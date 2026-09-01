@@ -82,13 +82,11 @@ that matches what you're doing right now.
 ## Quick install
 
 ```
-claude plugin marketplace add /path/to/spec-driven-engineering
+claude plugin marketplace add girijesh-ai/spec-driven-engineering
 claude plugin install spec-driven-engineering@spec-driven-engineering-dev
 ```
 
-Once pushed to a Git host, install the same way from the remote URL
-instead of a local path. See `## Install` further down for how this was
-actually verified.
+See `## Install` further down for how this exact command was verified.
 
 ---
 
@@ -190,14 +188,18 @@ README instead of in nested directories.
 ## Install
 
 ```
-claude plugin marketplace add /path/to/spec-driven-engineering
+claude plugin marketplace add girijesh-ai/spec-driven-engineering
 claude plugin install spec-driven-engineering@spec-driven-engineering-dev
 ```
 
-Verified against `claude plugin validate` and a real install in this repo's
-own build process — see `docs/` Status lines for which skills have been
-dry-run. Once pushed to a Git host, install the same way from the remote
-URL instead of a local path.
+Verified end-to-end from the real repo: `claude plugin validate`, a clean
+`claude plugin marketplace add` clone from GitHub (not a local path), and
+`claude plugin install` from that marketplace showing all 16 skills
+discovered (`claude plugin details spec-driven-engineering`). Working
+from a local clone instead works the same way — pass the local path to
+`marketplace add` in place of `girijesh-ai/spec-driven-engineering`.
+
+Repo: [github.com/girijesh-ai/spec-driven-engineering](https://github.com/girijesh-ai/spec-driven-engineering)
 
 ## Status
 
