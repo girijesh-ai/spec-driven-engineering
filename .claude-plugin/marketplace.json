@@ -1,0 +1,22 @@
+{
+  "name": "spec-driven-engineering-dev",
+  "description": "Development marketplace for the spec-driven-engineering skills library",
+  "owner": {
+    "name": "Girijesh",
+    "email": "linuxingirijesh@gmail.com",
+    "url": "https://github.com/girijesh-ai"
+  },
+  "plugins": [
+    {
+      "name": "spec-driven-engineering",
+      "description": "Spec/design-driven engineering workflow: spec -> plan -> implement -> review -> finish, with supporting standards, architecture, and debugging disciplines",
+      "version": "0.1.0",
+      "source": "./",
+      "author": {
+        "name": "Girijesh",
+        "email": "linuxingirijesh@gmail.com",
+        "url": "https://github.com/girijesh-ai"
+      }
+    }
+  ]
+}
