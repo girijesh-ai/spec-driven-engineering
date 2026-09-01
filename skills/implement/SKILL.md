@@ -33,8 +33,11 @@ against beyond what's obviously implied by the request.
 
 1. **Take one step at a time.** Never start a step whose dependencies (per
    the plan) aren't done. Write against `engineering-standards` as you go —
-   naming, error handling, security, layer boundaries — rather than
-   treating it as something only `review-code` checks after the fact.
+   naming, error handling, security, layer boundaries, and necessity
+   (does this code need to exist, is this the simplest correct solution)
+   — rather than treating any of that as something only `review-code`
+   checks after the fact. Catching your own over-engineering while writing
+   is cheaper than catching it in review.
 2. **Test-first.** Invoke `test-driven-development` for the step: write the
    failing test that encodes the step's verification, watch it fail for the
    right reason, write the minimal code to pass, refactor.

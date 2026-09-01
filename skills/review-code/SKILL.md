@@ -81,8 +81,11 @@ security- or correctness-critical should be silently skipped there.
 ### Step 6 — Axis 2: standards and architecture
 
 Run the change against `engineering-standards` (naming, SRP, error
-handling, security, DRY, layer boundaries) and `codebase-architecture`
-(module depth, interface width, boundary violations).
+handling, security, DRY, necessity/simplicity, layer boundaries) and
+`codebase-architecture` (module depth, interface width, boundary
+violations). A change can be fully spec-compliant and pass every other
+standards check and still be over-engineered — check necessity
+explicitly, don't assume it falls out of the other checks.
 
 ### Step 7 — Structured report
 

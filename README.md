@@ -249,5 +249,13 @@ Also structured after [mattpocock/skills](https://github.com/mattpocock/skills)
 (mission-first, persona-facing). Packaged the way
 [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) and
 Anthropic's own `superpowers` plugin ship
-(`.claude-plugin/plugin.json` + `marketplace.json`). Pairs well with
-`ponytail` for YAGNI/simplicity discipline — not reimplemented here.
+(`.claude-plugin/plugin.json` + `marketplace.json`).
+
+`engineering-standards` carries its own lightweight necessity/YAGNI
+check (no unrequested abstractions, stdlib/native-feature-first, simplest
+correct solution), applied at write-time by `implement` and as a backstop
+by `review-code`'s Axis 2 — not left as review-only. What isn't
+reimplemented here is `ponytail`'s deeper, dedicated audit
+(`ponytail-review`/`ponytail-audit` scan a whole diff or repo
+specifically for over-engineering); pairs well with that for anyone who
+wants it.

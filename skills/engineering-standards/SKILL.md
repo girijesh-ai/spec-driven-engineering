@@ -114,6 +114,20 @@ appendix (exact conventions: dataclasses, pathlib, logging setup).
 - The moment the same block appears a second time, extract it — three
   occurrences means the extraction was already overdue.
 
+## Necessity and simplicity
+
+- Before writing anything, ask whether it needs to exist at all. A
+  speculative feature not required by the spec's Goals is scope creep, not
+  thoroughness.
+- No unrequested abstractions: no interface with a single implementation,
+  no config for a value that will never change, no parameter added for a
+  hypothetical future caller.
+- Climb the ladder before writing new code: does stdlib already do this?
+  Does a native platform feature cover it? Does an already-installed
+  dependency solve it? Only write new code once those are ruled out.
+- The simplest correct solution wins. Code that needs more comments to
+  explain than the code it replaces is a regression, not an improvement.
+
 ## Layer boundaries and backward compatibility
 
 - Dependencies flow one direction. If a lower layer needs something from a
@@ -130,6 +144,9 @@ appendix (exact conventions: dataclasses, pathlib, logging setup).
 ## Quick reference for review-code
 
 When reviewing, check in this order: naming/functions → error handling →
-security → SOLID/DRY → layer boundaries. A change can look clean at the
-diff level and still fail every one of these once read in full-file
+security → SOLID/DRY → necessity/simplicity → layer boundaries. A change
+can be fully correct and standards-compliant and still be over-engineered
+— necessity is its own check, not a byproduct of the others. A change can
+look clean at the diff level and still fail every one of these once read
+in full-file
 context — see `review-code` for that process.

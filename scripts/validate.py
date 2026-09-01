@@ -38,11 +38,11 @@ def parse_frontmatter(text: str) -> dict[str, str] | None:
     return fields
 
 
-def check_skill_frontmatter(errors: list[str]) -> set[str]:
-    promoted: set[str] = set()
+def check_skill_frontmatter(errors: list[str]) -> None:
     for path in sorted(REPO_ROOT.glob("skills/*/SKILL.md")):
         skill_name = path.parent.name
-        fields = parse_frontmatter(path.read_text())
+        text = path.read_text()
+        fields = parse_frontmatter(text)
         if fields is None:
             errors.append(f"{path}: no YAML frontmatter block")
             continue
@@ -54,10 +54,8 @@ def check_skill_frontmatter(errors: list[str]) -> set[str]:
         description = fields.get("description", "")
         if not description.startswith("Use when"):
             errors.append(f"{path}: description must start with 'Use when'")
-        if not re.search(r"^Status:\s*(draft|stable)\s*$", path.read_text(), re.M):
+        if not re.search(r"^Status:\s*(draft|stable)\s*$", text, re.M):
             errors.append(f"{path}: missing 'Status: draft' or 'Status: stable' line")
-        promoted.add(skill_name)
-    return promoted
 
 
 def check_promoted_docs(errors: list[str]) -> None:
