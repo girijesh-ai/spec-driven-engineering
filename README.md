@@ -79,6 +79,12 @@ A skill isn't fenced off to one persona — `review-code` and
 `domain-modeling` show up twice above on purpose. Pick the entry point
 that matches what you're doing right now.
 
+**Want to see it working on a real codebase before installing?** See
+[`examples/smolagents/`](examples/smolagents/) — all three personas run
+against a real, popular open-source Python AI framework, including a
+genuine upstream bug found and fixed. Nothing staged, nothing pushed
+upstream.
+
 ## Quick install
 
 ```
