@@ -4,7 +4,7 @@ description: Use when writing or editing a SKILL.md, CLAUDE.md, or any other doc
 ---
 
 # writing-for-agents
-Status: draft
+Status: stable
 
 ## Overview
 

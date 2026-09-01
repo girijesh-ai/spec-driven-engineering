@@ -4,7 +4,7 @@ description: Use when a git merge or rebase produces conflicts — resolves each
 ---
 
 # resolve-merge-conflicts
-Status: draft
+Status: stable
 
 ## Overview
 

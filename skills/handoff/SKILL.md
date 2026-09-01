@@ -4,7 +4,7 @@ description: Use when a conversation or session needs to end but the work isn't 
 ---
 
 # handoff
-Status: draft
+Status: stable
 
 ## Overview
 

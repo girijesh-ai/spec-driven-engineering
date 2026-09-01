@@ -1,6 +1,6 @@
 # resolve-merge-conflicts
 
-**Status:** draft
+**Status:** stable
 
 ## What it does
 

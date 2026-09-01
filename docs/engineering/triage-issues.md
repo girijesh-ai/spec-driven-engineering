@@ -1,6 +1,6 @@
 # triage-issues
 
-**Status:** draft
+**Status:** stable
 
 ## What it does
 

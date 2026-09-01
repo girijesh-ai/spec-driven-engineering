@@ -204,9 +204,16 @@ Repo: [github.com/girijesh-ai/spec-driven-engineering](https://github.com/girije
 ## Status
 
 v1. Every skill dispatches correctly through the actual `Skill` tool once
-installed. 10 of 16 are `stable` — dry-run against a real task, per
-`CLAUDE.md`'s promotion rule; the other 6 are `draft`, correct as written
-but not yet exercised. Formal subagent pressure-testing is a known
+installed, and all 16 are `stable` — dry-run against a real task, per
+`CLAUDE.md`'s promotion rule. The last 6 were promoted after a real-repo
+persona test against `huggingface/smolagents`: a genuine root-caused bug
+fix (`debug-systematically`), a manufactured-but-real git conflict
+resolved by intent (`resolve-merge-conflicts`), an empirically-confirmed
+terminology ambiguity (`domain-modeling`), real backlog triage
+(`triage-issues`), a handoff doc proven usable by actually resuming from
+it (`handoff`), and a critique of the target repo's own `AGENTS.md`
+against this skill's rules (`writing-for-agents`) — all local-only,
+nothing pushed upstream. Formal subagent pressure-testing is a known
 follow-up, not a v1 requirement.
 
 | Skill | Status |
@@ -221,12 +228,12 @@ follow-up, not a v1 requirement.
 | `test-driven-development` | stable |
 | `codebase-architecture` | stable |
 | `grill-me` | stable |
-| `domain-modeling` | draft |
-| `debug-systematically` | draft |
-| `resolve-merge-conflicts` | draft |
-| `triage-issues` | draft |
-| `handoff` | draft |
-| `writing-for-agents` | draft |
+| `domain-modeling` | stable |
+| `debug-systematically` | stable |
+| `resolve-merge-conflicts` | stable |
+| `triage-issues` | stable |
+| `handoff` | stable |
+| `writing-for-agents` | stable |
 
 ## Credits & prior art
 

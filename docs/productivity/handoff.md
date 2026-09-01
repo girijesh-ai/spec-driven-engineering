@@ -1,6 +1,6 @@
 # handoff
 
-**Status:** draft
+**Status:** stable
 
 ## What it does
 

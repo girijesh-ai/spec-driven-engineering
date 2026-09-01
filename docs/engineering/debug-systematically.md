@@ -1,6 +1,6 @@
 # debug-systematically
 
-**Status:** draft
+**Status:** stable
 
 ## What it does
 

@@ -1,6 +1,6 @@
 # writing-for-agents
 
-**Status:** draft
+**Status:** stable
 
 ## What it does
 

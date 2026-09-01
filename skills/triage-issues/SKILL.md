@@ -4,7 +4,7 @@ description: Use when grooming a backlog of issues, bugs, or requests and decidi
 ---
 
 # triage-issues
-Status: draft
+Status: stable
 
 ## Overview
 

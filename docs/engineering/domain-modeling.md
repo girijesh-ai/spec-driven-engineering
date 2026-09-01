@@ -1,6 +1,6 @@
 # domain-modeling
 
-**Status:** draft
+**Status:** stable
 
 ## What it does
 

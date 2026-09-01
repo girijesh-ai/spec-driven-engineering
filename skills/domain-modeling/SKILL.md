@@ -4,7 +4,7 @@ description: Use when a spec's requirements use terms that are vague, overloaded
 ---
 
 # domain-modeling
-Status: draft
+Status: stable
 
 ## Overview
 

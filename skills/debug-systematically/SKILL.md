@@ -4,7 +4,7 @@ description: Use when encountering any bug, test failure, or unexpected behavior
 ---
 
 # debug-systematically
-Status: draft
+Status: stable
 
 ## Overview
 
