@@ -15,6 +15,11 @@ REQUIRED_DOC_SECTIONS = (
     "Common questions",
     "It's working if",
 )
+# Promoted skill docs live only in these buckets (CLAUDE.md). Other docs/
+# subdirs — docs/specs/ and docs/plans/, where spec-from-idea and
+# plan-from-spec tell users to write dated artifacts — are not skill docs and
+# must not be scanned as if their filename were a skill name.
+DOC_BUCKETS = ("engineering", "productivity")
 
 
 def check_json_manifests(errors: list[str]) -> None:
@@ -60,7 +65,10 @@ def check_skill_frontmatter(errors: list[str]) -> None:
 
 def check_promoted_docs(errors: list[str]) -> None:
     status_re = re.compile(r"^\*\*Status:\*\*\s*(draft|stable)\s*$", re.M)
-    for doc_path in sorted(REPO_ROOT.glob("docs/*/*.md")):
+    doc_paths = sorted(
+        p for bucket in DOC_BUCKETS for p in (REPO_ROOT / "docs" / bucket).glob("*.md")
+    )
+    for doc_path in doc_paths:
         skill_name = doc_path.stem
         if not (REPO_ROOT / "skills" / skill_name / "SKILL.md").exists():
             errors.append(f"{doc_path}: doc exists but skills/{skill_name}/SKILL.md does not")
