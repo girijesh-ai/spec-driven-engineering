@@ -72,6 +72,11 @@ doesn't actually deliver something checkable.
 - Verification: <criterion>
 ```
 
+Write the plan to `docs/plans/YYYY-MM-DD-<topic>.md`, mirroring the spec's
+location, so `implement`, `finish-branch`, and `handoff` can link to it by
+path. A small, well-understood change may keep the plan in chat instead —
+but anything handed to `implement` as "the plan" gets the file.
+
 ## Common mistakes
 
 | Mistake | Fix |

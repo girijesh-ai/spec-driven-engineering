@@ -1,6 +1,6 @@
 ---
 name: debug-systematically
-description: Use when encountering any bug, test failure, or unexpected behavior, before proposing a fix — a disciplined reproduce, minimize, hypothesize, instrument, root-cause loop instead of guessing at symptoms.
+description: Use when encountering any bug, test failure, or unexpected behavior, before proposing a fix — to find and fix the true root cause instead of guessing at the symptom the report happened to name.
 ---
 
 # debug-systematically
