@@ -14,11 +14,13 @@ governs every `SKILL.md` and doc in this repo.
 
 ## Rules
 
-**Description is a trigger, not a summary.** A `SKILL.md` frontmatter
-`description` should state only when to use the skill, never summarize its
-process. A description that summarizes the workflow becomes a shortcut an
-agent takes instead of reading the body — it'll act on the summary and miss
-whatever the body actually says to do.
+**Description leads with the trigger.** A `SKILL.md` frontmatter
+`description` must lead with when to use the skill. A single trailing clause
+naming the outcome is fine ("— turns an idea into a spec"), but never
+enumerate the skill's steps or name its internal process phases: a
+description that summarizes the workflow becomes a shortcut an agent takes
+instead of reading the body — it acts on the summary and misses whatever the
+body actually says to do.
 
 **State the rule, not just the goal.** "Write good tests" gives an agent
 nothing to check itself against. "Never mock the unit under test" does.
@@ -52,7 +54,7 @@ under pressure.
 
 | Mistake | Fix |
 |---|---|
-| Description that summarizes the skill's steps | Rewrite to state only triggering conditions |
+| Description that enumerates the skill's steps or process phases | Keep the trigger; trim the tail to at most a single outcome clause |
 | A rule stated as an aspiration ("be careful with resources") | Restate as a checkable action ("trace every early-return path for resource cleanup") |
 | Inlining a 200-line reference table into the main doc | Move it to `references/`, link from the main doc |
 | A cross-reference with no stated requirement level | State whether it's required or optional explicitly |

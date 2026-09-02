@@ -29,15 +29,17 @@ are tracked in documentation, not directory structure:
 
 - Every skill has a `SKILL.md` with YAML frontmatter: `name` (letters,
   numbers, hyphens only) and `description` (third person, starts with
-  "Use when...", states triggering conditions only — never a summary of the
+  "Use when...", leads with triggering conditions — a single trailing clause
+  naming the outcome is allowed, but never a step-by-step summary of the
   skill's own process, since a workflow-summarizing description becomes a
   shortcut agents take instead of reading the skill body).
 - Every promoted skill also has a human-facing doc at
   `docs/<bucket>/<skill-name>.md` with exactly four sections: **What it
   does**, **When to reach for it**, **Common questions**, **It's working
   if**.
-- Every skill doc carries a status line — `Status: draft` or
-  `Status: stable` — directly under the title. `stable` requires at least
+- Every skill doc carries a status line — `**Status:** draft` or
+  `**Status:** stable` — directly under the title (the bolded form the docs
+  use; `scripts/validate.py` enforces it). `stable` requires at least
   one dry run against a real task; before that, it stays `draft` even if
   the content looks finished.
 - Heavy reference content (100+ lines: full API/checklist detail) lives in

@@ -1,6 +1,6 @@
 ---
 name: implement
-description: Use when writing the actual code for a plan step, feature, or bugfix — drives test-driven development at each seam, checks each step's verification before moving on, and runs review-code before committing.
+description: Use when writing the actual code for a plan step, feature, or bugfix — turns a plan (or an ad-hoc change) into committed, verified code.
 ---
 
 # implement

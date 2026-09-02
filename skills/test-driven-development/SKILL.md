@@ -1,6 +1,6 @@
 ---
 name: test-driven-development
-description: Use when implementing any feature or bugfix, before writing implementation code — the red-green-refactor discipline that implement and debug-systematically both drive their work through.
+description: Use when implement or debug-systematically reaches a code seam that needs a test written before the implementation — the test-first sub-routine those skills drive, not a standalone entry point.
 ---
 
 # test-driven-development

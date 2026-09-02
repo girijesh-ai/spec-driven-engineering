@@ -59,15 +59,26 @@ def check_skill_frontmatter(errors: list[str]) -> None:
 
 
 def check_promoted_docs(errors: list[str]) -> None:
+    status_re = re.compile(r"^\*\*Status:\*\*\s*(draft|stable)\s*$", re.M)
     for doc_path in sorted(REPO_ROOT.glob("docs/*/*.md")):
         skill_name = doc_path.stem
         if not (REPO_ROOT / "skills" / skill_name / "SKILL.md").exists():
             errors.append(f"{doc_path}: doc exists but skills/{skill_name}/SKILL.md does not")
             continue
         text = doc_path.read_text()
+        if not status_re.search(text):
+            errors.append(
+                f"{doc_path}: missing '**Status:** draft' or '**Status:** stable' line"
+            )
+        headings = set(re.findall(r"^## (.+?)\s*$", text, re.M))
         for section in REQUIRED_DOC_SECTIONS:
-            if f"## {section}" not in text:
+            if section not in headings:
                 errors.append(f"{doc_path}: missing required section '## {section}'")
+        for heading in sorted(headings - set(REQUIRED_DOC_SECTIONS)):
+            errors.append(
+                f"{doc_path}: unexpected section '## {heading}' — docs allow "
+                "exactly the four required sections"
+            )
 
 
 def check_dependency_claims(errors: list[str]) -> None:

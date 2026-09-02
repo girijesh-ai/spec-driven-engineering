@@ -1,6 +1,6 @@
 ---
 name: codebase-architecture
-description: Use when planning a non-trivial change's file/module structure, or reviewing whether a change's boundaries are sound — checks module depth, interface width, and layer-boundary violations, independent of SOLID-level class design.
+description: Use when planning a non-trivial change's file/module structure, or reviewing whether a change's boundaries are sound — the structural lens on modules and boundaries, distinct from SOLID-level class design.
 ---
 
 # codebase-architecture
@@ -9,10 +9,11 @@ Status: stable
 ## Overview
 
 Feeds `plan-from-spec` (before code exists, to plan sound boundaries) and
-`review-code` (after code exists, to check they held). Where
-`engineering-standards`' SOLID section is about a single class or function's
-responsibilities, this skill is about the shape of modules and the
-boundaries between them — a different, complementary lens.
+`review-code` (after code exists, to check they held).
+`engineering-standards` covers a unit's *responsibilities* (SOLID, at any
+level) and backward compatibility; this skill owns the *structural* lens —
+module depth, interface width, and which direction dependencies may flow
+across a layer boundary. Complementary, not overlapping.
 
 ## When to use
 
