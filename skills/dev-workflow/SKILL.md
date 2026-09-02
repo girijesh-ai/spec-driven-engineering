@@ -30,6 +30,8 @@ digraph routing {
     "Backlog needs grooming" [shape=box];
     "A plan/decision needs pressure-testing" [shape=box];
     "Context needs to move to another session" [shape=box];
+    "Vocabulary in a requirement is fuzzy" [shape=box];
+    "Deciding file/module boundaries" [shape=box];
 
     "What's the task?" -> "Feasibility question only" -> "spec-from-idea (spike path)";
     "What's the task?" -> "Nothing written down yet" -> "spec-from-idea";
@@ -42,6 +44,8 @@ digraph routing {
     "What's the task?" -> "Backlog needs grooming" -> "triage-issues";
     "What's the task?" -> "A plan/decision needs pressure-testing" -> "grill-me";
     "What's the task?" -> "Context needs to move to another session" -> "handoff";
+    "What's the task?" -> "Vocabulary in a requirement is fuzzy" -> "domain-modeling";
+    "What's the task?" -> "Deciding file/module boundaries" -> "codebase-architecture";
 }
 ```
 

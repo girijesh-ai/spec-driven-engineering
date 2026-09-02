@@ -79,11 +79,14 @@ A skill isn't fenced off to one persona — `review-code` and
 `domain-modeling` show up twice above on purpose. Pick the entry point
 that matches what you're doing right now.
 
-**Want to see it working on a real codebase before installing?** See
-[`examples/smolagents/`](examples/smolagents/) — all three personas run
-against a real, popular open-source Python AI framework, including a
-genuine upstream bug found and fixed. Nothing staged, nothing pushed
-upstream.
+**Want to see it before installing?** Two examples:
+[`examples/spine-walkthrough/`](examples/spine-walkthrough/) carries one
+change through the whole spine — a spec with measurable Success Criteria &
+Evals → a plan whose every step traces back to one → implement → review →
+finish — so you can watch the eval thread run end to end. And
+[`examples/smolagents/`](examples/smolagents/) runs the supporting skills
+against a real, popular open-source Python AI framework, including a genuine
+upstream bug found and fixed — nothing staged, nothing pushed upstream.
 
 ## Quick install
 
@@ -123,7 +126,7 @@ spec-from-idea -> plan-from-spec -> implement -> review-code -> finish-branch
 
 `implement` and `review-code` work without an upstream spec/plan, but say
 so explicitly ("no spec/plan found — proceeding ad-hoc" /
-"spec axis: skipped — no spec found") rather than silently treating a
+"spec axis skipped — no spec found") rather than silently treating a
 missing spec as satisfied. See this repo's [CLAUDE.md](CLAUDE.md) for the
 full governance rule.
 

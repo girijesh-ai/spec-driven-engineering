@@ -1,6 +1,6 @@
 ---
 name: review-code
-description: Use when about to commit, push, or open a PR for any non-trivial change — reviews the full changed files (not just the diff) against the spec's success criteria first, then against engineering standards and architecture, tracing callers and auditing resource/failure paths.
+description: Use when about to commit, push, or open a PR for any non-trivial change — the last gate that checks the change against its spec and the engineering standards before it ships.
 ---
 
 # review-code
@@ -24,7 +24,7 @@ show.
 ## No-spec fallback
 
 If no spec is linked, do not skip Axis 1 silently. Report it explicitly:
-**"Spec axis: skipped — no spec found."** Then run Axis 2 (standards) in
+**"Spec axis skipped — no spec found."** Then run Axis 2 (standards) in
 full — standards compliance never depends on a spec existing.
 
 ## Process
@@ -81,9 +81,9 @@ security- or correctness-critical should be silently skipped there.
 ### Step 6 — Axis 2: standards and architecture
 
 Run the change against `engineering-standards` (naming, SRP, error
-handling, security, DRY, necessity/simplicity, layer boundaries) and
-`codebase-architecture` (module depth, interface width, boundary
-violations). A change can be fully spec-compliant and pass every other
+handling, security, DRY, necessity/simplicity, backward compatibility) and
+`codebase-architecture` (module depth, interface width, and layer-boundary
+direction). A change can be fully spec-compliant and pass every other
 standards check and still be over-engineered — check necessity
 explicitly, don't assume it falls out of the other checks.
 
@@ -94,7 +94,8 @@ explicitly, don't assume it falls out of the other checks.
 Files changed, additions/deletions, one-paragraph summary of intent.
 
 ### Spec compliance (Axis 1)
-Per criterion: met / not met / skipped (no spec) — with why.
+Per criterion: met / not met / not applicable — with why.
+(No spec at all: "Spec axis skipped — no spec found.")
 
 ### Confirmed issues
 File, line, what's wrong, failure scenario, concrete fix.
@@ -109,7 +110,7 @@ Findings against engineering-standards / codebase-architecture.
 What's done well and correct — don't skip this, it's signal too.
 
 ### Verdict
-READY — no confirmed issues, spec axis met or explicitly not applicable.
+READY — no confirmed issues; spec criteria met or not applicable, or the spec axis was explicitly skipped (no spec).
 NEEDS FIXES — N confirmed issues listed above.
 ```
 

@@ -130,9 +130,9 @@ appendix (exact conventions: dataclasses, pathlib, logging setup).
 
 ## Layer boundaries and backward compatibility
 
-- Dependencies flow one direction. If a lower layer needs something from a
-  higher one, the architecture is wrong — add an abstraction, don't import
-  across the boundary anyway.
+- Dependency *direction* across a layer boundary is
+  `codebase-architecture`'s check, not this one — flag a wrong-direction
+  import there. Backward compatibility, below, is this skill's.
 - Public interfaces (return keys, exported function signatures, registered
   names looked up by string) are additive-only. Removing or renaming
   breaks callers you can't enumerate — deprecate for one cycle, then
@@ -144,9 +144,9 @@ appendix (exact conventions: dataclasses, pathlib, logging setup).
 ## Quick reference for review-code
 
 When reviewing, check in this order: naming/functions → error handling →
-security → SOLID/DRY → necessity/simplicity → layer boundaries. A change
-can be fully correct and standards-compliant and still be over-engineered
-— necessity is its own check, not a byproduct of the others. A change can
-look clean at the diff level and still fail every one of these once read
-in full-file
-context — see `review-code` for that process.
+security → SOLID/DRY → necessity/simplicity → backward compatibility
+(dependency direction is `codebase-architecture`'s check). A change can be
+fully correct and standards-compliant and still be over-engineered —
+necessity is its own check, not a byproduct of the others. A change can
+look clean at the diff level and still fail every one of these once read in
+full-file context — see `review-code` for that process.
