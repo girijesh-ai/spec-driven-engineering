@@ -210,6 +210,28 @@ from a local clone instead works the same way — pass the local path to
 
 Repo: [github.com/girijesh-ai/spec-driven-engineering](https://github.com/girijesh-ai/spec-driven-engineering)
 
+## Updating an existing install
+
+Already have this installed and the repo has moved on since? The
+marketplace source doesn't auto-refresh — pull the latest, then update:
+
+```
+claude plugin marketplace update spec-driven-engineering-dev
+claude plugin update spec-driven-engineering
+```
+
+Restart the Claude Code session afterward — plugin/skill loading happens
+at session start, so an update taken mid-session won't show up in that
+same session's `Skill` tool list.
+
+Verified against a real stale install: `claude plugin details
+spec-driven-engineering` showed `0.1.0` before this sequence, `1.0.1`
+after — matching the actual version bumped in this repo's most recent
+release. If a bundled skill's name ever changes across a release, the
+old name keeps working for one cycle as a pointer (see `CLAUDE.md`'s
+versioning rule) — you don't need to update your own invocations
+immediately.
+
 ## Status
 
 v1. Every skill dispatches correctly through the actual `Skill` tool once
