@@ -24,7 +24,7 @@ show.
 ## No-spec fallback
 
 If no spec is linked, do not skip Axis 1 silently. Report it explicitly:
-**"Spec axis skipped — no spec found."** Then run Axis 2 (standards) in
+**"spec axis skipped — no spec found."** Then run Axis 2 (standards) in
 full — standards compliance never depends on a spec existing.
 
 ## Process
@@ -95,7 +95,7 @@ Files changed, additions/deletions, one-paragraph summary of intent.
 
 ### Spec compliance (Axis 1)
 Per criterion: met / not met / not applicable — with why.
-(No spec at all: "Spec axis skipped — no spec found.")
+(No spec at all: "spec axis skipped — no spec found.")
 
 ### Confirmed issues
 File, line, what's wrong, failure scenario, concrete fix.

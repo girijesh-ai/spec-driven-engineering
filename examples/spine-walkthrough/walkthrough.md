@@ -37,12 +37,16 @@ at each seam:
 - **Reuse check:** `should_retry` imports the existing `TRANSIENT_STATUSES`
   constant instead of redefining it (the plan's reuse note).
 
-Before each commit, `implement` runs `review-code` — not just once at the end.
+Before each commit, `implement` runs `review-code` on that commit's diff — not
+just once at the end. Each early review checks only the criteria its step has
+made reachable (after step 1, SC3 alone) — so the reports build up, one step's
+worth of green at a time.
 
 ## 4. review-code → the two-axis report
 
-This is the artifact `review-code` produces. **Axis 1 (spec compliance) is
-primary**, and it is checked against exactly the spec's list:
+This is the **final** review's artifact — the per-step reviews before it shared
+this shape with a shorter Axis 1 list. **Axis 1 (spec compliance) is primary**,
+and it is checked against exactly the spec's list:
 
 ```
 ### Spec compliance (Axis 1)
@@ -64,7 +68,7 @@ READY — no confirmed issues; every spec criterion met.
 ```
 
 Because Axis 1 is per-criterion, "done" is not a judgment call — it is the six
-evals passing. If a spec were absent, this section would instead read **"Spec
+evals passing. If a spec were absent, this section would instead read **"spec
 axis skipped — no spec found"** and Axis 2 would still run in full.
 
 ## 5. finish-branch → landing it
