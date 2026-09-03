@@ -213,24 +213,42 @@ Repo: [github.com/girijesh-ai/spec-driven-engineering](https://github.com/girije
 ## Updating an existing install
 
 Already have this installed and the repo has moved on since? The
-marketplace source doesn't auto-refresh — pull the latest, then update:
+marketplace source doesn't auto-refresh — pull the latest, then update.
+
+**From a separate terminal (outside an active session):**
 
 ```
 claude plugin marketplace update spec-driven-engineering-dev
 claude plugin update spec-driven-engineering
 ```
 
-Restart the Claude Code session afterward — plugin/skill loading happens
-at session start, so an update taken mid-session won't show up in that
-same session's `Skill` tool list.
-
 Verified against a real stale install: `claude plugin details
 spec-driven-engineering` showed `0.1.0` before this sequence, `1.0.1`
 after — matching the actual version bumped in this repo's most recent
-release. If a bundled skill's name ever changes across a release, the
-old name keeps working for one cycle as a pointer (see `CLAUDE.md`'s
-versioning rule) — you don't need to update your own invocations
-immediately.
+release.
+
+**From inside an already-running interactive session**, the same update
+works without dropping to a separate shell — verified end to end,
+including that a full session restart is not required:
+
+```
+/plugin marketplace update spec-driven-engineering-dev
+/plugin update spec-driven-engineering@spec-driven-engineering-dev
+/reload-plugins
+```
+
+Verified: after running these three, `claude plugin details` showed
+`1.0.1`, and invoking a skill in that same session (no restart) resolved
+to `.../spec-driven-engineering-dev/spec-driven-engineering/1.0.1/...` —
+the version literally in the cache path — with body content matching the
+latest release exactly (down to a one-word casing fix that only exists
+post-update). `/reload-plugins` reported `Reloaded: N plugins · N skills
+· ...` confirming the live session picked it up immediately.
+
+Either path works; use whichever avoids breaking your flow. If a bundled
+skill's name ever changes across a release, the old name keeps working
+for one cycle as a pointer (see `CLAUDE.md`'s versioning rule) — you
+don't need to update your own invocations immediately.
 
 ## Status
 
