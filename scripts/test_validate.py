@@ -15,6 +15,13 @@ import validate  # noqa: E402  (path is set on the line above)
 
 
 class CheckPromotedDocs(unittest.TestCase):
+    def setUp(self) -> None:
+        # check_promoted_docs reads the module-level REPO_ROOT; each test points
+        # it at a throwaway tree. Capture the real one now and restore it at
+        # teardown so the suite stays hermetic for any later test that needs it.
+        original_root = validate.REPO_ROOT
+        self.addCleanup(setattr, validate, "REPO_ROOT", original_root)
+
     def _errors_for(self, root: Path) -> list[str]:
         validate.REPO_ROOT = root  # point the checker at a throwaway tree
         errors: list[str] = []
@@ -47,6 +54,22 @@ class CheckPromotedDocs(unittest.TestCase):
             self.assertTrue(
                 any("skills/ghost/SKILL.md does not" in e for e in errors),
                 f"expected a missing-skill error, got: {errors}",
+            )
+
+    def test_unexpected_docs_subdir_is_flagged(self) -> None:
+        """A docs/ subdir that is neither a known bucket nor a known artifact
+        dir must error. Without this, restricting the scan to DOC_BUCKETS would
+        let a future bucket go silently unvalidated instead of loudly flagged.
+        """
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            surprise = root / "docs" / "security"
+            surprise.mkdir(parents=True)
+            (surprise / "some-doc.md").write_text("# doc\n")
+            errors = self._errors_for(root)
+            self.assertTrue(
+                any("unexpected docs/ subdir" in e for e in errors),
+                f"expected an unexpected-subdir error, got: {errors}",
             )
 
 

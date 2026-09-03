@@ -15,11 +15,13 @@ REQUIRED_DOC_SECTIONS = (
     "Common questions",
     "It's working if",
 )
-# Promoted skill docs live only in these buckets (CLAUDE.md). Other docs/
-# subdirs — docs/specs/ and docs/plans/, where spec-from-idea and
-# plan-from-spec tell users to write dated artifacts — are not skill docs and
-# must not be scanned as if their filename were a skill name.
+# Promoted skill docs live only in these buckets (CLAUDE.md); their files are
+# validated as skill docs.
 DOC_BUCKETS = ("engineering", "productivity")
+# Artifact dirs hold the dated files spec-from-idea and plan-from-spec tell
+# users to write (docs/specs/YYYY-MM-DD-<topic>.md, docs/plans/...) — not skill
+# docs, so their files are skipped rather than scanned by filename.
+DOC_ARTIFACT_DIRS = ("specs", "plans")
 
 
 def check_json_manifests(errors: list[str]) -> None:
@@ -65,6 +67,17 @@ def check_skill_frontmatter(errors: list[str]) -> None:
 
 def check_promoted_docs(errors: list[str]) -> None:
     status_re = re.compile(r"^\*\*Status:\*\*\s*(draft|stable)\s*$", re.M)
+    # Every docs/ subdir must be a known bucket (validated below) or a known
+    # artifact dir (skipped). Anything else is either a new bucket that would
+    # otherwise go silently unvalidated or a stray dir — flag it, don't skip it.
+    known_subdirs = set(DOC_BUCKETS) | set(DOC_ARTIFACT_DIRS)
+    for sub in sorted(p for p in (REPO_ROOT / "docs").glob("*") if p.is_dir()):
+        if sub.name not in known_subdirs:
+            errors.append(
+                f"{sub}: unexpected docs/ subdir — classify it in "
+                "scripts/validate.py (add to DOC_BUCKETS to validate its docs, "
+                "or DOC_ARTIFACT_DIRS to skip them)"
+            )
     doc_paths = sorted(
         p for bucket in DOC_BUCKETS for p in (REPO_ROOT / "docs" / bucket).glob("*.md")
     )
