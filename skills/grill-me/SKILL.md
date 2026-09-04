@@ -22,6 +22,24 @@ the plan later, now, while it's still cheap to answer.
 - Before `plan-from-spec` on anything architectural, if `spec-from-idea`'s
   own self-review pass didn't fully resolve the Open Questions section
 
+## This is a live interview, not a solo exercise
+
+Ask one question, then stop and wait for the actual answer — never answer
+on the requester's behalf. Self-answering defeats the point: this skill
+exists to surface what the requester hasn't thought through, not what the
+agent guesses they'd say. This holds even under a general bias toward not
+stopping for clarifying questions (an autonomous or background mode,
+Auto Mode's default) — this skill's whole purpose is to stop and ask, and
+that's exactly the kind of skill-level signal such a bias is meant to
+defer to.
+
+If no live answer is actually available (a genuinely unattended run,
+nobody to respond), do not fake the interview. Say so explicitly —
+"grill-me needs a live answer here; running unattended, so this question
+is logged as unresolved" — and list every unanswered question under Open
+Questions/Non-Goals rather than presenting a self-resolved interview as
+if it were real.
+
 ## Process
 
 1. **Start from the plan/spec as written**, not from scratch. Read it
@@ -47,6 +65,8 @@ the plan later, now, while it's still cheap to answer.
 | Accepting "we'll handle that later" without pinning it down | Push for a specific resolution or an explicit, reasoned deferral |
 | Stopping after the first round of questions | Keep going until a round produces nothing new, not until it produces something comfortable |
 | Grilling implementation details in a spec that hasn't settled its goals yet | Grill the goals/approach first — implementation questions are premature if the goal itself is still shaky |
+| Answering your own question instead of asking the requester | Stop after each question and wait for the real answer — self-answering isn't grilling, it's narrating |
+| Treating a "don't stop for questions" bias as overriding this skill | It doesn't — a skill signaling it needs to ask is exactly the case such a bias is meant to defer to |
 
 ## Next
 

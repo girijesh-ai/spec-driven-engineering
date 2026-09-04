@@ -1,7 +1,7 @@
 {
   "name": "spec-driven-engineering",
   "description": "Spec/design-driven engineering workflow: spec -> plan -> implement -> review -> finish, with supporting standards, architecture, and debugging disciplines",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": {
     "name": "Girijesh",
     "email": "linuxingirijesh@gmail.com",
