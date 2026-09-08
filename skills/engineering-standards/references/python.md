@@ -4,6 +4,19 @@ Concrete conventions for Python codebases. The principles in `SKILL.md`
 apply regardless of language; this file is how they translate to Python
 specifically.
 
+## Environment
+
+Work in an isolated per-project environment — `venv`, `uv`, or `poetry`,
+whichever the project already uses. Never `pip install` into the system or
+global interpreter; a global install leaks between projects and makes the
+build unreproducible.
+
+- Commit the lockfile (`uv.lock`, `poetry.lock`, or a pinned
+  `requirements.txt`) so the environment is reproducible.
+- Document how to create and activate the environment in the project README
+  or `CLAUDE.md`, not in each contributor's head.
+- Keep the environment directory out of version control (`.gitignore`).
+
 ## Data
 
 ```python

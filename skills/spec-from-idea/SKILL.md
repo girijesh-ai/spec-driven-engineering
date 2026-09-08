@@ -44,8 +44,9 @@ scope turns out bigger once you're in it, say so and reclassify up.
 
 ## Process (bounded and architectural)
 
-1. Check existing context first — files, docs, prior specs — before asking
-   anything. Don't make the user repeat what's already written down.
+1. Check existing context first — files, docs, prior specs, and the project
+   `CLAUDE.md` if one exists — before asking anything. Don't make the user
+   repeat what's already written down.
    If a requirement's terms are vague, overloaded, or used inconsistently
    across the conversation, invoke `domain-modeling` before continuing —
    an ambiguous term now becomes an ambiguous Success Criterion later.

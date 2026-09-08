@@ -66,6 +66,22 @@ digraph routing {
 | Vocabulary in a requirement is fuzzy | `domain-modeling` |
 | Deciding file/module boundaries | `codebase-architecture` |
 
+## Project context (good to have, not required)
+
+A project-level `CLAUDE.md` that seeds durable orientation makes the spine's
+"check existing context" step land instead of the user re-explaining things
+each session. Keep it optional — the spine works without one — but when it
+exists it should hold:
+
+- Where specs live (`docs/specs/`) and a pointer to the active spec.
+- Key files/modules and what each is for.
+- How to build, run, and test the project.
+- Project conventions not obvious from the code.
+
+Keep the in-flight spec content itself in its dated `docs/specs/` file, not
+in `CLAUDE.md` — `CLAUDE.md` points at the spec, it doesn't duplicate it, so
+it can't go stale the moment the spec moves.
+
 ## Next
 
 Whichever skill the table points to — this skill doesn't do the work
