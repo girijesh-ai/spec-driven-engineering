@@ -3,7 +3,7 @@
 **Status:** stable
 
 How to install and run this catalog on [OpenCode](https://opencode.ai) —
-with no dependency on Claude Code. The 16 skills are plain
+with no dependency on Claude Code. The 17 skills are plain
 `skills/<name>/SKILL.md` files; OpenCode reads them natively. All you add
 is a config pointer to them plus six thin slash-command wrappers for the
 spine.
@@ -173,8 +173,8 @@ denied in `permission.skill`.
 Supporting skills (`engineering-standards`, `test-driven-development`,
 `domain-modeling`, `codebase-architecture`, `debug-systematically`,
 `resolve-merge-conflicts`, `triage-issues`, `grill-me`, `handoff`,
-`writing-for-agents`) have no slash command. The agent loads them via
-the `skill` tool when a spine skill names them, or when you ask.
+`writing-for-agents`, `simple`) have no slash command. The agent loads
+them via the `skill` tool when a spine skill names them, or when you ask.
 
 `implement` and `review-code` still work without an upstream spec. They
 must say so out loud ("no spec/plan found — proceeding ad-hoc" /

@@ -5,7 +5,7 @@
 ## What it does
 
 A routing table from "where the work currently is" to the right skill in
-this repo. It has no process of its own — it exists because 16 skills is
+this repo. It has no process of its own — it exists because 17 skills is
 too many to hold in one head, and this repo's actual value is the spine,
 not a flat list.
 
@@ -23,4 +23,4 @@ around ad hoc.
 
 ## It's working if
 
-- Nobody has to read all 16 `SKILL.md` files to figure out where to start.
+- Nobody has to read all 17 `SKILL.md` files to figure out where to start.

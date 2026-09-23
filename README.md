@@ -11,7 +11,7 @@ against anything but vibes. `spec-driven-engineering` makes the spec the
 thing everything else is checked against: one spine (idea → spec → plan
 → code → review → ship) carrying measurable Success Criteria & Evals all
 the way through, plus the standards, architecture, and debugging
-disciplines that spine leans on. 16 skills, free. Ships as a Claude Code
+disciplines that spine leans on. 17 skills, free. Ships as a Claude Code
 plugin and as an [OpenCode](OPENCODE.md) skill catalog.
 
 Not sure where to start? Invoke **[dev-workflow](docs/engineering/dev-workflow.md)**
@@ -156,6 +156,7 @@ These plug into the spine; none of them are peers of it.
 | [grill-me](docs/productivity/grill-me.md) | productivity | mid-`spec-from-idea` or standalone |
 | [handoff](docs/productivity/handoff.md) | productivity | standalone → feeds `dev-workflow` (next session) |
 | [writing-for-agents](docs/productivity/writing-for-agents.md) | productivity | governs how every skill here is written |
+| [simple](docs/productivity/simple.md) | productivity | standalone — plain-language explainer for any dense doc |
 
 ## Dependency graph
 
@@ -215,7 +216,7 @@ claude plugin install spec-driven-engineering@spec-driven-engineering-dev
 
 Verified end-to-end from the real repo: `claude plugin validate`, a clean
 `claude plugin marketplace add` clone from GitHub (not a local path), and
-`claude plugin install` from that marketplace showing all 16 skills
+`claude plugin install` from that marketplace showing all 17 skills
 discovered (`claude plugin details spec-driven-engineering`). Working
 from a local clone instead works the same way — pass the local path to
 `marketplace add` in place of `girijesh-ai/spec-driven-engineering`.
@@ -270,17 +271,18 @@ don't need to update your own invocations immediately.
 ## Status
 
 v1. Every skill dispatches correctly through the actual `Skill` tool once
-installed, and all 16 are `stable` — dry-run against a real task, per
-`CLAUDE.md`'s promotion rule. The last 6 were promoted after a real-repo
+installed, and all 17 are `stable` — dry-run against a real task, per
+`CLAUDE.md`'s promotion rule. Six were promoted after a real-repo
 persona test against `huggingface/smolagents`: a genuine root-caused bug
 fix (`debug-systematically`), a manufactured-but-real git conflict
 resolved by intent (`resolve-merge-conflicts`), an empirically-confirmed
 terminology ambiguity (`domain-modeling`), real backlog triage
 (`triage-issues`), a handoff doc proven usable by actually resuming from
 it (`handoff`), and a critique of the target repo's own `AGENTS.md`
-against this skill's rules (`writing-for-agents`) — all local-only,
-nothing pushed upstream. Formal subagent pressure-testing is a known
-follow-up, not a v1 requirement.
+against this skill's rules (`writing-for-agents`). `simple` was promoted
+after producing a real plain-language explainer for a live POC kickoff
+doc — all local-only, nothing pushed upstream. Formal subagent
+pressure-testing is a known follow-up, not a v1 requirement.
 
 | Skill | Status |
 |---|---|
@@ -300,6 +302,7 @@ follow-up, not a v1 requirement.
 | `triage-issues` | stable |
 | `handoff` | stable |
 | `writing-for-agents` | stable |
+| `simple` | stable |
 
 ## Credits & prior art
 
