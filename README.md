@@ -7,12 +7,12 @@ guess from.**
 
 An agent without a spec ships fast and drifts fast — every session
 re-guesses what "done" means, and nothing downstream can check its work
-against anything but vibes. `spec-driven-engineering` is a Claude Code
-plugin that makes the spec the thing everything else is checked against:
-one spine (idea → spec → plan → code → review → ship) carrying measurable
-Success Criteria & Evals all the way through, plus the standards,
-architecture, and debugging disciplines that spine leans on. 16 skills,
-free, installs in two commands.
+against anything but vibes. `spec-driven-engineering` makes the spec the
+thing everything else is checked against: one spine (idea → spec → plan
+→ code → review → ship) carrying measurable Success Criteria & Evals all
+the way through, plus the standards, architecture, and debugging
+disciplines that spine leans on. 16 skills, free. Ships as a Claude Code
+plugin and as an [OpenCode](OPENCODE.md) skill catalog.
 
 Not sure where to start? Invoke **[dev-workflow](docs/engineering/dev-workflow.md)**
 — it's a routing table from "where the work actually is" to the right
@@ -90,12 +90,18 @@ upstream bug found and fixed — nothing staged, nothing pushed upstream.
 
 ## Quick install
 
+**Claude Code**
+
 ```
 claude plugin marketplace add girijesh-ai/spec-driven-engineering
 claude plugin install spec-driven-engineering@spec-driven-engineering-dev
 ```
 
 See `## Install` further down for how this exact command was verified.
+
+**OpenCode** — clone, then `cd spec-driven-engineering && opencode`.
+Full options (global symlink, one consuming project) are in
+[OPENCODE.md](OPENCODE.md).
 
 ---
 
@@ -179,22 +185,28 @@ writing-for-agents (governs authoring, not invoked mid-task)
 
 ```
 spec-driven-engineering/
-  .claude-plugin/
+  .claude-plugin/              # Claude Code marketplace install
     plugin.json
     marketplace.json
+  .opencode/command/           # OpenCode slash wrappers for the spine
+  opencode.json                # OpenCode: skills.paths -> ./skills
   skills/
     <skill-name>/SKILL.md      # flat namespace — required for plugin discovery
   docs/
     engineering/<skill-name>.md   # bucket + promotion status tracked here, not in skills/
     productivity/<skill-name>.md
   CLAUDE.md
+  OPENCODE.md                  # OpenCode install + usage
 ```
 
 `skills/` is deliberately flat: Claude Code's plugin loader scans
 `skills/*/` one level deep, so bucket membership lives in `docs/` and this
-README instead of in nested directories.
+README instead of in nested directories. OpenCode reads the same
+`skills/` tree via `opencode.json` → `skills.paths`.
 
 ## Install
+
+**Claude Code**
 
 ```
 claude plugin marketplace add girijesh-ai/spec-driven-engineering
@@ -207,6 +219,11 @@ Verified end-to-end from the real repo: `claude plugin validate`, a clean
 discovered (`claude plugin details spec-driven-engineering`). Working
 from a local clone instead works the same way — pass the local path to
 `marketplace add` in place of `girijesh-ai/spec-driven-engineering`.
+
+**OpenCode** — see [OPENCODE.md](OPENCODE.md). No Claude Code needed.
+Short version: point `skills.paths` at the clone's `skills/` in your
+`opencode.json`, and copy the six command wrappers from
+`.opencode/command/` into an OpenCode `command/` directory.
 
 Repo: [github.com/girijesh-ai/spec-driven-engineering](https://github.com/girijesh-ai/spec-driven-engineering)
 
