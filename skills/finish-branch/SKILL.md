@@ -46,6 +46,27 @@ Do not use if `review-code` hasn't run, or returned NEEDS FIXES — go back to
 6. **Write the commit/PR description from the spec**, not from memory —
    the spec's Context and Goals sections are the "why," the plan's steps
    are the "what."
+7. **Write a plain-language summary of what shipped.** Invoke the `simple`
+   skill to produce a companion explainer for the non-technical audience
+   (PM, leadership, an engineer picking this up cold). Its primary source
+   is the **code that actually landed** — the merged diff and the current
+   state of the changed files. That's the one source that can't be stale or
+   aspirational: a spec states intent, but the diff is what shipped, and the
+   two drift. Read the diff, describe what it *does*. Use the spec/plan only
+   for the **why** — motivation and success criteria the code can't state
+   itself — and never let that intent override what the code actually says.
+   - Summarize what the change **is and does**, grounded in the diff — not
+     the path taken to it. False starts, reverts, and debugging detours are
+     session noise, not part of what shipped — leave them out. (A confident
+     "here's what we did" narrated from memory is exactly the fabrication
+     `simple` forbids.)
+   - Keep the altitude right: explain what the shipped behavior is and why
+     it matters, not a function-by-function walk of the code. The audience
+     reads outcomes, not diffs.
+   - If the change is too small to warrant an explainer, say so and skip —
+     don't manufacture one.
+   - The explainer is a companion, never a replacement: it links back to
+     the PR/commit (and the spec, if there is one) as the source of truth.
 
 ## Common mistakes
 
@@ -56,6 +77,8 @@ Do not use if `review-code` hasn't run, or returned NEEDS FIXES — go back to
 | Discarding unexpected uncommitted changes to get a clean status | Investigate first — it may be someone's in-progress work |
 | Force-pushing or rewriting shared history without asking | Confirm with the user before any destructive git operation |
 | Writing the PR description from memory instead of the spec | Pull Context and Goals straight from the spec — it's already the accurate version |
+| Writing the plain-language summary as a session recap ("first we tried X, then fixed Y") | Summarize what shipped, sourced from the merged diff — the path taken is session noise, and narrating it from memory is the fabrication `simple` forbids |
+| Summarizing from the spec's intent instead of the code that landed | The diff is what shipped; the spec is only what was hoped for. Read the code for *what*, use the spec only for *why* |
 
 ## Next
 

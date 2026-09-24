@@ -22,8 +22,13 @@ more simply. It never invents facts, decisions, or numbers the source doesn't co
   "add pictures", "TL;DR with diagrams", "onboarding version of this spec."
 - Any dense artifact: spec, design doc, RFC, ADR, architecture proposal, long README.
 
-Skip for: something already short and simple, or a doc with no stable source to point back to
-(the explainer must link to a source of truth).
+- Summarizing a shipped change for stakeholders (invoked by `finish-branch`). Here the source is
+  **the merged diff and the changed files**, not a document — the code is the stable source of
+  truth. The same hard rule applies: describe what the code does, don't narrate intent the diff
+  doesn't back up.
+
+Skip for: something already short and simple, or a subject with no stable source to point back to
+(the explainer must link to a source of truth — a document, or a concrete code change).
 
 ## The one hard rule
 
@@ -34,9 +39,11 @@ rather than inventing an answer. A confident wrong simplification is worse than 
 
 ## Process
 
-1. **Read the whole source document first.** Identify: the core idea, the problem it solves, the
-   key decision(s), the moving parts, what's in/out of scope, how success is measured, and who the
-   readers are. If the argument (a doc path) is missing, ask which document to simplify.
+1. **Read the whole source first.** For a document: the core idea, the problem it solves, the key
+   decision(s), the moving parts, what's in/out of scope, how success is measured, and who the
+   readers are. For a shipped change: read the **whole diff** and the current state of the changed
+   files — what behavior actually changed, what's new, what was removed. If neither a doc path nor
+   a diff/commit range is given, ask which one to simplify.
 2. **Find the single sentence.** What is this doc about, in one sentence a non-expert gets? This
    becomes §1. If you can't write it, re-read — you don't understand the doc yet.
 3. **Name the audiences.** Usually PM/leadership (want the *why* and the differentiator) and new
@@ -49,7 +56,9 @@ rather than inventing an answer. A confident wrong simplification is worse than 
 6. **Write one worked example** that walks a concrete input through the whole thing end-to-end.
    Concrete beats abstract every time (use real example values from the source).
 7. **Write the output** to the **same folder** as the source, named `<source-stem>-explained.md`.
-   Open with a callout block: who it's for, what it explains, and a link back to the source doc.
+   For a shipped change with no single source file, write it where the change's docs live (or the
+   repo root) as `<change-or-branch-name>-explained.md`. Open with a callout block: who it's for,
+   what it explains, and a link back to the source of truth (the doc, or the PR/commit).
 8. **Self-check** (below) before calling it done.
 
 ## Section template (adapt to the source; drop what doesn't apply)

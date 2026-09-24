@@ -156,7 +156,7 @@ These plug into the spine; none of them are peers of it.
 | [grill-me](docs/productivity/grill-me.md) | productivity | mid-`spec-from-idea` or standalone |
 | [handoff](docs/productivity/handoff.md) | productivity | standalone → feeds `dev-workflow` (next session) |
 | [writing-for-agents](docs/productivity/writing-for-agents.md) | productivity | governs how every skill here is written |
-| [simple](docs/productivity/simple.md) | productivity | standalone — plain-language explainer for any dense doc |
+| [simple](docs/productivity/simple.md) | productivity | `finish-branch` (stakeholder summary), or standalone for any dense doc |
 
 ## Dependency graph
 
@@ -173,7 +173,7 @@ implement ──┬─> test-driven-development
                                └─> codebase-architecture
        │
        v
-finish-branch
+finish-branch ──> simple (stakeholder summary of what shipped)
 
 debug-systematically ──> test-driven-development
 resolve-merge-conflicts (standalone)
