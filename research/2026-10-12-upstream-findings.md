@@ -428,36 +428,36 @@ Decided 2026-10-12. `[x]` = accepted, `[-]` = rejected / deferred. Each accepted
 `— done <sha>` as it lands, so this list is the tracker for what is left.
 
 **Tier 1**
-- [x] 1. debug-systematically: feedback-loop-first + stop-the-line + untrusted error output + redact — done 1977f88, 183c302
-- [x] 2. review-code: scope creep, spec discovery, fixed point, severity, mutation check, smells — done 0a65296, 42bb4da
-- [x] 3a. Interview: recommendation/guess per question, hypothesis/confidence, stop test — done e08fad2, 42bb4da
-- [x] 3b. Spec template: Assumptions, Boundaries, Commands, living spec, testing seams — done e08fad2
-- [x] 4. plan-from-spec: expand–contract, prefactor, sizing, risk-first, never overwrite — done e6f3b3b
-- [x] 5. test-driven-development: tautological + horizontal anti-patterns, mock at boundaries, stack discovery — done 295a79d
-- [x] 6. implement / finish-branch: NOTICED BUT NOT TOUCHING, PR template (Evidence, Merge Danger) — done 295a79d, 963a92b
-- [x] 7. handoff: redact, reference-don't-duplicate, working-tree + verification + approvals; phase-boundary tree — done 0886d3e
-- [x] 8. "Call the Skill tool with x" sweep — done 3e332ff (plus the call sites in each skill's own commit)
+- [x] 1. debug-systematically: feedback-loop-first + stop-the-line + untrusted error output + redact — done 32703ae, 536feb6
+- [x] 2. review-code: scope creep, spec discovery, fixed point, severity, mutation check, smells — done d4aa33c, 31278a8
+- [x] 3a. Interview: recommendation/guess per question, hypothesis/confidence, stop test — done 3793d64, 31278a8
+- [x] 3b. Spec template: Assumptions, Boundaries, Commands, living spec, testing seams — done 3793d64
+- [x] 4. plan-from-spec: expand–contract, prefactor, sizing, risk-first, never overwrite — done c5cab61
+- [x] 5. test-driven-development: tautological + horizontal anti-patterns, mock at boundaries, stack discovery — done 42edd5c
+- [x] 6. implement / finish-branch: NOTICED BUT NOT TOUCHING, PR template (Evidence, Merge Danger) — done 42edd5c, c2bb5c5
+- [x] 7. handoff: redact, reference-don't-duplicate, working-tree + verification + approvals; phase-boundary tree — done a8dafb4
+- [x] 8. "Call the Skill tool with x" sweep — done efec46f (plus the call sites in each skill's own commit)
 
 **Tier 2**
-- [x] 9. Evals: **plugin evals only** this pass; trigger/collision eval, CI eval step and behavioral tier deferred. Was: plugin evals → trigger/collision eval + CI → behavioral/pressure cases — done 42bb4da, 183c302
-- [x] 10. Floor-guard script (± CONSTRAINTS.md) — done 0a65296
-- [x] 11. **Both sections** (Rationalizations + Red Flags + Verification), despite M's negation counterpoint. Was: Rationalizations + Verification sections, enforced by validate.py — done 3e332ff (sections added in e08fad2, 295a79d, 0a65296, 1977f88)
-- [x] 12. codebase-architecture: deletion test, adapter rule, dependency categories, design it twice — done 1cdcea1
-- [x] 13. GLOSSARY.md + ADRs — done 1cdcea1
-- [x] 14. **All four** new skills, shipped as draft. Was: New skills: doubt-check / retro / simplify / source-driven (pick any) — done ca1aa1d — `simplify` shipped as `simplify-code` (name clash)
+- [x] 9. Evals: **plugin evals only** this pass; trigger/collision eval, CI eval step and behavioral tier deferred. Was: plugin evals → trigger/collision eval + CI → behavioral/pressure cases — done 31278a8, 536feb6
+- [x] 10. Floor-guard script (± CONSTRAINTS.md) — done d4aa33c
+- [x] 11. **Both sections** (Rationalizations + Red Flags + Verification), despite M's negation counterpoint. Was: Rationalizations + Verification sections, enforced by validate.py — done efec46f (sections added in 3793d64, 42edd5c, d4aa33c, 32703ae)
+- [x] 12. codebase-architecture: deletion test, adapter rule, dependency categories, design it twice — done 103797a
+- [x] 13. GLOSSARY.md + ADRs — done 103797a
+- [x] 14. **All four** new skills, shipped as draft. Was: New skills: doubt-check / retro / simplify / source-driven (pick any) — done be375fd — `simplify` shipped as `simplify-code` (name clash)
 - [-] 15. Deferred to its own spec: see [tickets proposal](2026-10-12-tickets-and-parallel-implement.md). Was: Autonomous or parallel implement mode
-- [x] 16. dev-workflow shared operating rules + trust levels — done 0886d3e
-- [x] 17. writing-for-agents deepening — done 3e332ff
+- [x] 16. dev-workflow shared operating rules + trust levels — done a8dafb4
+- [x] 17. writing-for-agents deepening — done efec46f
 
 **Conflicts** (accept = take the recommendation in §3)
 - [x] Keep resolve-merge-conflicts — done no change needed
 - [x] Keep refactor inside the TDD loop — done no change needed
-- [x] Keep one-question-at-a-time — done no change needed; guesses added in e08fad2
+- [x] Keep one-question-at-a-time — done no change needed; guesses added in 3793d64
 - [x] Keep "never test manually" — done no change needed
-- [x] Add DAMP test exemption to engineering-standards DRY — done 0a65296
-- [x] Skip user/model-invoked split, SessionStart router, em-dash ban — done recorded in docs/out-of-scope.md, 235cd8f
+- [x] Add DAMP test exemption to engineering-standards DRY — done d4aa33c
+- [x] Skip user/model-invoked split, SessionStart router, em-dash ban — done recorded in docs/out-of-scope.md, 1249adc
 
 **Hygiene**
-- [x] CHANGELOG.md — done 235cd8f
-- [x] CI workflow — done 235cd8f
-- [x] Rejected-ideas record (`.out-of-scope/` or ledger) — done 235cd8f (`docs/out-of-scope.md`)
+- [x] CHANGELOG.md — done 1249adc
+- [x] CI workflow — done 1249adc
+- [x] Rejected-ideas record (`.out-of-scope/` or ledger) — done 1249adc (`docs/out-of-scope.md`)

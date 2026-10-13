@@ -163,8 +163,8 @@ Rules:
 
 ## Prerequisites
 
-**All three landed in 2.0.0** (floor guard `0a65296`, NOTICED BUT NOT TOUCHING `295a79d`,
-numbered criteria `e08fad2`). They were blockers for this mode:
+**All three landed in 2.0.0** (floor guard `d4aa33c`, NOTICED BUT NOT TOUCHING `42edd5c`,
+numbered criteria `3793d64`). They were blockers for this mode:
 
 - **Floor guard** (finding 10) — without it, model tiers are unsafe.
 - **`NOTICED BUT NOT TOUCHING`** in `implement` (finding 6) — without it, units bleed into each
