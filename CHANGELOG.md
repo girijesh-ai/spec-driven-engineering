@@ -3,7 +3,7 @@
 Versions follow semver (`.claude-plugin/plugin.json`). Renaming a plugin or
 skill is a breaking change.
 
-## 2.1.0 — 2026-10-13
+## 2.0.1 — 2026-10-13
 
 - **New draft skill `plain-technical-writing`:** one standard for anything
   a person reads. Plain words, short sentences, and terms glossed on first
