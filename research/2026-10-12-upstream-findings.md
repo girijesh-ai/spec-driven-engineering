@@ -461,3 +461,18 @@ Decided 2026-10-12. `[x]` = accepted, `[-]` = rejected / deferred. Each accepted
 - [x] CHANGELOG.md — done 1249adc
 - [x] CI workflow — done 1249adc
 - [x] Rejected-ideas record (`.out-of-scope/` or ledger) — done 1249adc (`docs/out-of-scope.md`)
+
+## Addendum, 2026-10-13: over-engineering in specs and plans
+
+Re-read agent-skills 0.6.12 for anything that keeps specs and plans small (PR #7).
+
+| Idea | Source | Outcome |
+|---|---|---|
+| "What is the simplest thing that could work?"; three similar lines beat a premature abstraction; no abstraction before the third use | `incremental-implementation` Rule 0 | Taken: minimal approach in `spec-from-idea`, third-copy rule in `engineering-standards` |
+| Over-built vs simple examples (event bus for one notification, factory for two components, form builder for three forms) | `incremental-implementation` | Taken: table in `engineering-standards` Necessity |
+| "Would a staff engineer say 'why didn't you just…'?" | `incremental-implementation` | Taken: `engineering-standards`, `spec-from-idea` Verification |
+| "Not Doing (and Why)" list, naming tempting cuts | `idea-refine` | Taken: Non-Goals carry a reason and list tempting cuts |
+| No performance work without evidence of a problem | `performance-optimization` | Taken: `spec-from-idea` rationalization row |
+| "Code is a liability" | `deprecation-and-migration` | Already covered by the "unused flexibility" row |
+| MVP: one job, time-box, "if it's not embarrassing you over-built" | `idea-refine/refinement-criteria.md` | Not taken: product scoping, not engineering design. Revisit if an idea-stage skill is added |
+| Phase 0 capability map for bundled requests | `spec-driven-development` | Not taken here: it splits big requests, the opposite problem |

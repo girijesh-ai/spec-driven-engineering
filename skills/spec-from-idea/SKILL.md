@@ -105,7 +105,10 @@ Why this is being built. What prompted it, what problem it addresses.
 What this must achieve. Specific, not aspirational.
 
 ## Non-Goals
-What's explicitly out of scope. This is what stops scope creep later.
+What's explicitly out of scope, one line each with its reason:
+`<thing> — <why not now>`. List the tempting cuts too: anything a reader
+might expect to see (a cache, an admin screen, a config option) that the
+stated scale doesn't need. This is what stops scope creep later.
 
 ## Assumptions
 ASSUMPTIONS I'M MAKING: one per line. The user corrects these now, or
@@ -155,6 +158,7 @@ spec first, then the plan, then the code — never the code alone.
 | "The criterion is obvious, 'works correctly' is enough" | Downstream skills can only check what's written. Name the input, the command, the expected output |
 | "I'll just ask, it's faster than reading the code" | Facts the repo already holds are yours to find. Asking costs the user time and signals you didn't look |
 | "There's only one sensible approach" | Show it next to the minimal option and say why the minimal one falls short. If nothing does, the minimal one is the design |
+| "It should be fast, so let's cache it" | Performance work needs a measured problem: a number from a profile, a log, or a load test. No number, no cache |
 | "We'll need this at scale eventually" | Size to the stated scale. Growth that arrives gets its own spec, with real numbers |
 | "Adding it now is cheaper than adding it later" | Only with a named Goal behind it. Unused flexibility is code someone has to read, test, and keep working |
 | "They said 'sounds good', that's approval" | That's politeness. Approval names the design it's approving |
@@ -182,6 +186,8 @@ Before calling the spec done, confirm with evidence, not memory:
 - [ ] Every Success Criterion has a number, one reading, and a command
 - [ ] Every Goal traces to something the user said or a stated constraint
 - [ ] Scale and lifetime are stated, and the minimal approach was shown
+- [ ] Reading the recommendation, a staff engineer wouldn't ask "why didn't you just…?"
+- [ ] Every Non-Goal has a reason, and the tempting cuts are listed
 - [ ] The spec passes `plain-technical-writing`'s Verification list
 - [ ] The user gave an explicit yes on the six-line restate and on the approach
 

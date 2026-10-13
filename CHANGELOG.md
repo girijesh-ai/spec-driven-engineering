@@ -22,7 +22,11 @@ skill is a breaking change.
   "most flexible" option. `grill-me` weighs an edge case before making it
   a requirement. `engineering-standards` extracts duplicates on the third
   copy, or the second when they must change together. New eval
-  `spec-right-size`.
+  `spec-right-size`. From addyosmani/agent-skills (`idea-refine`,
+  `incremental-implementation`, `performance-optimization`): Non-Goals
+  carry a reason and list the tempting cuts; over-built vs simple
+  examples and the "why didn't you just…?" check; no performance work
+  without a measured problem.
 
 ## 2.0.0 — 2026-10-12
 
