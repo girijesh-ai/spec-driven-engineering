@@ -253,6 +253,10 @@ Repo: [github.com/girijesh-ai/spec-driven-engineering](https://github.com/girije
 
 Already have this installed and the repo has moved on since? The
 marketplace source doesn't auto-refresh — pull the latest, then update.
+Installed before 2.0.0 (`claude plugin list` shows
+`spec-driven-engineering`)? These commands fail with "Marketplace
+'sde-dev' not found" — reinstall once instead, per
+[Renamed to `sde` in 2.0.0](#renamed-to-sde-in-200).
 
 **From a separate terminal (outside an active session):**
 
@@ -295,6 +299,12 @@ claude plugin marketplace remove spec-driven-engineering-dev
 claude plugin marketplace add girijesh-ai/spec-driven-engineering
 claude plugin install sde@sde-dev
 ```
+
+Run all four, in order. Skipping the `remove` leaves the old marketplace
+registered: `add` then reports `'spec-driven-engineering-dev' already on
+disk` without fetching, and `install` fails with `Plugin "sde" not found in
+marketplace "sde-dev"`. Restart Claude Code afterwards; skills then show
+as `/sde:<skill>`.
 
 Skill names themselves didn't change. The GitHub repository keeps its
 name. If a bundled
