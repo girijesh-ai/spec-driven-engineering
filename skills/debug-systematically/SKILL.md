@@ -34,7 +34,10 @@ build to work on the next thing buries the cause under new changes.
      red right now;
    - is deterministic, fast, and runnable by you without a human.
 
-   No red-capable command, no hypotheses. `references/feedback-loops.md`
+   No red-capable command, no hypotheses. If you can't run commands here
+   at all (no shell, a sandbox error), say so and ask how to proceed — a
+   fix found by reading the code is still unconfirmed, and must be labelled
+   that way. `references/feedback-loops.md`
    lists ten ways to build one (failing test, curl script, snapshot diff,
    headless browser, trace replay, bisection harness, ...). If the bug
    won't reproduce on demand, see "Can't reproduce" below — the goal there

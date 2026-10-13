@@ -51,7 +51,13 @@ Single runs (`--runs 1`/`2 --ablation none`) on 2026-10-12, Claude Code
 |---|---|---|---|
 | spec-interview | 2/2 | 1/1 | First run bundled four sub-questions under one `Q:`; skill now says one question is one decision |
 | plan-traces-criteria | 1/1 | 1/1 | |
-| implement-ad-hoc | 2/4 | 0/2 | Didn't fire until the description named small one-off changes. Outcome needs Bash (no sandbox here) |
+| implement-ad-hoc | 4/6 | 0/4 | Didn't fire until the description named small one-off changes. Outcome blocked: Bash fails in the sandbox here (see below) |
 | review-no-spec | 3/4 | 1/1 | Didn't fire on an inline diff until the description named it |
-| debug-loop-first | 1/2 | 0/1 | Didn't fire in an empty workspace (case fixed with a scaffold). Outcome needs Bash |
+| debug-loop-first | 3/4 | 0/3 | Didn't fire in an empty workspace (case fixed with a scaffold). With Bash failing, it fixed the right bug by reading the code but skipped the reproduction; skill now says to stop and ask in that case |
 | grill-one-question | 4/4 | 1/2 | Failures: trailing follow-up asks after the `GUESS:`; skill now says to end there |
+
+With `bubblewrap` 0.4.0 and `socat` installed (RHEL 8), the sandbox starts
+but every Bash call inside it fails with `bwrap: Can't create file at
+/usr/bin/git: Permission denied`, so the two scaffolded cases can't run
+their tests on that host. Their trigger graders are still meaningful;
+their outcome graders need a host where sandboxed Bash works.
