@@ -30,6 +30,15 @@ Because that's what makes the plan an artifact `implement` and `review-code`
 can actually check against, instead of a to-do list that just gets marked
 "done" on faith.
 
+**What if a plan file for this topic already exists?**
+If any of its steps are marked done, the skill stops and asks whether to
+extend it, re-cut the remaining steps, or start a new file. It never
+overwrites a record of work that already shipped.
+
+**Why put the riskiest step first?**
+If an assumption behind the plan is wrong, you want to find out on step 1,
+not after five other steps have been built on it.
+
 **What if a step doesn't map to any Success Criterion in the spec?**
 That's a signal, not something to paper over — either the step isn't
 necessary, or the spec is missing a criterion. Resolve which before
@@ -40,4 +49,6 @@ continuing.
 - Every step in the plan has a Verification line traceable to the spec.
 - `implement` can pick up any step and know exactly what files to touch and
   how to know it's done, without re-reading the whole spec.
-- Steps are ordered so nothing depends on work a later step hasn't done yet.
+- Steps are ordered so nothing depends on work a later step hasn't done yet,
+  and the riskiest ready step comes first.
+- No step is sized XL, and each one fits in a fresh session.
