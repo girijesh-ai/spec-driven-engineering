@@ -71,15 +71,21 @@ changes in plain words, and every command, path, and `SC-n` stays exact.
 
    Also split a step that has more than 3 verification bullets, an "and"
    in its name, or touches two subsystems. Keep refactor steps separate
-   from feature steps.
+   from feature steps. Don't split below what one commit naturally holds:
+   a small change is one or two steps, not six XS ones.
 7. **Attach verification to every step**, citing the spec criterion it
-   satisfies (`Satisfies: SC-2`) and the command that checks it. If a step
-   doesn't map to any criterion, either the step is unnecessary or the
-   spec is missing one — resolve which before moving on, don't silently
-   invent a check.
-8. **Mark checkpoints** every 2-3 steps: a point where the full suite runs
-   and a human can look before more is built on top.
-9. **Call out reuse.** Reference existing functions, modules, or patterns
+   satisfies (`Satisfies: SC-2`) and the command that checks it. A step
+   that maps to no criterion is **dropped by default**. Adding a criterion
+   to keep it needs the user's explicit yes, and the new criterion goes
+   into the spec first. Never invent a check to justify a step.
+8. **Deletion test every step.** Ask: "if this step were dropped, which
+   criterion would fail?" If none would, drop it. This catches steps that
+   cite a criterion but don't move it, such as a config layer or an
+   abstraction "for later".
+9. **Mark checkpoints** every 2-3 steps: a point where the full suite runs
+   and a human can look before more is built on top. A plan of 3 steps or
+   fewer needs only the final full-suite run.
+10. **Call out reuse.** Reference existing functions, modules, or patterns
    found during spec-writing or exploration that steps should reuse instead
    of reimplementing.
 
@@ -131,7 +137,9 @@ but anything handed to `implement` as "the plan" gets the file.
 | Mistake | Fix |
 |---|---|
 | Steps that can't be verified until the whole plan is done | Break further — every step should produce something checkable on its own |
-| A step with no linked Success Criterion | Stop and resolve: either drop the step or fix the spec, don't invent an ad-hoc check silently |
+| A step with no linked Success Criterion | Drop it. Keep it only if the user agrees to add a criterion to the spec first |
+| Adding a criterion so a step has something to cite | That's scope growth through the back door. The spec changes only with the user's yes |
+| A step for flexibility nothing asks for (config option, plugin point, generic base class) | Deletion test: if no criterion fails without it, it isn't in the plan |
 | Enumerating every file/line for a repeated pattern | Describe the pattern once, list a few representative paths |
 | Ignoring existing code that already does this | Reuse first — check what spec-from-idea's exploration already surfaced |
 | Building the riskiest step last | Order risk-first among ready steps — a bad assumption should fail early, before other steps depend on it |

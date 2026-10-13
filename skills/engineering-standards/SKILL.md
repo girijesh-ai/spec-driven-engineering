@@ -123,8 +123,10 @@ defaults here.
 - A constant, threshold, or validation rule defined in two places is a
   future inconsistency bug. One authoritative source, imported everywhere
   else.
-- The moment the same block appears a second time, extract it — three
-  occurrences means the extraction was already overdue.
+- Extract a repeated block on its third occurrence, or on its second
+  when the copies must always change together (a rule, a format, a
+  protocol step). Two blocks that merely look alike can stay; a wrong
+  shared abstraction costs more than a little duplication.
 - **Exception: test bodies.** Tests favour DAMP (descriptive and
   meaningful phrases) over DRY: each test should read on its own, with its
   setup and expected values visible. Shared fixtures for genuinely common

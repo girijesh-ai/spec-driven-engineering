@@ -40,7 +40,9 @@ State the classification out loud before asking anything else:
   file.
 
 When in doubt, take the heavier path. Nothing downgrades mid-task — if
-scope turns out bigger once you're in it, say so and reclassify up.
+scope turns out bigger once you're in it, say so and reclassify up. A
+heavier classification means more checking, never more features: the
+design is still sized to the Goals.
 
 ## Process (bounded and architectural)
 
@@ -71,12 +73,23 @@ throughout. Simpler words, never less precision.
    Outcome / User / Why now / Success / Constraint / Out of scope.
    "Sounds good", "sure", "whatever you think" are not a yes — ask the
    one question that would change the design.
-5. **Propose 2-3 approaches with trade-offs.** Lead with the
-   recommendation and why. Cut speculative features from every approach —
-   YAGNI applies at design time, not only at implementation time.
-6. **Present the design in sections**, confirming each one lands before
+5. **Right-size.** State the expected scale (users, requests, data
+   volume) and lifetime (spike, prototype, or long-lived), as facts you
+   found or as assumptions the user confirms. The design is sized to
+   these numbers, not to growth nobody has asked for. Growth gets its own
+   spec when it arrives.
+6. **Propose approaches with trade-offs, one of them minimal.** The
+   minimal approach is the smallest thing that meets the Goals. Climb
+   `engineering-standards`' ladder for it: no new code, then a platform
+   feature or an installed dependency, then the smallest change.
+   Recommend it unless a named Goal or constraint rules it out, and name
+   that Goal. Bounded: the recommendation next to the minimal option is
+   enough (they may be the same). Architectural: 2-3 approaches. Cut
+   speculative features from every approach — YAGNI applies at design
+   time, not only at implementation time.
+7. **Present the design in sections**, confirming each one lands before
    moving to the next.
-7. **Architectural only:** write the spec to
+8. **Architectural only:** write the spec to
    `docs/specs/YYYY-MM-DD-<topic>.md` using the template below, then stop.
    Planning happens in a later turn, after the user has read the file.
 
@@ -96,7 +109,8 @@ What's explicitly out of scope. This is what stops scope creep later.
 
 ## Assumptions
 ASSUMPTIONS I'M MAKING: one per line. The user corrects these now, or
-they stand.
+they stand. The first line is always scale and lifetime, e.g. "Scale: ~5
+internal users, reports under 2k rows. Lifetime: long-lived."
 
 ## Boundaries
 - Always: <what every change under this spec must do>
@@ -140,7 +154,9 @@ spec first, then the plan, then the code — never the code alone.
 |---|---|
 | "The criterion is obvious, 'works correctly' is enough" | Downstream skills can only check what's written. Name the input, the command, the expected output |
 | "I'll just ask, it's faster than reading the code" | Facts the repo already holds are yours to find. Asking costs the user time and signals you didn't look |
-| "There's only one sensible approach" | The trade-offs are what get approved, not just the pick. Show 2-3 |
+| "There's only one sensible approach" | Show it next to the minimal option and say why the minimal one falls short. If nothing does, the minimal one is the design |
+| "We'll need this at scale eventually" | Size to the stated scale. Growth that arrives gets its own spec, with real numbers |
+| "Adding it now is cheaper than adding it later" | Only with a named Goal behind it. Unused flexibility is code someone has to read, test, and keep working |
 | "They said 'sounds good', that's approval" | That's politeness. Approval names the design it's approving |
 | "It's bounded, so I can skip confirmation" | Bounded skips the file, never the explicit yes before `plan-from-spec` |
 | "It turned out bigger, but redoing the classification wastes work" | Hidden complexity upgrades the classification; it never downgrades one in progress |
@@ -150,6 +166,8 @@ spec first, then the plan, then the code — never the code alone.
 - A question asked without a `GUESS:` attached
 - A question the user has to read twice to understand
 - A Success Criterion with no command next to it
+- A Goal or criterion no one asked for and no stated constraint requires
+- A queue, cache, background job, new service, or plugin point in a design with no scale number behind it
 - An "Assumptions" section that is empty on an architectural spec
 - Starting `plan-from-spec` in the same turn the spec file was written
 - Code changed to match a new requirement while the spec still says the old one
@@ -162,6 +180,8 @@ Before calling the spec done, confirm with evidence, not memory:
 - [ ] No two sections contradict each other
 - [ ] One coherent spec — not two independent pieces that should be split
 - [ ] Every Success Criterion has a number, one reading, and a command
+- [ ] Every Goal traces to something the user said or a stated constraint
+- [ ] Scale and lifetime are stated, and the minimal approach was shown
 - [ ] The spec passes `plain-technical-writing`'s Verification list
 - [ ] The user gave an explicit yes on the six-line restate and on the approach
 

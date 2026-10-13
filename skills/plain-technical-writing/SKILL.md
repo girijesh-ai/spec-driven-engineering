@@ -100,4 +100,4 @@ Before calling the text done:
 - [ ] No word from the swap list in `references/patterns.md` is left
 - [ ] Every term a new engineer may not know is glossed once
 - [ ] Nothing precise was lost: every number, command, path, and ID from the draft is still there
-- [ ] Every flow of 3+ steps or 2+ interacting parts has a diagram: Mermaid in files, ASCII in chat
+- [ ] A flow of 3+ steps or 2+ interacting parts that would take a paragraph to follow has a diagram: Mermaid in files, ASCII in chat

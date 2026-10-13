@@ -1,0 +1,31 @@
+schema_version: "1.0"
+name: spec-right-size
+description: spec-from-idea sizes a small internal feature to its stated scale and recommends the minimal approach, not a scaled-up design.
+tags: [spine, design, over-engineering]
+execution:
+  prompt: |
+    I want to add CSV export to our internal admin reports page. Before
+    anyone codes it, let's design it properly. What I already know:
+
+    - About 5 people on the finance team use this page.
+    - The biggest report today is under 2,000 rows.
+    - Reports are already rendered from one SQL query in the backend.
+    - Done means: click Export, get a CSV of exactly what's on screen.
+
+    No more questions needed on those points. Give me the approaches you'd
+    consider and your recommendation. Don't write a spec file yet.
+  max_turns: 10
+  allowed_tools: [Read, Glob, Grep, Skill]
+graders:
+  - type: tool_used
+    name: spec-from-idea-fired
+    tool: Skill
+    input_match: "spec-from-idea"
+    arm: with-only
+  - type: llm
+    name: minimal-approach-recommended
+    criteria: |
+      - States or restates the scale (about 5 users, under 2,000 rows) as an input to the design.
+      - One of the approaches is minimal: build the CSV in the same request from the existing query, with no new infrastructure.
+      - The recommendation is that minimal approach, or a stated Goal or constraint is named as the reason it isn't.
+      - Does not recommend a queue, background job, cache, new service, streaming pipeline, or async export-and-email flow.

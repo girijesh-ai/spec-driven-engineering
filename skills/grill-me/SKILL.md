@@ -57,6 +57,10 @@ if it were real.
    before the first question. `Q:` is one sentence in the requester's own
    words; `GUESS:` is the answer plus "because". A term they didn't use
    gets a short gloss.
+   Finding an edge case is not the same as having to handle it. Weigh how
+   likely it is at the spec's stated scale and what breaks if it's not
+   handled. "Out of scope" and "fail with a clear error" are real answers,
+   and often the right `GUESS:`.
 3. **Look up facts, ask about decisions.** If the code, docs, or a quick
    experiment can answer it, find out yourself (or dispatch a subagent)
    and state what you found. Only decisions go to the requester.
@@ -76,6 +80,7 @@ if it were real.
 
 | Mistake | Fix |
 |---|---|
+| Turning every edge case found into a requirement | Weigh likelihood at the stated scale and the cost of not handling it; out of scope or a clear error is often enough |
 | Asking questions the plan already answers | Read fully first — grilling should surface new gaps, not restate the document |
 | Accepting "we'll handle that later" without pinning it down | Push for a specific resolution or an explicit, reasoned deferral |
 | Stopping after the first round of questions | Keep going until a round produces nothing new, not until it produces something comfortable |
