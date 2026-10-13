@@ -163,7 +163,8 @@ Rules:
 
 ## Prerequisites
 
-Two items from the upstream findings stop being nice-to-haves and become blockers for this mode:
+**All three landed in 2.0.0** (floor guard `fe5f6df`, NOTICED BUT NOT TOUCHING `a834707`,
+numbered criteria `1f939af`). They were blockers for this mode:
 
 - **Floor guard** (finding 10) — without it, model tiers are unsafe.
 - **`NOTICED BUT NOT TOUCHING`** in `implement` (finding 6) — without it, units bleed into each
