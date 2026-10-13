@@ -78,15 +78,21 @@ changes in plain words, and every command, path, and `SC-n` stays exact.
    that maps to no criterion is **dropped by default**. Adding a criterion
    to keep it needs the user's explicit yes, and the new criterion goes
    into the spec first. Never invent a check to justify a step.
-   Exception: a prefactor step (step 4) or a contract step (step 5)
-   changes no behaviour, so it cites the step it makes possible instead:
-   `Enables: step 3`. Its verification is the existing suite staying
-   green.
+   Two exceptions change no behaviour by design:
+   - A prefactor step (step 4) cites the step it makes possible:
+     `Enables: step 3`. Verification: the existing suite stays green.
+   - A contract step (step 5) cites the migration it finishes:
+     `Completes: steps 2-4`. Verification: a search finds no remaining
+     callers of the old form, and the suite stays green.
 8. **Deletion test every step.** Ask: "if this step were dropped, which
-   criterion would fail?" If none would, drop it. For an `Enables:` step,
-   ask whether the step it enables could land cleanly without it; if it
-   could, drop it. This catches steps that cite a criterion but don't move
-   it, such as a config layer or an abstraction "for later".
+   criterion would fail?" If none would, drop it. This catches steps that
+   cite a criterion but don't move it, such as a config layer or an
+   abstraction "for later". For an `Enables:` step, ask whether the step
+   it enables could land cleanly without it; if it could, drop it. A
+   `Completes:` step stays: leaving the old form means two live paths,
+   which is the cost the migration exists to remove. Drop it only if the
+   spec says the old form stays (for example, a public API kept through a
+   deprecation window); then its removal is a follow-up.
 9. **Mark checkpoints** every 2-3 steps: a point where the full suite runs
    and a human can look before more is built on top. A plan of 3 steps or
    fewer needs only the final full-suite run.
@@ -115,7 +121,7 @@ changes in plain words, and every command, path, and `SC-n` stays exact.
 - Depends on: none
 - Touches: <files>
 - Size: S
-- Satisfies: SC-1             ← or `Enables: step N` for a prefactor/contract step
+- Satisfies: SC-1             ← or `Enables: step N` (prefactor) / `Completes: steps N-M` (contract)
 - Verification: `<exact command>` → <expected result>
 
 ### 2. <step name>
@@ -142,7 +148,7 @@ but anything handed to `implement` as "the plan" gets the file.
 | Mistake | Fix |
 |---|---|
 | Steps that can't be verified until the whole plan is done | Break further — every step should produce something checkable on its own |
-| A step with no linked Success Criterion | Drop it, unless it's a prefactor or contract step naming the step it enables. Otherwise keep it only if the user agrees to add a criterion to the spec first |
+| A step with no linked Success Criterion | Drop it, unless it's a prefactor (`Enables:`) or contract (`Completes:`) step. Otherwise keep it only if the user agrees to add a criterion to the spec first |
 | Adding a criterion so a step has something to cite | That's scope growth through the back door. The spec changes only with the user's yes |
 | A step for flexibility nothing asks for (config option, plugin point, generic base class) | Deletion test: if no criterion fails without it, it isn't in the plan |
 | Enumerating every file/line for a repeated pattern | Describe the pattern once, list a few representative paths |

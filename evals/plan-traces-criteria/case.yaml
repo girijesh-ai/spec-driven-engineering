@@ -31,7 +31,7 @@ graders:
   - type: llm
     name: sized-risk-first-steps
     criteria: |
-      - Every step cites at least one of SC-1, SC-2, SC-3 and names a command that verifies it. A prefactor or contract step may instead name the step it enables, verified by the existing suite staying green.
+      - Every step cites at least one of SC-1, SC-2, SC-3 and names a command that verifies it. A prefactor step may instead cite `Enables: step N`, and a contract step `Completes: steps N-M`, verified by the existing suite staying green.
       - Every step has a size label (XS, S, M, L or XL), and none is XL.
       - The risky shared-schema change (backward compatibility for existing sessions, SC-3) is scheduled before or alongside the first behaviour step, not last.
       - Steps declare dependencies on each other.

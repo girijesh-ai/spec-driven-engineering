@@ -42,9 +42,11 @@ not after five other steps have been built on it.
 **What if a step doesn't map to any Success Criterion in the spec?**
 It's dropped by default. If you want it kept, the skill asks you first and
 adds the criterion to the spec before the plan, so the spec can't grow
-quietly to fit the plan. The exception is a prefactor or contract step,
-which changes no behaviour: it names the step it makes possible
-(`Enables: step 3`) instead.
+quietly to fit the plan. Two kinds of step change no behaviour on
+purpose and are kept differently: a prefactor step names the step it makes
+possible (`Enables: step 3`), and the final contract step of a migration
+names the steps it finishes (`Completes: steps 2-4`) and is kept so the
+old code doesn't live on beside the new.
 
 **How does it avoid over-engineering the plan?**
 Every step gets a deletion test: "if this step were dropped, which
