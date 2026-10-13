@@ -26,6 +26,16 @@ SOLID is about a single class or function's responsibilities. This is about
 module boundaries and the direction dependencies flow between them — a
 different altitude, and both matter.
 
+**How do I tell whether a module is earning its keep?**
+The deletion test: imagine inlining it into its callers. If complexity
+vanishes, it was a pass-through. If the same logic reappears in several
+places, it was doing real work.
+
+**When should an interface be designed more than once?**
+When other code will depend on it. The skill dispatches several subagents,
+each designing under a different constraint, and compares the results
+before one is chosen.
+
 **What if fixing this means touching code outside the current change?**
 Note it as a follow-up, don't silently expand the current diff to fix
 something unrelated.
