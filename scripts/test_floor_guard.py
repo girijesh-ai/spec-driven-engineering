@@ -81,6 +81,18 @@ class FloorGuardRepo(unittest.TestCase):
         self.write(TEST_FILE, "import pytest\n\n@pytest.mark.skip\n" + BASE_TEST)
         self.assertEqual(self.rules(), ["SKIPPED_TEST"])
 
+    def test_paths_with_spaces_and_non_ascii_are_flagged_unquoted(self) -> None:
+        # git ends "+++ b/a b.py" with a tab and quotes non-ASCII paths by default.
+        skipped = "import pytest\n\n@pytest.mark.skip\n" + BASE_TEST
+        self.write("my tests/test_a b.py", skipped)
+        self.write("tests/test_é.py", skipped)
+        self.commit("odd paths")
+        findings, _, _, _ = floor_guard.run(self.repo, None)
+        self.assertEqual(
+            sorted((f.rule, f.path) for f in findings),
+            [("SKIPPED_TEST", "my tests/test_a b.py"), ("SKIPPED_TEST", "tests/test_é.py")],
+        )
+
     def test_removed_assertion_is_flagged(self) -> None:
         self.write(TEST_FILE, "def test_add():\n    assert add(2, 3) == 5\n")
         self.assertEqual(self.rules(), ["REMOVED_ASSERTION"])

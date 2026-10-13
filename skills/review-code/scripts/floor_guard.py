@@ -106,7 +106,8 @@ class GuardError(Exception):
 def git(repo: Path, *args: str) -> str:
     try:
         result = subprocess.run(
-            ["git", "-C", str(repo), *args],
+            # quotepath=off: non-ASCII paths come out as-is, not "\303\251"-quoted
+            ["git", "-C", str(repo), "-c", "core.quotepath=off", *args],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             universal_newlines=True,
@@ -143,7 +144,7 @@ def parse_unified_diff(text: str) -> List[FileDiff]:
         if raw.startswith("diff --git "):
             current, in_header = None, True
         elif in_header and raw.startswith("+++ "):
-            path = raw[4:]
+            path = raw[4:].rstrip("\t")  # git appends a tab to paths with spaces
             if path == "/dev/null":
                 current = None
                 continue
