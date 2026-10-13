@@ -304,7 +304,7 @@ don't need to update your own invocations immediately.
 
 ## Status
 
-v1. Every skill dispatches correctly through the actual `Skill` tool once
+Every skill dispatches correctly through the actual `Skill` tool once
 installed, and all 17 are `stable` — dry-run against a real task, per
 `CLAUDE.md`'s promotion rule. Six were promoted after a real-repo
 persona test against `huggingface/smolagents`: a genuine root-caused bug
