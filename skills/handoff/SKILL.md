@@ -19,6 +19,16 @@ questions already answered here.
   in progress
 - Work is being handed to a different agent/person mid-task
 
+Not every session boundary needs one. If the spec, plan, and commits
+already carry the state, a fresh session can start from them — see
+`dev-workflow`'s phase boundaries. Write a handoff when something must
+travel that the artifacts don't hold: a new harness or directory, a
+colleague, a side task interrupting a phase.
+
+If you're told what the next session is for ("hand off for the review",
+"for the migration step"), shape the doc around that: lead with what that
+session needs and drop what it doesn't.
+
 ## What goes in a handoff doc
 
 ```markdown
@@ -28,7 +38,20 @@ questions already answered here.
 <e.g. "spec approved, plan-from-spec done, implement on step 3 of 5">
 
 ## What's done
-Concretely — files changed, tests passing, review status if any.
+Concretely — commits (SHAs), plan steps marked done, review status if any.
+
+## Working tree
+Branch, `git status` summary, and any uncommitted or untracked changes —
+with what each one is, so the next session doesn't discard live work.
+
+## Verification
+The exact commands that check this work and their last result
+(`pytest tests/test_x.py` → 14 passed, 1 failed: `test_expiry`).
+
+## Approvals
+What the user has explicitly approved, and where that's recorded (spec
+sign-off, plan approval, "ok to merge"). Anything not listed here is not
+approved.
 
 ## What's next
 The specific next action, not a restated task description.
@@ -40,7 +63,9 @@ Anything that was debated and resolved — so it doesn't get re-litigated.
 Anything genuinely still unresolved, and what's needed to resolve it.
 
 ## Links
-Spec path, plan path, branch name, relevant PR/issue.
+Spec path, plan path, branch name, relevant PR/issue. Reference these by
+path — don't paste their contents; a copy goes stale the moment the
+original changes.
 ```
 
 ## Process
@@ -55,6 +80,8 @@ Spec path, plan path, branch name, relevant PR/issue.
    already finished.
 4. **Skip narrative.** No "then I tried X, which didn't work, so I tried
    Y" — only what's true now and what's next.
+5. **Redact.** Replace secrets, tokens, and personal data in commands and
+   outputs with `<REDACTED>` before writing the file.
 
 ## Common mistakes
 
@@ -64,8 +91,13 @@ Spec path, plan path, branch name, relevant PR/issue.
 | Omitting the spec/plan link | Without it, the next session can't verify anything against Success Criteria |
 | Listing a resolved decision as an open question | Forces redundant re-litigation — be explicit about what's settled |
 | Vague "what's next" ("continue implementation") | Name the specific next step and which skill handles it |
+| Pasting the spec or plan into the handoff | Link by path; the file is the source of truth |
+| Leaving out uncommitted changes | List them with what each is — otherwise the next session may discard live work |
 
 ## Next
 
-Whoever receives the handoff starts with `dev-workflow` using the "Where
-this is in the spine" line to route to the right skill.
+Whoever receives the handoff calls the Skill tool with `dev-workflow`, using the "Where
+this is in the spine" line to route to the right skill. The receiver
+treats only what the **Approvals** section (or a durable artifact) records
+as approved — never an approval remembered from, or implied by, an
+earlier conversation.
