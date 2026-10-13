@@ -124,7 +124,8 @@ spec-from-idea -> plan-from-spec -> implement -> review-code -> finish-branch
 ```
 
 1. **[spec-from-idea](docs/engineering/spec-from-idea.md)** — idea →
-   clarifying questions → 2-3 approaches → written spec with measurable
+   clarifying questions → scale check → the minimal approach plus
+   alternatives → written spec with measurable
    Success Criteria & Evals.
 2. **[plan-from-spec](docs/engineering/plan-from-spec.md)** — spec →
    ordered implementation plan, each step carrying a verification traced

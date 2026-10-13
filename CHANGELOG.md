@@ -26,7 +26,9 @@ skill is a breaking change.
   `incremental-implementation`, `performance-optimization`): Non-Goals
   carry a reason and list the tempting cuts; over-built vs simple
   examples and the "why didn't you just…?" check; no performance work
-  without a measured problem.
+  without a measured problem. `plain-technical-writing` asks for a
+  diagram only where a flow would take a paragraph to follow, not for
+  every 3-step flow.
 
 ## 2.0.0 — 2026-10-12
 
