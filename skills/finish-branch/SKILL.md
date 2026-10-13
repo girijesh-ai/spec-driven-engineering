@@ -18,8 +18,8 @@ unresolved spec criteria, a branch that's drifted from its base.
 - All plan steps are implemented and `review-code` returned READY
 - Before merging, pushing, or opening a PR
 
-Do not use if `review-code` hasn't run, or returned NEEDS FIXES — go back to
-`implement` first.
+Do not use if `review-code` hasn't run, or returned NEEDS FIXES — call the
+Skill tool with `implement` first.
 
 ## Process
 
@@ -43,11 +43,33 @@ Do not use if `review-code` hasn't run, or returned NEEDS FIXES — go back to
      team's standard review process.
    - **Rebase then merge/PR** — branch has drifted and history should stay
      linear.
-6. **Write the commit/PR description from the spec**, not from memory —
-   the spec's Context and Goals sections are the "why," the plan's steps
-   are the "what."
-7. **Write a plain-language summary of what shipped.** Invoke the `simple`
-   skill to produce a companion explainer for the non-technical audience
+6. **Write the commit/PR description from the spec and the diff**, not
+   from memory — the spec's Context and Goals are the "why," the plan's
+   steps and the diff are the "what." Use this shape:
+
+   ```markdown
+   ## Summary
+   The smallest picture of the change: a call tree, file tree, Mermaid
+   diagram, pseudocode, or a shaped diff. Prose only if none of those fit.
+
+   ## Evidence
+   Per Success Criterion: SC-n — the command run and its result
+   (before → after where it changed).
+
+   ## Merge danger
+   One-way or two-way door? Blast radius if it's wrong. Rollback plan:
+   the exact revert, flag, or migration-down step.
+
+   ## Not touched (intentionally)
+   Nearby things left alone on purpose, and the NOTICED BUT NOT TOUCHING
+   list from `implement`. Known risks the reviewer should accept, named.
+   ```
+
+   A one-way door (data migration, public API removal, anything `git
+   revert` can't undo) needs the rollback plan and an explicit yes from
+   the owner before integrating.
+7. **Write a plain-language summary of what shipped.** Call the Skill tool
+   with `simple` to produce a companion explainer for the non-technical audience
    (PM, leadership, an engineer picking this up cold). Its primary source
    is the **code that actually landed** — the merged diff and the current
    state of the changed files. That's the one source that can't be stale or
@@ -77,6 +99,8 @@ Do not use if `review-code` hasn't run, or returned NEEDS FIXES — go back to
 | Discarding unexpected uncommitted changes to get a clean status | Investigate first — it may be someone's in-progress work |
 | Force-pushing or rewriting shared history without asking | Confirm with the user before any destructive git operation |
 | Writing the PR description from memory instead of the spec | Pull Context and Goals straight from the spec — it's already the accurate version |
+| "Tests pass" as the whole Evidence section | One line per Success Criterion: the command and its result |
+| Merging a one-way door with no rollback plan | Name the revert path first; if there isn't one, get an explicit yes from the owner |
 | Writing the plain-language summary as a session recap ("first we tried X, then fixed Y") | Summarize what shipped, sourced from the merged diff — the path taken is session noise, and narrating it from memory is the fabrication `simple` forbids |
 | Summarizing from the spec's intent instead of the code that landed | The diff is what shipped; the spec is only what was hoped for. Read the code for *what*, use the spec only for *why* |
 
