@@ -28,9 +28,21 @@ the change interacts with code around it, not in the changed lines
 themselves.
 
 **What's the actual bar for READY?**
-Zero confirmed issues, and the spec axis either met or explicitly marked
-not applicable. "Plausible issues" alone don't block READY, but they should
-be surfaced, not dropped.
+No confirmed Critical or Required issues, and the spec axis either met or
+explicitly marked not applicable. Optional, Nit, and FYI findings, and
+"plausible" issues, don't block READY, but they're surfaced, not dropped.
+
+**What is the floor guard?**
+A script bundled with this skill (`scripts/floor_guard.py`, stdlib Python)
+that scans the branch's changes for ways of passing checks without
+improving the code: new suppressions, skipped tests, deleted tests,
+removed assertions, lowered coverage thresholds, relaxed lint config. If
+it can't run, the review says so — it never reports a failure to run as
+clean.
+
+**Why break the code on purpose during review?**
+That's the mutation spot-check: if a criterion's test stays green when
+the code it checks is broken, the test doesn't guard the criterion.
 
 ## It's working if
 
@@ -38,4 +50,6 @@ be surfaced, not dropped.
   up in the next round of manual testing that this review should have
   caught.
 - Every public interface change gets its callers checked, every time.
+- Weakened tests are caught by the floor guard or the mutation spot-check,
+  not discovered after a regression ships.
 - Resource-leak and failure-path findings show up before production does.

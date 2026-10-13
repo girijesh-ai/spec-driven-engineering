@@ -21,18 +21,32 @@ show.
 - Before `git push` or opening a PR
 - Any time you're about to claim a change is "done"
 
+## Finding the spec
+
+Look in this order and stop at the first hit: a spec path passed to you →
+the plan's `Source spec` line → issue or spec references in the branch's
+commit messages → a `docs/specs/` file whose topic matches the branch or
+feature name → ask.
+
 ## No-spec fallback
 
-If no spec is linked, do not skip Axis 1 silently. Report it explicitly:
+If no spec is found, do not skip Axis 1 silently. Report it explicitly:
 **"spec axis skipped — no spec found."** Then run Axis 2 (standards) in
 full — standards compliance never depends on a spec existing.
 
 ## Process
 
-### Step 1 — Establish scope
+### Step 1 — Pin the fixed point, establish scope
 
+Record exactly what is under review: `git rev-parse HEAD` and the base
+(merge-base with the target branch). Confirm the diff between them is
+non-empty — reviewing an empty or wrong range reports READY on nothing.
 List every changed file and the total additions/deletions. State in one
 sentence what the change is trying to do.
+
+Size check: ~100 changed lines reviews well, ~300 is acceptable, ~1000
+should have been split — say so. A refactor mixed into a feature diff is
+a finding: they belong in separate commits.
 
 ### Step 2 — Axis 1: spec compliance
 
@@ -40,6 +54,15 @@ Read the spec's Success Criteria & Evals (if one exists). For each
 criterion: does the diff satisfy it? Concretely — run the check the
 criterion describes, don't eyeball it. Report each criterion as met, not
 met, or not applicable, with why.
+
+**Mutation spot-check.** For at least one criterion the diff claims to
+satisfy, break the code it depends on — invert one condition, return
+early — run that criterion's check, then restore the code. If the check
+stays green, it doesn't guard the criterion: that's a confirmed finding
+against the test, not the code.
+
+**Scope creep.** Also report behaviour in the diff that no criterion or
+goal asked for. Unrequested behaviour has nothing to be checked against.
 
 ### Step 3 — Read the full diff, then the full changed files
 
@@ -78,16 +101,44 @@ unexpected data, or raises mid-operation? A conditional check like
 `if dependency is not None:` needs its `else` branch audited too — nothing
 security- or correctness-critical should be silently skipped there.
 
-### Step 6 — Axis 2: standards and architecture
+### Step 6 — Floor guard
 
-Run the change against `engineering-standards` (naming, SRP, error
-handling, security, DRY, necessity/simplicity, backward compatibility) and
-`codebase-architecture` (module depth, interface width, and layer-boundary
-direction). A change can be fully spec-compliant and pass every other
+Run this skill's `scripts/floor_guard.py` from the repo under review:
+`python3 <this skill's dir>/scripts/floor_guard.py --base <target branch>`.
+It flags new suppressions, skipped or focused tests, stubs, deleted test
+files, net-removed assertions, lowered coverage thresholds, and relaxed
+lint/type config. Exit 0 = clean, 1 = findings, **2 = it didn't run** —
+report a 2 as "floor guard did not run", never as clean. Each finding is a
+confirmed issue unless the spec or plan explicitly calls for that change.
+If the project has a `CONSTRAINTS.md`, check its enforced rules too.
+
+### Step 7 — Axis 2: standards and architecture
+
+Call the Skill tool with `engineering-standards`, then again with
+`codebase-architecture`. Run the change against the first (naming, SRP,
+error handling, security, DRY, necessity/simplicity, backward
+compatibility) and the second (module depth, interface width, and
+layer-boundary direction). A change can be fully spec-compliant and pass every other
 standards check and still be over-engineered — check necessity
 explicitly, don't assume it falls out of the other checks.
 
-### Step 7 — Structured report
+Also check:
+- **Smells** — the baseline in `engineering-standards`'
+  `references/smells.md`. Always judgement calls; a documented repo
+  standard overrides them.
+- **Refactors** — does it reduce complexity or just move it? Count the
+  concepts a reader needs before and after.
+- **Performance** — queries or calls inside loops, unbounded reads or
+  result sets, work repeated on a hot path.
+- **Dead code and dependencies** — list code the change made unreachable
+  and ask before deleting it. More than one new dependency in a change is
+  a finding; read the lockfile diff for what came along with it.
+
+For the final whole-branch review (before `finish-branch`), you may run
+Axis 1 and Axis 2 in separate subagents so neither colours the other.
+Report each axis's findings as they came; never re-rank across axes.
+
+### Step 8 — Structured report
 
 ```markdown
 ### Scope
@@ -97,8 +148,14 @@ Files changed, additions/deletions, one-paragraph summary of intent.
 Per criterion: met / not met / not applicable — with why.
 (No spec at all: "spec axis skipped — no spec found.")
 
+### Scope creep
+Behaviour in the diff no criterion or goal asked for (or "none").
+
+### Floor guard
+Exit code and findings, or "did not run — <reason>".
+
 ### Confirmed issues
-File, line, what's wrong, failure scenario, concrete fix.
+Severity, file, line, what's wrong, failure scenario, concrete fix.
 
 ### Plausible issues
 Lower-confidence concerns needing verification, or genuine edge cases.
@@ -110,22 +167,56 @@ Findings against engineering-standards / codebase-architecture.
 What's done well and correct — don't skip this, it's signal too.
 
 ### Verdict
-READY — no confirmed issues; spec criteria met or not applicable, or the spec axis was explicitly skipped (no spec).
-NEEDS FIXES — N confirmed issues listed above.
+READY — no confirmed Critical or Required issues; spec criteria met or not applicable, or the spec axis was explicitly skipped (no spec).
+NEEDS FIXES — N confirmed Critical/Required issues listed above.
 ```
 
-Do not report READY until every confirmed issue is resolved.
+**Severity** is a second label on every finding, separate from
+confirmed/plausible (which is confidence):
 
-## Common mistakes
+| Severity | Meaning | Blocks READY? |
+|---|---|---|
+| Critical | Wrong behaviour, data loss, security hole, unmet criterion | Yes |
+| Required | Breaks a standard the project holds, or a caller | Yes |
+| Optional | Worth doing; the author decides | No |
+| Nit | Style or taste | No |
+| FYI | Context, no action | No |
 
-| Mistake | Fix |
+Do not report READY while any confirmed Critical or Required issue is
+open.
+
+## Common rationalizations
+
+| Rationalization | Reality |
 |---|---|
-| Reviewing only the diff lines | Read the complete changed files — bugs hide in unchanged surrounding code |
-| Treating a missing spec as an automatic pass | Report "spec axis skipped," never silently treat it as satisfied |
-| Checking Axis 2 but skipping caller/cross-file grep | A correct-looking diff can still break every caller of a changed signature |
-| Eyeballing whether a criterion is met | Actually run the check the criterion describes |
-| Skipping the resource/failure-path audit on "small" changes | Small diffs leak resources just as easily as big ones — audit every early return regardless of diff size |
+| "The diff looks fine, no need to open the files" | Bugs hide in the unchanged code around the diff. Read the complete files |
+| "There's no spec, so Axis 1 passes" | Report "spec axis skipped — no spec found". A missing spec is never a pass |
+| "The signature change is small, callers will be fine" | Grep every caller. A correct-looking diff can break all of them |
+| "The test for that criterion exists, so it's met" | Run it — then break the code once and run it again. A check that can't fail guards nothing |
+| "It's a small change, skip the failure-path audit" | Small diffs leak resources as easily as big ones |
+| "The floor guard errored, I'll treat it as clean" | Exit 2 means nothing was checked. Say so |
+| "It's not perfect, but it's better than before" | Severity decides what blocks, not overall impression. Confirmed Critical/Required still block |
+
+## Red flags
+
+- A READY verdict with no command output behind any criterion
+- No `git rev-parse` value recorded for what was reviewed
+- Floor guard missing from the report
+- Behaviour in the diff that no criterion mentions, unreported
+- Every finding marked Nit
+
+## Verification
+
+Before issuing the verdict:
+
+- [ ] HEAD and base SHAs are recorded and the diff is non-empty
+- [ ] Each criterion's check ran in this session (or the axis is explicitly skipped)
+- [ ] At least one mutation spot-check ran and went red
+- [ ] Floor guard exit code is in the report
+- [ ] Every changed file was read in full and every changed public symbol grepped
 
 ## Next
 
-READY hands off to `finish-branch`. NEEDS FIXES goes back to `implement`.
+Inside `implement` (one step): READY returns to `implement` to commit;
+NEEDS FIXES returns to it to fix. On the whole branch: READY means call
+the Skill tool with `finish-branch`.
