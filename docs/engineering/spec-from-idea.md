@@ -35,6 +35,16 @@ That's a sign the spec isn't finished, not a sign to skip the section. Keep
 asking "how would I check this passed" until you have concrete, checkable
 answers.
 
+**Why does every question come with a guess attached?**
+Reacting to a concrete position is faster than answering an open
+question, and a wrong guess exposes the gap just as well. The guess is a
+proposal for you to accept or correct, never an answer on your behalf.
+
+**Why number the Success Criteria and attach a command to each?**
+Plan steps cite them (`Satisfies: SC-2`), `review-code` runs each command,
+and `finish-branch` reports each one's result. A number and a command are
+what let every later skill check the same thing.
+
 **What happens if I skip this and go straight to `implement`?**
 `implement` still runs, but it will visibly say "no spec/plan found —
 proceeding ad-hoc," and `review-code`'s spec-compliance axis will report
@@ -43,7 +53,9 @@ itself skipped rather than silently passing.
 ## It's working if
 
 - Every spec that comes out has a Success Criteria & Evals section with
-  checkable, non-vague conditions.
+  numbered criteria, each naming the command that checks it.
+- Nothing reaches `plan-from-spec` on a "sounds good" — approval was an
+  explicit yes to a six-line restate and to the chosen approach.
 - You can hand the spec to `plan-from-spec` without needing to re-explain
   anything that was already asked and answered during spec-writing.
 - Six months later, someone reading the spec file understands why the
