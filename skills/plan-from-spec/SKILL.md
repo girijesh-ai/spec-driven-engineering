@@ -26,26 +26,56 @@ doesn't actually deliver something checkable.
 
 ## Process
 
-1. **Read the spec fully.** Extract every Goal and every Success Criterion.
-   If there's no spec, say so explicitly and ask whether to fall back to a
-   short in-chat plan for a small, well-understood change, or to go back to
-   `spec-from-idea` first.
-2. **Check `codebase-architecture`, then identify the critical files** the
+1. **Read the spec fully.** Extract every Goal and every numbered Success
+   Criterion (`SC-1`, `SC-2`, ...). If there's no spec, say so explicitly
+   and ask whether to fall back to a short in-chat plan for a small,
+   well-understood change, or to call the Skill tool with `spec-from-idea`
+   first.
+2. **Never overwrite a plan that's partly done.** If
+   `docs/plans/` already has a plan for this topic with steps marked done,
+   stop and ask: extend it, re-cut the remaining steps, or start a new
+   file. Silent overwrites lose the record of what already shipped.
+3. **Call the Skill tool with `codebase-architecture`, then identify the
+   critical files** the
    work touches — it settles whether a step's natural boundary is a new
    module or an extension of an existing one before the file list gets
    locked in. Name files, don't enumerate every line; for a pattern
    repeated across many files, describe the pattern once and list a few
    representative paths.
-3. **Sequence into steps.** Each step should be independently implementable
-   and independently verifiable — a tracer bullet through the system, not a
-   layer-by-layer build-out that can't be checked until everything is done.
-   Order by dependency: a step never assumes something a later step
-   produces.
-4. **Attach verification to every step**, sourced from the spec's Success
-   Criteria & Evals. If a step doesn't map to any criterion, either the
-   step is unnecessary or the spec is missing one — resolve which before
-   moving on, don't silently invent a check.
-5. **Call out reuse.** Reference existing functions, modules, or patterns
+4. **Prefactor first.** If the change is awkward in the code as it stands,
+   the first step reshapes the code so the change becomes easy — behaviour
+   unchanged, existing tests green — and the next steps make the easy
+   change.
+5. **Sequence into steps.** Each step is a tracer bullet through the
+   system, independently implementable and verifiable — not a
+   layer-by-layer build-out that can't be checked until everything is
+   done. Order by dependency first; among steps that are ready, put the
+   **riskiest first**, so a wrong assumption fails on step 1, not step 7.
+   For a wide mechanical change that breaks many call sites at once, no
+   vertical slice lands green — use **expand / migrate / contract**: add
+   the new form beside the old, migrate callers in batches sized by blast
+   radius, then delete the old form in its own step.
+6. **Size every step** so one fresh context window can implement it:
+
+   | Size | Shape |
+   |---|---|
+   | XS | One function or config value |
+   | S | One file plus its tests, ~100 changed lines |
+   | M | A few files in one module, ~300 changed lines |
+   | L | Crosses a module boundary — split if you can |
+   | XL | Always split |
+
+   Also split a step that has more than 3 verification bullets, an "and"
+   in its name, or touches two subsystems. Keep refactor steps separate
+   from feature steps.
+7. **Attach verification to every step**, citing the spec criterion it
+   satisfies (`Satisfies: SC-2`) and the command that checks it. If a step
+   doesn't map to any criterion, either the step is unnecessary or the
+   spec is missing one — resolve which before moving on, don't silently
+   invent a check.
+8. **Mark checkpoints** every 2-3 steps: a point where the full suite runs
+   and a human can look before more is built on top.
+9. **Call out reuse.** Reference existing functions, modules, or patterns
    found during spec-writing or exploration that steps should reuse instead
    of reimplementing.
 
@@ -62,15 +92,26 @@ doesn't actually deliver something checkable.
 
 ## Steps
 ### 1. <step name>
+- Status: todo                 ← todo / done <commit sha> / blocked <reason>
 - Depends on: none
 - Touches: <files>
-- Verification: <the spec criterion this satisfies, stated as a concrete check>
+- Size: S
+- Satisfies: SC-1
+- Verification: `<exact command>` → <expected result>
 
 ### 2. <step name>
+- Status: todo
 - Depends on: step 1
 - Touches: <files>
-- Verification: <criterion>
+- Size: M
+- Satisfies: SC-2, SC-3
+- Verification: `<exact command>` → <expected result>
+
+**Checkpoint:** full suite green; human look before step 3.
 ```
+
+`implement` updates each step's `Status` as it commits, so the plan file
+is also the record of progress — a fresh session resumes from it.
 
 Write the plan to `docs/plans/YYYY-MM-DD-<topic>.md`, mirroring the spec's
 location, so `implement`, `finish-branch`, and `handoff` can link to it by
@@ -85,8 +126,11 @@ but anything handed to `implement` as "the plan" gets the file.
 | A step with no linked Success Criterion | Stop and resolve: either drop the step or fix the spec, don't invent an ad-hoc check silently |
 | Enumerating every file/line for a repeated pattern | Describe the pattern once, list a few representative paths |
 | Ignoring existing code that already does this | Reuse first — check what spec-from-idea's exploration already surfaced |
+| Building the riskiest step last | Order risk-first among ready steps — a bad assumption should fail early, before other steps depend on it |
+| One giant step "migrate all callers" | Expand / migrate in batches / contract, each batch its own step |
+| Rewriting a plan file that already has done steps | Stop and ask; extend or re-cut, never silently overwrite |
 | Planning without reading the full spec | Half-read specs produce plans that miss non-goals and re-litigate settled questions |
 
 ## Next
 
-Hand off to `implement`, step by step.
+Call the Skill tool with `implement`, step by step.

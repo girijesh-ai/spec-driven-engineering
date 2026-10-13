@@ -1,0 +1,28 @@
+schema_version: "1.0"
+name: spec-interview
+description: spec-from-idea fires on a new feature idea and opens with a hypothesis and one question carrying a guess.
+tags: [spine, interview]
+execution:
+  prompt: |
+    I want to add rate limiting to our public API so one customer can't starve
+    the others. Let's design it properly before anyone writes code.
+  max_turns: 10
+  allowed_tools: [Read, Glob, Grep, Skill]
+graders:
+  - type: tool_used
+    name: spec-from-idea-fired
+    tool: Skill
+    input_match: "spec-from-idea"
+    arm: with-only
+  - type: regex
+    name: question-carries-guess
+    target: last_message
+    pattern: "GUESS:"
+    flags: i
+  - type: llm
+    name: one-question-no-code
+    criteria: |
+      - States a classification of the task (spike, bounded, or architectural).
+      - States a hypothesis about what the user wants, with a confidence level.
+      - Asks exactly one clarifying question about a single decision (not several sub-questions bundled together), and attaches its own recommended answer to it.
+      - Contains no implementation code and no finished spec document.

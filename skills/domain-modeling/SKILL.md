@@ -25,6 +25,10 @@ spec is finalized, not after the code reveals the ambiguity.
 
 ## Process
 
+0. **Read the project's `GLOSSARY.md` and ADRs first**, if they exist.
+   A term already defined there is settled — challenge the new usage
+   against it instead of redefining it. Check any claim about how the
+   system behaves against the code, not memory.
 1. **List every domain term the requirement depends on.** Not every noun —
    the ones a wrong definition would actually break the spec's Success
    Criteria.
@@ -40,6 +44,18 @@ spec is finalized, not after the code reveals the ambiguity.
 5. **Write the resolved definitions into the spec** (either inline in
    Context, or as a short glossary if there are several) so `plan-from-spec`
    and `implement` inherit the precise meaning, not the fuzzy one.
+6. **Promote lasting terms to the repo's `GLOSSARY.md`** so they outlive
+   this spec. Create the file the first time a term needs it, at the repo
+   root. One entry per term: the definition, a near-miss that is *not* a
+   member, and synonyms to avoid. Domain meaning only — no class names,
+   tables, or file paths; those change, the meaning shouldn't.
+7. **Offer an ADR only when all three hold:** the decision is hard to
+   reverse, it would surprise a reader who lacks today's context, and
+   there was a real trade-off. Follow the repo's existing ADR convention
+   if it has one; otherwise `docs/adr/NNNN-<title>.md` with **Status**,
+   **Context**, **Decision**, **Alternatives considered**,
+   **Consequences**. A changed decision gets a new ADR that marks the old
+   one superseded — never edit or delete the old one.
 
 ## Common mistakes
 
@@ -48,9 +64,11 @@ spec is finalized, not after the code reveals the ambiguity.
 | Accepting a term's common-sense meaning without checking edge cases | Test it against a near-miss case before treating it as settled |
 | Leaving the resolved definition only in chat, not in the spec | Write it into the spec — a definition that exists only in conversation history isn't available to `implement` later |
 | Renaming a term mid-spec without updating every earlier use | Sweep the whole spec once a term changes, don't leave the old name in some sections |
+| Redefining a term `GLOSSARY.md` already settles | Use the existing definition, or raise the conflict explicitly |
+| Writing an ADR for every choice | Only hard-to-reverse, surprising, real-trade-off decisions get one |
 | Over-modeling terms that don't affect any Success Criterion | Only chase precision on terms that could actually change what "done" means |
 
 ## Next
 
 Resolved vocabulary feeds back into `spec-from-idea`'s Context/Goals
-sections.
+sections, and lasting terms into `GLOSSARY.md`.

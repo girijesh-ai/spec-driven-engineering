@@ -25,8 +25,14 @@ answer until a round of questions surfaces nothing new.
 specifically for what would embarrass it later.
 
 **When does grilling stop?**
-When a round of questions produces nothing new — not when the first few
-answers feel satisfying.
+When the agent can predict your answers to its next three questions — not
+when the first few answers feel satisfying.
+
+**Each question comes with the agent's own guess. Isn't that answering
+for me?**
+No. The guess is a position for you to push against; you still give the
+answer. Facts the agent can look up (in the code, the docs, a quick test)
+it looks up instead of asking — only decisions come to you.
 
 **Under an autonomous/background mode that's biased against stopping for
 questions, does grill-me still ask?**

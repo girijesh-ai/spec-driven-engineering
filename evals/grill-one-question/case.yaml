@@ -1,0 +1,24 @@
+schema_version: "1.0"
+name: grill-one-question
+description: grill-me asks one happy-path-breaking question with its own guess, then stops for the answer.
+tags: [supporting, interview]
+execution:
+  prompt: |
+    Pressure-test this plan with me: we migrate user sessions from Redis to
+    Postgres over a weekend with a two-hour downtime window, then delete the
+    Redis cluster on Monday.
+  max_turns: 10
+  allowed_tools: [Read, Glob, Grep, Skill]
+graders:
+  - type: tool_used
+    name: grill-me-fired
+    tool: Skill
+    input_match: "grill-me"
+    arm: with-only
+  - type: llm
+    name: one-question-then-stop
+    criteria: |
+      - Asks one question about one decision. Restating that same question in closing counts as one.
+      - The question challenges the plan — a failure path (rollback, partial migration, data loss, overrun of the window), the irreversible Redis deletion, or an unexamined premise — rather than confirming the happy path.
+      - Attaches the assistant's own recommended answer or guess to the question.
+      - Does not answer the question itself or continue to further questions in the same message.

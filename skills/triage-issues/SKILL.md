@@ -58,4 +58,5 @@ new -> triaged -> ready -> in-progress -> done
 
 ## Next
 
-`ready` items needing more than a trivial fix go to `spec-from-idea`.
+For a `ready` item needing more than a trivial fix, call the Skill tool
+with `spec-from-idea`.

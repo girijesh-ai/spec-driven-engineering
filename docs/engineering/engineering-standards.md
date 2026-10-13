@@ -31,6 +31,11 @@ were written for Python work.
 `references/python.md` — dataclasses, logging setup, pathlib, the
 deprecation-over-deletion pattern with `warnings.warn`.
 
+**Doesn't DRY apply to tests too?**
+Not to test bodies. Tests favour DAMP — each should read on its own, with
+its setup and expected values visible — so a reader can see what a
+failing test was checking without chasing helpers.
+
 **What if a codebase's existing conventions conflict with something here?**
 Existing, established codebase conventions win for consistency within that
 codebase — this checklist is the default for new decisions, not a mandate

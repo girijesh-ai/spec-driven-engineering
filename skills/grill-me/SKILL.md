@@ -46,16 +46,27 @@ if it were real.
    fully first.
 2. **Ask the question that breaks the happy path**, not the question that
    confirms it. "What happens when X is empty/absent/concurrent/huge?"
-   beats "does this handle X?"
-3. **Follow every "we'll handle that later" to its actual answer.**
+   beats "does this handle X?" Every question carries your own
+   recommended answer: `Q: <question>` / `GUESS: <your answer and why>`.
+   One question means one decision, not several bundled under one `Q:`.
+   End the message at the `GUESS:` — no "and if so, also tell me…"
+   follow-ups; those are the next questions, asked after this answer.
+   The requester reacts to a concrete position faster than to an open
+   question, and a wrong guess surfaces the gap just as well.
+3. **Look up facts, ask about decisions.** If the code, docs, or a quick
+   experiment can answer it, find out yourself (or dispatch a subagent)
+   and state what you found. Only decisions go to the requester.
+4. **Follow every "we'll handle that later" to its actual answer.**
    "Later" is not an answer — either resolve it now or move it explicitly
    to Open Questions/Non-Goals with a stated reason.
-4. **Keep going past the first satisfying answer.** One good answer often
-   hides the next unexamined branch. Stop only when a new question doesn't
-   surface anything new — not when the first few questions felt resolved.
-5. **Summarize what changed.** List every question that led to a real
-   change in the spec/plan, and every one that confirmed the original was
-   right. Both are useful output.
+5. **Keep going past the first satisfying answer.** One good answer often
+   hides the next unexamined branch. Stop when you can predict the
+   requester's answer to your next three questions — not when the first
+   few felt resolved.
+6. **Summarize what changed, then get an explicit yes.** List every
+   question that led to a real change in the spec/plan, and every one that
+   confirmed the original was right. "Sounds good", "sure", "whatever you
+   think" are not a yes — ask which change they disagree with.
 
 ## Common mistakes
 
@@ -65,6 +76,8 @@ if it were real.
 | Accepting "we'll handle that later" without pinning it down | Push for a specific resolution or an explicit, reasoned deferral |
 | Stopping after the first round of questions | Keep going until a round produces nothing new, not until it produces something comfortable |
 | Grilling implementation details in a spec that hasn't settled its goals yet | Grill the goals/approach first — implementation questions are premature if the goal itself is still shaky |
+| Asking an open question with no position of your own | Attach a `GUESS:` — it's not answering for them, it's giving them something to push against |
+| Asking the requester something the repo could answer | Facts are yours to look up; only decisions go to them |
 | Answering your own question instead of asking the requester | Stop after each question and wait for the real answer — self-answering isn't grilling, it's narrating |
 | Treating a "don't stop for questions" bias as overriding this skill | It doesn't — a skill signaling it needs to ask is exactly the case such a bias is meant to defer to |
 

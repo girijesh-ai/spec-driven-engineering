@@ -25,6 +25,11 @@ actually understood precisely, not a ritual.
 Manual verification doesn't survive the next refactor or the next person's
 change. It needs to be in the suite.
 
+**Can I mock my own modules to keep a test simple?**
+No — mock only at system boundaries (external APIs, the clock,
+randomness). A mock of your own code makes the test agree with the mock,
+not with the code. Prefer a real collaborator, then a fake.
+
 **Isn't this slower for small changes?**
 For a one-line fix, "minimum code to pass" is often the whole fix — the
 loop doesn't add meaningful overhead there, it just makes the eventual
@@ -35,3 +40,4 @@ regression test exist instead of not existing.
 - Every non-trivial change has a test that existed before the
   implementation code did, and that test failed for the right reason first.
 - Refactors don't quietly change behavior, because the test would catch it.
+- No test computes its expected value the same way the code does.

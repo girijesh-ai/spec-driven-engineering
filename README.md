@@ -1,4 +1,4 @@
-# spec-driven-engineering
+# sde — spec-driven-engineering
 
 By [girijesh-ai](https://github.com/girijesh-ai)
 
@@ -7,12 +7,13 @@ guess from.**
 
 An agent without a spec ships fast and drifts fast — every session
 re-guesses what "done" means, and nothing downstream can check its work
-against anything but vibes. `spec-driven-engineering` makes the spec the
+against anything but vibes. `sde` (spec-driven-engineering) makes the spec the
 thing everything else is checked against: one spine (idea → spec → plan
 → code → review → ship) carrying measurable Success Criteria & Evals all
 the way through, plus the standards, architecture, and debugging
 disciplines that spine leans on. 17 skills, free. Ships as a Claude Code
-plugin and as an [OpenCode](OPENCODE.md) skill catalog.
+plugin (`sde` — skills are `/sde:implement`, `/sde:review-code`, ...) and
+as an [OpenCode](OPENCODE.md) skill catalog.
 
 Not sure where to start? Invoke **[dev-workflow](docs/engineering/dev-workflow.md)**
 — it's a routing table from "where the work actually is" to the right
@@ -93,11 +94,18 @@ upstream bug found and fixed — nothing staged, nothing pushed upstream.
 **Claude Code**
 
 ```
-claude plugin marketplace add girijesh-ai/spec-driven-engineering
-claude plugin install spec-driven-engineering@spec-driven-engineering-dev
+/plugin install sde --marketplace girijesh-ai/spec-driven-engineering
 ```
 
-See `## Install` further down for how this exact command was verified.
+Older Claude Code (before 2.1.275), or from a shell:
+
+```
+claude plugin marketplace add girijesh-ai/spec-driven-engineering
+claude plugin install sde@sde-dev
+```
+
+Upgrading from 1.x, when the plugin was called `spec-driven-engineering`?
+See [Renamed to `sde` in 2.0.0](#renamed-to-sde-in-200).
 
 **OpenCode** — clone, then `cd spec-driven-engineering && opencode`.
 Full options (global symlink, one consuming project) are in
@@ -193,9 +201,17 @@ spec-driven-engineering/
   opencode.json                # OpenCode: skills.paths -> ./skills
   skills/
     <skill-name>/SKILL.md      # flat namespace — required for plugin discovery
+    <skill-name>/references/   # heavy detail, loaded only when a step needs it
+    review-code/scripts/floor_guard.py   # flags changes that lower the quality bar
   docs/
     engineering/<skill-name>.md   # bucket + promotion status tracked here, not in skills/
     productivity/<skill-name>.md
+    in-progress.md             # draft skills not yet promoted
+    out-of-scope.md            # ideas considered and rejected or deferred
+  evals/                       # claude plugin eval cases
+  scripts/                     # validate.py + tests (run in CI)
+  research/                    # proposals and upstream comparisons
+  CHANGELOG.md
   CLAUDE.md
   OPENCODE.md                  # OpenCode install + usage
 ```
@@ -211,15 +227,20 @@ README instead of in nested directories. OpenCode reads the same
 
 ```
 claude plugin marketplace add girijesh-ai/spec-driven-engineering
-claude plugin install spec-driven-engineering@spec-driven-engineering-dev
+claude plugin install sde@sde-dev
 ```
 
-Verified end-to-end from the real repo: `claude plugin validate`, a clean
-`claude plugin marketplace add` clone from GitHub (not a local path), and
-`claude plugin install` from that marketplace showing all 17 skills
-discovered (`claude plugin details spec-driven-engineering`). Working
-from a local clone instead works the same way — pass the local path to
-`marketplace add` in place of `girijesh-ai/spec-driven-engineering`.
+On Claude Code 2.1.275 or later, one step from inside a session:
+`/plugin install sde --marketplace girijesh-ai/spec-driven-engineering`.
+
+The marketplace path was verified end to end on 1.x under the old name
+(`claude plugin validate`, a clean `marketplace add` clone from GitHub,
+`plugin install`, `plugin details` listing every skill). The 2.0.0 rename
+was checked with `claude plugin validate` and by loading the plugin from
+its path in `claude plugin eval`, where every skill registers as
+`sde:<skill>`. Working from a local clone works the same way — pass the
+local path to `marketplace add` in place of
+`girijesh-ai/spec-driven-engineering`.
 
 **OpenCode** — see [OPENCODE.md](OPENCODE.md). No Claude Code needed.
 Short version: point `skills.paths` at the clone's `skills/` in your
@@ -236,41 +257,54 @@ marketplace source doesn't auto-refresh — pull the latest, then update.
 **From a separate terminal (outside an active session):**
 
 ```
-claude plugin marketplace update spec-driven-engineering-dev
-claude plugin update spec-driven-engineering
+claude plugin marketplace update sde-dev
+claude plugin update sde
 ```
 
-Verified against a real stale install: `claude plugin details
-spec-driven-engineering` showed `0.1.0` before this sequence, `1.0.1`
-after — matching the actual version bumped in this repo's most recent
-release.
+Verified on 1.x (old names) against a real stale install: `claude plugin
+details` showed `0.1.0` before this sequence, `1.0.1` after.
 
 **From inside an already-running interactive session**, the same update
 works without dropping to a separate shell — verified end to end,
 including that a full session restart is not required:
 
 ```
-/plugin marketplace update spec-driven-engineering-dev
-/plugin update spec-driven-engineering@spec-driven-engineering-dev
+/plugin marketplace update sde-dev
+/plugin update sde@sde-dev
 /reload-plugins
 ```
 
-Verified: after running these three, `claude plugin details` showed
-`1.0.1`, and invoking a skill in that same session (no restart) resolved
-to `.../spec-driven-engineering-dev/spec-driven-engineering/1.0.1/...` —
-the version literally in the cache path — with body content matching the
+Verified on 1.x (old names): after running these three, `claude plugin
+details` showed `1.0.1`, and invoking a skill in that same session (no
+restart) resolved to a cache path containing `1.0.1` — with body content matching the
 latest release exactly (down to a one-word casing fix that only exists
 post-update). `/reload-plugins` reported `Reloaded: N plugins · N skills
 · ...` confirming the live session picked it up immediately.
 
-Either path works; use whichever avoids breaking your flow. If a bundled
+Either path works; use whichever avoids breaking your flow.
+
+### Renamed to `sde` in 2.0.0
+
+The plugin was `spec-driven-engineering` from the `spec-driven-engineering-dev`
+marketplace; it's now `sde` from `sde-dev`, so skills are `/sde:<skill>`.
+An update can't carry an install across a rename, so reinstall once:
+
+```
+claude plugin uninstall spec-driven-engineering
+claude plugin marketplace remove spec-driven-engineering-dev
+claude plugin marketplace add girijesh-ai/spec-driven-engineering
+claude plugin install sde@sde-dev
+```
+
+Skill names themselves didn't change. The GitHub repository keeps its
+name. If a bundled
 skill's name ever changes across a release, the old name keeps working
 for one cycle as a pointer (see `CLAUDE.md`'s versioning rule) — you
 don't need to update your own invocations immediately.
 
 ## Status
 
-v1. Every skill dispatches correctly through the actual `Skill` tool once
+Every skill dispatches correctly through the actual `Skill` tool once
 installed, and all 17 are `stable` — dry-run against a real task, per
 `CLAUDE.md`'s promotion rule. Six were promoted after a real-repo
 persona test against `huggingface/smolagents`: a genuine root-caused bug
@@ -283,6 +317,13 @@ against this skill's rules (`writing-for-agents`). `simple` was promoted
 after producing a real plain-language explainer for a live POC kickoff
 doc — all local-only, nothing pushed upstream. Formal subagent
 pressure-testing is a known follow-up, not a v1 requirement.
+
+2.0.0 reworked most of these skills' bodies (see `CHANGELOG.md`). The
+changes have plugin-eval smoke runs ([`evals/README.md`](evals/README.md))
+but no fresh dry run against a real task yet. Four draft skills —
+`doubt-check`, `retro`, `simplify-code`, `source-driven` — ship in
+`skills/` but aren't listed here until they're dry-run; see
+[`docs/in-progress.md`](docs/in-progress.md).
 
 | Skill | Status |
 |---|---|
@@ -318,6 +359,16 @@ just inspiration:
   resource-leak and failure-path audit, structured report shape) directly
   from his pre-existing personal `pre-push-review` skill, generalized
   beyond the one project it was written for.
+
+2.0.0 adapts techniques from
+[mattpocock/skills](https://github.com/mattpocock/skills) v1.3.1 and
+[addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)
+0.6.12 — each credited where it's used, and compared in
+[`research/2026-10-12-upstream-findings.md`](research/2026-10-12-upstream-findings.md).
+The draft skills `doubt-check`, `simplify-code`, and `source-driven` adapt
+agent-skills originals; `retro` adapts mattpocock's. The PR description's
+Summary visuals in `finish-branch` come from Dex Horthy's `show-me`
+(HumanLayer), by way of mattpocock's `pr`.
 
 Also structured after [mattpocock/skills](https://github.com/mattpocock/skills)
 (bucket + promotion-rule layout) and presented the way

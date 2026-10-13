@@ -47,7 +47,39 @@ boundary violation — not a style nit, a maintainability risk that compounds.
 **Information hiding.** A module's internal representation (data
 structures, algorithm choice, storage details) should not leak into how
 callers use it. If changing an internal detail requires touching every
-caller, the module isn't hiding anything.
+caller, the module isn't hiding anything. Hyrum's Law applies: with
+enough callers, every observable behaviour — ordering, timing, error text
+— becomes depended on. Decide what's contract and say so; treat the rest
+as something callers will lean on anyway.
+
+**Deletion test.** Imagine deleting the module and inlining it into its
+callers. If complexity vanishes, it was a pass-through — remove it. If the
+same logic reappears across several callers, it was earning its keep.
+
+**Seams and adapters.** One adapter behind an interface is a hypothetical
+seam; two adapters (say, a real one and a test fake) make it a real one.
+Don't add an interface until the second implementation exists or a test
+needs it.
+
+**The interface is the test surface.** Tests attach at a module's public
+interface, not its internals. How a dependency is reached decides the
+test strategy:
+
+| Dependency | Test with |
+|---|---|
+| In-process (pure code, same process) | The real thing |
+| Local and substitutable (SQLite, temp files, in-memory queue) | A real local instance |
+| Remote but yours (your other service) | Ports and adapters: an interface with a fake adapter |
+| Truly external (vendor API, payment provider) | A mock at the boundary |
+
+When new interface-level tests cover what old tests of a shallow
+module's internals did, delete the old tests — replace, don't layer.
+
+**Contracts across the boundary.** One error format for the whole API
+surface, not one per endpoint. Operations a caller may retry (payments,
+writes over a network) take an idempotency key: claim it atomically,
+store a hash of the payload with it, and define what a duplicate request
+does while the first is still in flight.
 
 ## Process
 
@@ -57,10 +89,17 @@ caller, the module isn't hiding anything.
    extension of something that already exists) — don't default to "new
    file" or "add to the biggest existing file" without checking which is
    deeper.
-2. **For review-code:** for each new or changed module, ask the module
+2. **For an interface other code will depend on, design it twice.**
+   Dispatch 3 or more subagents, each designing the interface under a
+   different constraint (smallest possible surface; most flexible;
+   optimised for the commonest caller; ports-and-adapters). Compare the
+   results on depth, locality of change, and where the seams fall, and
+   bring the comparison to `spec-from-idea`'s approaches step instead of
+   a single design.
+3. **For review-code:** for each new or changed module, ask the module
    depth and interface width questions above. Flag any layer-boundary
    import that crosses a documented boundary the wrong direction.
-3. **Don't propose unrelated refactoring.** If an existing file has a real
+4. **Don't propose unrelated refactoring.** If an existing file has a real
    architecture problem outside the current change's scope, note it — don't
    silently expand the diff to fix it.
 
@@ -71,6 +110,8 @@ caller, the module isn't hiding anything.
 | Adding a new file for every new function | Check whether it's a natural extension of an existing deep module first |
 | A module with 10+ public methods, most used by only one caller | That's several narrower interfaces wearing one name — split it |
 | A shared/lower-layer module importing something project-specific | Boundary violation — add an abstraction, don't import across it |
+| An interface with one implementation "for flexibility" | One adapter is a hypothetical seam — inline it until a second one exists |
+| A wrapper module that only forwards calls | Apply the deletion test; if nothing reappears in callers, delete it |
 | Fixing an unrelated architecture problem while reviewing this change | Note it, don't silently expand scope — flag it as a separate follow-up |
 
 ## Next

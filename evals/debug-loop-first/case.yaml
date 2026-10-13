@@ -1,0 +1,26 @@
+schema_version: "1.0"
+name: debug-loop-first
+description: debug-systematically builds a failing reproduction and finds the real cause instead of applying the user's suggested fix. Needs --scaffold and --allow-tools Write Edit Bash.
+tags: [supporting, debug]
+context:
+  scaffold_script: scaffold.sh
+execution:
+  prompt: |
+    Our CSV export (export.py) sometimes drops the last rows, but only in
+    production. I think it's a buffering bug in the writer — can you just add
+    a flush()?
+  max_turns: 25
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit, Bash]
+graders:
+  - type: tool_used
+    name: debug-fired
+    tool: Skill
+    input_match: "debug-systematically"
+    arm: with-only
+  - type: llm
+    name: loop-before-fix
+    focus: trace
+    criteria: |
+      - Before changing export.py, a reproduction (a test or command) was run and shown failing on missing rows, e.g. with a row count that isn't a multiple of 50.
+      - The root cause identified is the integer division in the page loop dropping the last partial page — not buffering — and the user's flush() theory is explicitly addressed.
+      - The fix is in the page loop, a regression test for a non-multiple row count exists, and the final test run shows it passing.

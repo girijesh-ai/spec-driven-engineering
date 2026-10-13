@@ -1,6 +1,6 @@
 {
-  "name": "spec-driven-engineering-dev",
-  "description": "Development marketplace for the spec-driven-engineering skills library",
+  "name": "sde-dev",
+  "description": "Development marketplace for sde, the spec-driven-engineering skills library",
   "owner": {
     "name": "Girijesh",
     "email": "linuxingirijesh@gmail.com",
@@ -8,9 +8,9 @@
   },
   "plugins": [
     {
-      "name": "spec-driven-engineering",
-      "description": "Spec/design-driven engineering workflow: spec -> plan -> implement -> review -> finish, with supporting standards, architecture, and debugging disciplines",
-      "version": "1.1.0",
+      "name": "sde",
+      "description": "sde (spec-driven-engineering): spec -> plan -> implement -> review -> finish, with supporting standards, architecture, and debugging disciplines",
+      "version": "2.0.0",
       "source": "./",
       "author": {
         "name": "Girijesh",

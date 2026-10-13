@@ -73,5 +73,39 @@ class CheckPromotedDocs(unittest.TestCase):
             )
 
 
+class CheckDisciplineSections(unittest.TestCase):
+    def setUp(self) -> None:
+        original_root = validate.REPO_ROOT
+        self.addCleanup(setattr, validate, "REPO_ROOT", original_root)
+
+    def _errors_for(self, root: Path) -> list[str]:
+        validate.REPO_ROOT = root
+        errors: list[str] = []
+        validate.check_discipline_sections(errors)
+        return errors
+
+    def _write_skills(self, root: Path, body: str) -> None:
+        for name in validate.DISCIPLINE_SKILLS:
+            skill_dir = root / "skills" / name
+            skill_dir.mkdir(parents=True)
+            (skill_dir / "SKILL.md").write_text(body)
+
+    def test_all_sections_present_is_clean(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self._write_skills(
+                root, "## Common rationalizations\n## Red flags\n## Verification\n"
+            )
+            self.assertEqual(self._errors_for(root), [])
+
+    def test_missing_section_is_flagged_per_skill(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self._write_skills(root, "## Common mistakes\n## Verification\n")
+            errors = self._errors_for(root)
+            self.assertEqual(len(errors), 2 * len(validate.DISCIPLINE_SKILLS), errors)
+            self.assertTrue(any("'## Red flags'" in e for e in errors), errors)
+
+
 if __name__ == "__main__":
     unittest.main()

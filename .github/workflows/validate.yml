@@ -1,0 +1,33 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # floor-guard tests build their own repos; full history keeps git happy
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Structural validation
+        run: python3 scripts/validate.py
+      - name: Validator tests
+        run: python3 scripts/test_validate.py
+      - name: Floor-guard tests
+        run: python3 scripts/test_floor_guard.py
+      - name: Floor guard on this change
+        if: github.event_name == 'pull_request'
+        # Exit 1 (findings) is reported for the reviewer, not failed on: the
+        # guard's own pattern strings and fixtures trip it. Exit 2 fails.
+        run: |
+          set +e
+          python3 skills/review-code/scripts/floor_guard.py --base "origin/${{ github.base_ref }}"
+          code=$?
+          [ "$code" -eq 2 ] && exit 2
+          exit 0

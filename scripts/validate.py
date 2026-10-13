@@ -22,6 +22,16 @@ DOC_BUCKETS = ("engineering", "productivity")
 # users to write (docs/specs/YYYY-MM-DD-<topic>.md, docs/plans/...) — not skill
 # docs, so their files are skipped rather than scanned by filename.
 DOC_ARTIFACT_DIRS = ("specs", "plans")
+# Discipline skills hold a line under pressure; writing-for-agents requires
+# each to close with these three sections.
+DISCIPLINE_SKILLS = (
+    "spec-from-idea",
+    "implement",
+    "review-code",
+    "test-driven-development",
+    "debug-systematically",
+)
+DISCIPLINE_SECTIONS = ("Common rationalizations", "Red flags", "Verification")
 
 
 def check_json_manifests(errors: list[str]) -> None:
@@ -63,6 +73,18 @@ def check_skill_frontmatter(errors: list[str]) -> None:
             errors.append(f"{path}: description must start with 'Use when'")
         if not re.search(r"^Status:\s*(draft|stable)\s*$", text, re.M):
             errors.append(f"{path}: missing 'Status: draft' or 'Status: stable' line")
+
+
+def check_discipline_sections(errors: list[str]) -> None:
+    for skill_name in DISCIPLINE_SKILLS:
+        path = REPO_ROOT / "skills" / skill_name / "SKILL.md"
+        if not path.exists():
+            errors.append(f"discipline check: {path} does not exist")
+            continue
+        headings = set(re.findall(r"^## (.+?)\s*$", path.read_text(), re.M))
+        for section in DISCIPLINE_SECTIONS:
+            if section not in headings:
+                errors.append(f"{path}: discipline skill missing '## {section}'")
 
 
 def check_promoted_docs(errors: list[str]) -> None:
@@ -131,6 +153,7 @@ def main() -> int:
         check_skill_frontmatter(errors)
         check_promoted_docs(errors)
         check_dependency_claims(errors)
+        check_discipline_sections(errors)
     except (OSError, UnicodeDecodeError) as exc:
         print(f"Could not read repo files: {exc}")
         return 1

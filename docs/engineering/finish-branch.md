@@ -37,6 +37,13 @@ By risk and visibility: low-risk and no team review process needed → direct
 merge. Anything others should see or a team review gate applies to → PR.
 Branch has drifted from its base → rebase first, either way.
 
+**What goes in the PR description?**
+Four sections: **Summary** (the smallest picture of the change — a call
+tree, file tree, or diagram), **Evidence** (each Success Criterion, the
+command run, and its result), **Merge danger** (one-way or two-way door,
+blast radius, rollback plan), and **Not touched** (what was deliberately
+left alone, and the risks a reviewer should accept).
+
 **Doesn't the plain-language summary just repeat the PR description?**
 No — the PR description is for reviewers who read diffs; the summary is for
 people who don't (PMs, leadership, someone onboarding). Same facts, plainer
@@ -53,6 +60,7 @@ one.
 - PR/commit descriptions read like they came from the spec, because they
   did.
 - No destructive git operation happens without an explicit go-ahead.
+- Every one-way-door change ships with a named rollback path.
 - The stakeholder summary describes what shipped and traces every claim to
   the code that landed — no session play-by-play, no behavior the diff
   doesn't actually contain (even if the spec called for it).

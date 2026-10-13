@@ -44,20 +44,36 @@ scope turns out bigger once you're in it, say so and reclassify up.
 
 ## Process (bounded and architectural)
 
-1. Check existing context first — files, docs, prior specs — before asking
-   anything. Don't make the user repeat what's already written down.
-   If a requirement's terms are vague, overloaded, or used inconsistently
-   across the conversation, invoke `domain-modeling` before continuing —
-   an ambiguous term now becomes an ambiguous Success Criterion later.
-2. Ask clarifying questions **one at a time**: purpose, constraints, who's
-   affected, what "done" looks like. Prefer specific questions over
-   open-ended ones.
-3. Propose 2-3 approaches with trade-offs. Lead with the recommendation and
-   why. Cut speculative features from every approach — YAGNI applies at
-   design time, not only at implementation time.
-4. Present the design in sections, confirming each one lands before moving
-   to the next.
-5. Architectural only: write the spec to `docs/specs/YYYY-MM-DD-<topic>.md`.
+1. **Check existing context first** — files, docs, prior specs, the
+   project's `GLOSSARY.md` and ADRs if present — before asking anything.
+   Facts are your job: look them up (or dispatch a subagent) instead of
+   asking. Decisions are the user's. If a requirement's terms are vague,
+   overloaded, or used inconsistently, call the Skill tool with
+   `domain-modeling` before continuing — an ambiguous term now becomes an
+   ambiguous Success Criterion later.
+2. **Open with your hypothesis.** One line each:
+   `HYPOTHESIS: <what you think they want>` and
+   `CONFIDENCE: ~N% — missing: <what would raise it>`.
+3. **Ask clarifying questions one at a time**, each carrying your guess:
+   `Q: <question>` / `GUESS: <your recommended answer and why>`. One
+   question is one decision — never a bundle of sub-questions under one
+   `Q:`. Cover purpose, constraints, who's affected, what "done" looks
+   like, across successive questions. When an
+   answer is a buzzword, probe it: "If you didn't have to justify this to
+   anyone, what would you actually want?"
+4. **Stop asking when you can predict the answers to your next three
+   questions.** Then restate in six lines and get a real yes:
+   Outcome / User / Why now / Success / Constraint / Out of scope.
+   "Sounds good", "sure", "whatever you think" are not a yes — ask the
+   one question that would change the design.
+5. **Propose 2-3 approaches with trade-offs.** Lead with the
+   recommendation and why. Cut speculative features from every approach —
+   YAGNI applies at design time, not only at implementation time.
+6. **Present the design in sections**, confirming each one lands before
+   moving to the next.
+7. **Architectural only:** write the spec to
+   `docs/specs/YYYY-MM-DD-<topic>.md` using the template below, then stop.
+   Planning happens in a later turn, after the user has read the file.
 
 ## Required spec sections (architectural)
 
@@ -73,14 +89,34 @@ What this must achieve. Specific, not aspirational.
 ## Non-Goals
 What's explicitly out of scope. This is what stops scope creep later.
 
+## Assumptions
+ASSUMPTIONS I'M MAKING: one per line. The user corrects these now, or
+they stand.
+
+## Boundaries
+- Always: <what every change under this spec must do>
+- Ask first: <what needs a human yes before doing>
+- Never: <what is off-limits>
+
 ## Approach
 The chosen approach and why, briefly noting alternatives considered.
+Name behaviour and interfaces, not file paths or code — those go stale;
+the plan names files. Exception: a snippet that *is* the decision (a
+signature, a schema).
+
+## Testing Seams
+Where tests attach: the highest seam that observes the behaviour, and as
+few seams as possible. Confirmed with the user.
 
 ## Success Criteria & Evals
-Measurable, pass/fail conditions — never "test manually" or "works
-correctly." Each one must be checkable by running something specific or
-reading a specific output. `review-code` checks the implementation against
-exactly this list.
+Numbered, measurable, pass/fail — never "test manually" or "works
+correctly." Each one names the exact command that checks it.
+
+- **SC-1:** <condition>. Check: `<exact command, with flags>` → <expected result>
+- **SC-2:** ...
+
+`review-code` checks the implementation against exactly this list, and
+plan steps cite these numbers.
 
 ## Open Questions
 Anything still unresolved, and who needs to resolve it.
@@ -89,27 +125,39 @@ Anything still unresolved, and who needs to resolve it.
 A spec without a completed **Success Criteria & Evals** section is not
 done — do not hand it to `plan-from-spec` in that state.
 
-## Self-review before done
+**The spec is living.** When requirements change mid-build, change the
+spec first, then the plan, then the code — never the code alone.
 
-Re-read with fresh eyes before calling it finished:
+## Common rationalizations
 
-- Any "TBD", placeholder, or vague requirement? Fix it now.
-- Do any sections contradict each other?
-- Is this one coherent spec, or does it actually cover two or more
-  independent pieces that should be split and sequenced separately?
-- Could any Success Criterion be read two different ways? Pick one meaning
-  and make it explicit.
-
-## Common mistakes
-
-| Mistake | Fix |
+| Rationalization | Reality |
 |---|---|
-| Success criteria that say "works correctly" | Replace with a concrete check: input X produces output Y, command Z exits 0, endpoint returns status N |
-| Writing the spec before checking existing code/docs | Explore first — the thing may already exist, partially or fully |
-| Jumping straight to one approach | Always present 2-3 with trade-offs, even when the answer feels obvious — the trade-offs are what get approved, not just the pick |
-| Treating "bounded" as a way to skip approval | Bounded skips the file, never the confirmation — get an explicit yes before moving to `plan-from-spec` |
-| Downgrading scope mid-task to avoid redoing work | Hidden complexity upgrades the classification; it never downgrades one already in progress |
+| "The criterion is obvious, 'works correctly' is enough" | Downstream skills can only check what's written. Name the input, the command, the expected output |
+| "I'll just ask, it's faster than reading the code" | Facts the repo already holds are yours to find. Asking costs the user time and signals you didn't look |
+| "There's only one sensible approach" | The trade-offs are what get approved, not just the pick. Show 2-3 |
+| "They said 'sounds good', that's approval" | That's politeness. Approval names the design it's approving |
+| "It's bounded, so I can skip confirmation" | Bounded skips the file, never the explicit yes before `plan-from-spec` |
+| "It turned out bigger, but redoing the classification wastes work" | Hidden complexity upgrades the classification; it never downgrades one in progress |
+
+## Red flags
+
+- A question asked without a `GUESS:` attached
+- A Success Criterion with no command next to it
+- An "Assumptions" section that is empty on an architectural spec
+- Starting `plan-from-spec` in the same turn the spec file was written
+- Code changed to match a new requirement while the spec still says the old one
+
+## Verification
+
+Before calling the spec done, confirm with evidence, not memory:
+
+- [ ] No "TBD", placeholder, or vague requirement remains
+- [ ] No two sections contradict each other
+- [ ] One coherent spec — not two independent pieces that should be split
+- [ ] Every Success Criterion has a number, one reading, and a command
+- [ ] The user gave an explicit yes on the six-line restate and on the approach
 
 ## Next
 
-Once approved, hand off to `plan-from-spec`.
+Once the user has approved the written spec, call the Skill tool with
+`plan-from-spec`.

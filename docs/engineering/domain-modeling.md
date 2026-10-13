@@ -25,7 +25,13 @@ wouldn't change what "done" means.
 
 **Where do the resolved definitions end up?**
 In the spec itself, not left in chat history — otherwise `implement` has no
-way to inherit them later.
+way to inherit them later. Terms that will outlive the spec also go in the
+repo's `GLOSSARY.md`, created the first time one is needed.
+
+**When does a decision get an ADR?**
+Only when it's hard to reverse, would surprise someone without today's
+context, and involved a real trade-off. A changed decision gets a new ADR
+that supersedes the old one; the old one is never edited away.
 
 ## It's working if
 

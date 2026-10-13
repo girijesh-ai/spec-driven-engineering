@@ -175,6 +175,8 @@ Supporting skills (`engineering-standards`, `test-driven-development`,
 `resolve-merge-conflicts`, `triage-issues`, `grill-me`, `handoff`,
 `writing-for-agents`, `simple`) have no slash command. The agent loads
 them via the `skill` tool when a spine skill names them, or when you ask.
+Where a skill says "Call the Skill tool with `x`", OpenCode's equivalent
+is its `skill` tool with the same name.
 
 `implement` and `review-code` still work without an upstream spec. They
 must say so out loud ("no spec/plan found — proceeding ad-hoc" /
