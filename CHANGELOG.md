@@ -3,7 +3,7 @@
 Versions follow semver (`.claude-plugin/plugin.json`). Renaming a plugin or
 skill is a breaking change.
 
-## Unreleased
+## 2.0.1 — 2026-10-13
 
 - **New draft skill `plain-technical-writing`:** one standard for anything
   a person reads. Plain words, short sentences, and terms glossed on first
@@ -13,6 +13,22 @@ skill is a breaking change.
   `finish-branch`, and `domain-modeling` call it. Plans with 4+ steps gain
   an Order diagram. Prompted by user feedback that output read as too
   "Claude-like".
+- **Right-sized specs and plans.** `spec-from-idea` states scale and
+  lifetime first and always shows the minimal approach, recommending it
+  unless a named Goal rules it out. `plan-from-spec` drops steps that map
+  to no criterion (adding a criterion needs the user's yes) and runs a
+  deletion test on every step. `codebase-architecture` runs design-it-twice
+  only for interfaces that are hard to change later, without a fixed
+  "most flexible" option. `grill-me` weighs an edge case before making it
+  a requirement. `engineering-standards` extracts duplicates on the third
+  copy, or the second when they must change together. New eval
+  `spec-right-size`. From addyosmani/agent-skills (`idea-refine`,
+  `incremental-implementation`, `performance-optimization`): Non-Goals
+  carry a reason and list the tempting cuts; over-built vs simple
+  examples and the "why didn't you just…?" check; no performance work
+  without a measured problem. `plain-technical-writing` asks for a
+  diagram only where a flow would take a paragraph to follow, not for
+  every 3-step flow.
 
 ## 2.0.0 — 2026-10-12
 

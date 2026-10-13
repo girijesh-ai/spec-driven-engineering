@@ -45,6 +45,13 @@ Plan steps cite them (`Satisfies: SC-2`), `review-code` runs each command,
 and `finish-branch` reports each one's result. A number and a command are
 what let every later skill check the same thing.
 
+**How does it avoid over-engineering the design?**
+Three ways. It states the expected scale and lifetime first ("~5 users,
+under 2k rows, long-lived"), so the design is sized to real numbers. It
+always shows the minimal approach and recommends it unless a named Goal
+rules it out. And every Goal must trace to something you said or a stated
+constraint. A queue or cache with no scale number behind it is a red flag.
+
 **What happens if I skip this and go straight to `implement`?**
 `implement` still runs, but it will visibly say "no spec/plan found —
 proceeding ad-hoc," and `review-code`'s spec-compliance axis will report

@@ -89,13 +89,16 @@ does while the first is still in flight.
    extension of something that already exists) — don't default to "new
    file" or "add to the biggest existing file" without checking which is
    deeper.
-2. **For an interface other code will depend on, design it twice.**
-   Dispatch 3 or more subagents, each designing the interface under a
-   different constraint (smallest possible surface; most flexible;
-   optimised for the commonest caller; ports-and-adapters). Compare the
-   results on depth, locality of change, and where the seams fall, and
-   bring the comparison to `spec-from-idea`'s approaches step instead of
-   a single design.
+2. **Design it twice only when it's hard to change later**: a public
+   API, or an interface crossing a module or service boundary with
+   callers you don't control. Everything else gets one design, checked
+   with the depth and deletion tests above. When it applies, dispatch 2
+   subagents (3 for a public API), each under a different constraint:
+   smallest possible surface; optimised for the commonest caller; and
+   ports-and-adapters only if a second adapter exists or a test needs
+   one. Compare them on depth, locality of change, and where the seams
+   fall. If the comparison changes the spec's approach, stop and update
+   the spec with the user before planning further.
 3. **For review-code:** for each new or changed module, ask the module
    depth and interface width questions above. Flag any layer-boundary
    import that crosses a documented boundary the wrong direction.
@@ -111,6 +114,7 @@ does while the first is still in flight.
 | A module with 10+ public methods, most used by only one caller | That's several narrower interfaces wearing one name — split it |
 | A shared/lower-layer module importing something project-specific | Boundary violation — add an abstraction, don't import across it |
 | An interface with one implementation "for flexibility" | One adapter is a hypothetical seam — inline it until a second one exists |
+| Fanning out design-it-twice for an internal helper | One design; the depth and deletion tests are enough when callers are yours to change |
 | A wrapper module that only forwards calls | Apply the deletion test; if nothing reappears in callers, delete it |
 | Fixing an unrelated architecture problem while reviewing this change | Note it, don't silently expand scope — flag it as a separate follow-up |
 

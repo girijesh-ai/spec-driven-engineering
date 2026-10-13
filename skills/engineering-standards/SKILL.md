@@ -123,8 +123,10 @@ defaults here.
 - A constant, threshold, or validation rule defined in two places is a
   future inconsistency bug. One authoritative source, imported everywhere
   else.
-- The moment the same block appears a second time, extract it — three
-  occurrences means the extraction was already overdue.
+- Extract a repeated block on its third occurrence, or on its second
+  when the copies must always change together (a rule, a format, a
+  protocol step). Two blocks that merely look alike can stay; a wrong
+  shared abstraction costs more than a little duplication.
 - **Exception: test bodies.** Tests favour DAMP (descriptive and
   meaningful phrases) over DRY: each test should read on its own, with its
   setup and expected values visible. Shared fixtures for genuinely common
@@ -143,6 +145,17 @@ defaults here.
   dependency solve it? Only write new code once those are ruled out.
 - The simplest correct solution wins. Code that needs more comments to
   explain than the code it replaces is a regression, not an improvement.
+  What that looks like:
+
+  | Over-built | Simple |
+  |---|---|
+  | An event bus with middleware for one notification | A function call |
+  | An abstract factory for two similar components | Two components sharing a helper |
+  | A config-driven form builder for three forms | Three form components |
+  | A cache in front of a query nobody measured as slow | The query |
+
+  Ask of every new layer: would a staff engineer reading this say "why
+  didn't you just…?" If yes, do that instead.
 
 ## Layer boundaries and backward compatibility
 

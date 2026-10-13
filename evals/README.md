@@ -13,6 +13,7 @@ plugin loaded and grades two things:
 | Case | Skill | Checks |
 |---|---|---|
 | `spec-interview` | spec-from-idea | Classification, hypothesis + confidence, one question with a `GUESS:`, no code |
+| `spec-right-size` | spec-from-idea | Sizes a small internal feature to its stated scale; recommends the minimal approach, no queue/cache/background job |
 | `plan-traces-criteria` | plan-from-spec | Steps cite SC-n with commands, are sized, risky step early |
 | `implement-ad-hoc` | implement | Announces "no spec/plan found", writes the test first |
 | `review-no-spec` | review-code | Reports no spec, finds the pool leak on the early return with blocking severity |
