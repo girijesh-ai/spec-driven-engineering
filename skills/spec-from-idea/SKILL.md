@@ -44,6 +44,11 @@ scope turns out bigger once you're in it, say so and reclassify up.
 
 ## Process (bounded and architectural)
 
+Everything written here is read by a person: the hypothesis, each
+question, the restate, the design, the spec file. Before the first
+question, call the Skill tool with `plain-technical-writing` and follow it
+throughout. Simpler words, never less precision.
+
 1. **Check existing context first** — files, docs, prior specs, the
    project's `GLOSSARY.md` and ADRs if present — before asking anything.
    Facts are your job: look them up (or dispatch a subagent) instead of
@@ -102,7 +107,8 @@ they stand.
 The chosen approach and why, briefly noting alternatives considered.
 Name behaviour and interfaces, not file paths or code — those go stale;
 the plan names files. Exception: a snippet that *is* the decision (a
-signature, a schema).
+signature, a schema). A flow of 3+ steps or 2+ interacting components
+gets a Mermaid diagram.
 
 ## Testing Seams
 Where tests attach: the highest seam that observes the behaviour, and as
@@ -142,6 +148,7 @@ spec first, then the plan, then the code — never the code alone.
 ## Red flags
 
 - A question asked without a `GUESS:` attached
+- A question the user has to read twice to understand
 - A Success Criterion with no command next to it
 - An "Assumptions" section that is empty on an architectural spec
 - Starting `plan-from-spec` in the same turn the spec file was written
@@ -155,6 +162,7 @@ Before calling the spec done, confirm with evidence, not memory:
 - [ ] No two sections contradict each other
 - [ ] One coherent spec — not two independent pieces that should be split
 - [ ] Every Success Criterion has a number, one reading, and a command
+- [ ] The spec passes `plain-technical-writing`'s Verification list
 - [ ] The user gave an explicit yes on the six-line restate and on the approach
 
 ## Next

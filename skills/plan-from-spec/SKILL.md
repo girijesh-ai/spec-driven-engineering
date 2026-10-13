@@ -26,6 +26,10 @@ doesn't actually deliver something checkable.
 
 ## Process
 
+The plan is read by people as well as by `implement`. Call the Skill tool
+with `plain-technical-writing` before writing it: step names say what
+changes in plain words, and every command, path, and `SC-n` stays exact.
+
 1. **Read the spec fully.** Extract every Goal and every numbered Success
    Criterion (`SC-1`, `SC-2`, ...). If there's no spec, say so explicitly
    and ask whether to fall back to a short in-chat plan for a small,
@@ -90,6 +94,10 @@ doesn't actually deliver something checkable.
 ## Critical files
 - <path> — <what changes and why>
 
+## Order
+<4+ steps: a Mermaid flowchart of step dependencies, e.g.
+`1 --> 2`, `1 --> 3`, `2 & 3 --> 4`. Fewer steps: omit this section.>
+
 ## Steps
 ### 1. <step name>
 - Status: todo                 ← todo / done <commit sha> / blocked <reason>
@@ -129,6 +137,7 @@ but anything handed to `implement` as "the plan" gets the file.
 | Building the riskiest step last | Order risk-first among ready steps — a bad assumption should fail early, before other steps depend on it |
 | One giant step "migrate all callers" | Expand / migrate in batches / contract, each batch its own step |
 | Rewriting a plan file that already has done steps | Stop and ask; extend or re-cut, never silently overwrite |
+| Step names in abstract jargon ("Implement resilience layer") | Name what changes: "Retry failed chunk uploads, up to 3 times" |
 | Planning without reading the full spec | Half-read specs produce plans that miss non-goals and re-litigate settled questions |
 
 ## Next
