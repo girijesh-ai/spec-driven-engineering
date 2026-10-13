@@ -1,0 +1,37 @@
+schema_version: "1.0"
+name: plan-traces-criteria
+description: plan-from-spec turns a spec with numbered criteria into sized, risk-ordered steps that cite those criteria.
+tags: [spine, planning]
+execution:
+  prompt: |
+    Here's the approved spec. Turn it into an implementation plan.
+
+    # Session expiry
+    ## Goals
+    Sessions expire after 30 minutes idle; expired sessions can't be used.
+    ## Approach
+    Store last-seen time on the session; check it in the auth middleware.
+    The session store is shared by three services, so the schema change is risky.
+    ## Success Criteria & Evals
+    - SC-1: A session idle for 31 minutes is rejected with 401. Check: `pytest tests/test_auth.py -k idle_expiry`
+    - SC-2: A session used every 10 minutes stays valid for 2 hours. Check: `pytest tests/test_auth.py -k sliding_window`
+    - SC-3: Existing sessions without a last-seen field keep working after deploy. Check: `pytest tests/test_migration.py`
+  max_turns: 12
+  allowed_tools: [Read, Glob, Grep, Skill]
+graders:
+  - type: tool_used
+    name: plan-from-spec-fired
+    tool: Skill
+    input_match: "plan-from-spec"
+    arm: with-only
+  - type: regex
+    name: cites-criteria
+    target: last_message
+    pattern: "SC-3"
+  - type: llm
+    name: sized-risk-first-steps
+    criteria: |
+      - Every step cites at least one of SC-1, SC-2, SC-3 and names a command that verifies it.
+      - Every step has a size label (XS, S, M, L or XL), and none is XL.
+      - The risky shared-schema change (backward compatibility for existing sessions, SC-3) is scheduled before or alongside the first behaviour step, not last.
+      - Steps declare dependencies on each other.

@@ -1,0 +1,41 @@
+schema_version: "1.0"
+name: review-no-spec
+description: review-code reports the skipped spec axis and catches a resource leak on an early return, with severity.
+tags: [spine, review]
+execution:
+  prompt: |
+    Review this change before I commit it.
+
+    ```diff
+    --- a/app/export.py
+    +++ b/app/export.py
+    @@ def export_orders(customer_id):
+    -    rows = db.query("SELECT * FROM orders WHERE customer_id = %s", customer_id)
+    -    return to_csv(rows)
+    +    conn = pool.acquire()
+    +    if not customer_id:
+    +        return ""
+    +    rows = conn.query("SELECT * FROM orders WHERE customer_id = %s", customer_id)
+    +    pool.release(conn)
+    +    return to_csv(rows)
+    ```
+  max_turns: 10
+  allowed_tools: [Read, Glob, Grep, Skill]
+graders:
+  - type: tool_used
+    name: review-code-fired
+    tool: Skill
+    input_match: "review-code"
+    arm: with-only
+  - type: regex
+    name: spec-axis-skipped
+    target: last_message
+    pattern: "spec axis skipped|no spec"
+    flags: i
+  - type: llm
+    name: leak-found-with-severity
+    criteria: |
+      - Identifies that the connection acquired from the pool is never released when customer_id is falsy (the early return).
+      - Labels that finding Critical or Required (or equivalent blocking severity).
+      - Also notes the connection leaks if conn.query raises.
+      - The verdict is NEEDS FIXES, not READY.

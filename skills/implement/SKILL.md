@@ -1,6 +1,6 @@
 ---
 name: implement
-description: Use when writing the actual code for a plan step, feature, or bugfix — turns a plan (or an ad-hoc change) into committed, verified code.
+description: Use when writing or changing code for a plan step, feature, or bugfix — including a small one-off change asked for with no spec or plan, such as adding a function to an existing file — turns it into committed, verified code.
 ---
 
 # implement

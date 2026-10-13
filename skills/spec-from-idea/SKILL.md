@@ -55,8 +55,10 @@ scope turns out bigger once you're in it, say so and reclassify up.
    `HYPOTHESIS: <what you think they want>` and
    `CONFIDENCE: ~N% — missing: <what would raise it>`.
 3. **Ask clarifying questions one at a time**, each carrying your guess:
-   `Q: <question>` / `GUESS: <your recommended answer and why>`. Cover
-   purpose, constraints, who's affected, what "done" looks like. When an
+   `Q: <question>` / `GUESS: <your recommended answer and why>`. One
+   question is one decision — never a bundle of sub-questions under one
+   `Q:`. Cover purpose, constraints, who's affected, what "done" looks
+   like, across successive questions. When an
    answer is a buzzword, probe it: "If you didn't have to justify this to
    anyone, what would you actually want?"
 4. **Stop asking when you can predict the answers to your next three

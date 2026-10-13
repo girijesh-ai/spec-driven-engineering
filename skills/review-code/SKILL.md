@@ -1,6 +1,6 @@
 ---
 name: review-code
-description: Use when about to commit, push, or open a PR for any non-trivial change — the last gate that checks the change against its spec and the engineering standards before it ships.
+description: Use when about to commit, push, or open a PR for any non-trivial change, or when asked to review a change or diff — including a diff pasted inline rather than on a branch — the last gate that checks it against its spec and the engineering standards before it ships.
 ---
 
 # review-code

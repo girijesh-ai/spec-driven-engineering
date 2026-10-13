@@ -1,0 +1,30 @@
+schema_version: "1.0"
+name: implement-ad-hoc
+description: implement says out loud that there is no spec or plan, and still works test-first. Needs --scaffold and --allow-tools Write Edit Bash.
+tags: [spine, implement]
+context:
+  scaffold_script: scaffold.sh
+execution:
+  prompt: |
+    Add a slugify(title) function to utils.py: lowercase, spaces to hyphens,
+    strip punctuation.
+  max_turns: 25
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit, Bash]
+graders:
+  - type: tool_used
+    name: implement-fired
+    tool: Skill
+    input_match: "implement"
+    arm: with-only
+  - type: regex
+    name: announces-ad-hoc
+    target: trace
+    pattern: "no spec/plan found"
+    flags: i
+  - type: llm
+    name: test-first
+    focus: trace
+    criteria: |
+      - A test for slugify was written to the test suite and run (failing) before slugify was implemented in utils.py.
+      - The test's expected values are literal strings, not computed by the same logic as the implementation.
+      - The existing truncate tests still pass at the end, and the final test run was shown.
