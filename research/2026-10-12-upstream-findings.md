@@ -424,39 +424,40 @@ Infrastructure:
 
 ## Decisions for review
 
-Mark each `[x] accept`, `[-] reject`, or leave `[ ]` for later. Add notes inline.
+Decided 2026-10-12. `[x]` = accepted, `[-]` = rejected / deferred. Each accepted line gets
+`— done <sha>` as it lands, so this list is the tracker for what is left.
 
 **Tier 1**
-- [ ] 1. debug-systematically: feedback-loop-first + stop-the-line + untrusted error output + redact
-- [ ] 2. review-code: scope creep, spec discovery, fixed point, severity, mutation check, smells
-- [ ] 3a. Interview: recommendation/guess per question, hypothesis/confidence, stop test
-- [ ] 3b. Spec template: Assumptions, Boundaries, Commands, living spec, testing seams
-- [ ] 4. plan-from-spec: expand–contract, prefactor, sizing, risk-first, never overwrite
-- [ ] 5. test-driven-development: tautological + horizontal anti-patterns, mock at boundaries, stack discovery
-- [ ] 6. implement / finish-branch: NOTICED BUT NOT TOUCHING, PR template (Evidence, Merge Danger)
-- [ ] 7. handoff: redact, reference-don't-duplicate, working-tree + verification + approvals; phase-boundary tree
-- [ ] 8. "Call the Skill tool with x" sweep
+- [x] 1. debug-systematically: feedback-loop-first + stop-the-line + untrusted error output + redact
+- [x] 2. review-code: scope creep, spec discovery, fixed point, severity, mutation check, smells
+- [x] 3a. Interview: recommendation/guess per question, hypothesis/confidence, stop test
+- [x] 3b. Spec template: Assumptions, Boundaries, Commands, living spec, testing seams
+- [x] 4. plan-from-spec: expand–contract, prefactor, sizing, risk-first, never overwrite
+- [x] 5. test-driven-development: tautological + horizontal anti-patterns, mock at boundaries, stack discovery
+- [x] 6. implement / finish-branch: NOTICED BUT NOT TOUCHING, PR template (Evidence, Merge Danger)
+- [x] 7. handoff: redact, reference-don't-duplicate, working-tree + verification + approvals; phase-boundary tree
+- [x] 8. "Call the Skill tool with x" sweep
 
 **Tier 2**
-- [ ] 9. Evals: plugin evals → trigger/collision eval + CI → behavioral/pressure cases
-- [ ] 10. Floor-guard script (± CONSTRAINTS.md)
-- [ ] 11. Rationalizations + Verification sections, enforced by validate.py
-- [ ] 12. codebase-architecture: deletion test, adapter rule, dependency categories, design it twice
-- [ ] 13. GLOSSARY.md + ADRs
-- [ ] 14. New skills: doubt-check / retro / simplify / source-driven (pick any)
-- [ ] 15. Autonomous or parallel implement mode
-- [ ] 16. dev-workflow shared operating rules + trust levels
-- [ ] 17. writing-for-agents deepening
+- [x] 9. Evals: **plugin evals only** this pass; trigger/collision eval, CI eval step and behavioral tier deferred. Was: plugin evals → trigger/collision eval + CI → behavioral/pressure cases
+- [x] 10. Floor-guard script (± CONSTRAINTS.md)
+- [x] 11. **Both sections** (Rationalizations + Red Flags + Verification), despite M's negation counterpoint. Was: Rationalizations + Verification sections, enforced by validate.py
+- [x] 12. codebase-architecture: deletion test, adapter rule, dependency categories, design it twice
+- [x] 13. GLOSSARY.md + ADRs
+- [x] 14. **All four** new skills, shipped as draft. Was: New skills: doubt-check / retro / simplify / source-driven (pick any)
+- [-] 15. Deferred to its own spec: see [tickets proposal](2026-10-12-tickets-and-parallel-implement.md). Was: Autonomous or parallel implement mode
+- [x] 16. dev-workflow shared operating rules + trust levels
+- [x] 17. writing-for-agents deepening
 
 **Conflicts** (accept = take the recommendation in §3)
-- [ ] Keep resolve-merge-conflicts
-- [ ] Keep refactor inside the TDD loop
-- [ ] Keep one-question-at-a-time
-- [ ] Keep "never test manually"
-- [ ] Add DAMP test exemption to engineering-standards DRY
-- [ ] Skip user/model-invoked split, SessionStart router, em-dash ban
+- [x] Keep resolve-merge-conflicts
+- [x] Keep refactor inside the TDD loop
+- [x] Keep one-question-at-a-time
+- [x] Keep "never test manually"
+- [x] Add DAMP test exemption to engineering-standards DRY
+- [x] Skip user/model-invoked split, SessionStart router, em-dash ban
 
 **Hygiene**
-- [ ] CHANGELOG.md
-- [ ] CI workflow
-- [ ] Rejected-ideas record (`.out-of-scope/` or ledger)
+- [x] CHANGELOG.md
+- [x] CI workflow
+- [x] Rejected-ideas record (`.out-of-scope/` or ledger)
