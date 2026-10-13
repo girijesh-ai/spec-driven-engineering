@@ -31,26 +31,52 @@ against beyond what's obviously implied by the request.
 
 ## Process
 
+0. **Start from a clean baseline.** Discover the project's test, build,
+   and typecheck commands (read the repo — never assume `npm test`), run
+   the suite once, and note the result. If it's already red, say so and
+   ask before building on it — otherwise a failure later can't be blamed
+   on the step that caused it.
 1. **Take one step at a time.** Never start a step whose dependencies (per
-   the plan) aren't done. Write against `engineering-standards` as you go —
+   the plan) aren't done. Call the Skill tool with `engineering-standards`
+   once per session and write against it as you go —
    naming, error handling, security, layer boundaries, and necessity
    (does this code need to exist, is this the simplest correct solution)
    — rather than treating any of that as something only `review-code`
    checks after the fact. Catching your own over-engineering while writing
    is cheaper than catching it in review.
-2. **Test-first.** Invoke `test-driven-development` for the step: write the
-   failing test that encodes the step's verification, watch it fail for the
-   right reason, write the minimal code to pass, refactor.
-3. **Check the step's verification** (from the plan, traced to the spec's
-   Success Criteria & Evals) before considering the step done. "The code
-   compiles" is not verification; "the linked criterion is now checkable
-   and passes" is.
-4. **Run `review-code` before each commit** — not just at the end of the
-   whole plan. Catching a standards or spec-compliance problem one step
-   late is cheaper than catching it after five steps built on top of it.
-5. **Commit** only after review passes (or documented findings are
-   addressed).
-6. **Move to the next step.**
+2. **Test-first.** Call the Skill tool with `test-driven-development` for
+   the step: write the failing test that encodes the step's verification,
+   watch it fail for the right reason, write the minimal code to pass,
+   refactor. Run typecheck and the single test file often; the full suite
+   at each plan checkpoint and before the final review. If you've written
+   about 100 lines without running a test, stop and run one.
+3. **Stay inside the step.** Anything you notice outside the step's scope —
+   a bug, a smell, a missing test — goes in a list, not in this diff:
+
+   ```
+   NOTICED BUT NOT TOUCHING:
+   - <file:line> — <what and why it matters>
+   → Want me to add these as plan steps or follow-ups?
+   ```
+4. **Check the step's verification** (from the plan, traced to the spec's
+   Success Criteria & Evals) by running its command yourself before
+   considering the step done. "The code compiles" is not verification;
+   "the linked criterion's command ran and passed" is.
+5. **Stop the line on an unexpected failure.** A verification that fails
+   for a reason you don't understand, or a build that breaks, is not
+   something to push past to the next step. Preserve the output, call the
+   Skill tool with `debug-systematically`, and resume only once it's green.
+6. **Call the Skill tool with `review-code` before each commit** — not
+   just at the end of the whole plan. Catching a standards or
+   spec-compliance problem one step late is cheaper than catching it after
+   five steps built on top of it.
+7. **Commit** only after review passes (or documented findings are
+   addressed). Stage only this step's files. Keep each commit revertable
+   on its own: the code compiles at every commit, and never delete an old
+   implementation and add its replacement in the same commit.
+8. **Mark the step done** in the plan file (`Status: done <sha>`), then
+   move to the next step. The plan file, not your memory, is the record a
+   resumed session starts from.
 
 ## Reuse before writing
 
@@ -59,16 +85,36 @@ reusable, and grep the codebase for existing implementations of the same
 concern. Building a second version of something that exists is a bug, not a
 feature.
 
-## Common mistakes
+## Common rationalizations
 
-| Mistake | Fix |
+| Rationalization | Reality |
 |---|---|
-| Writing all steps' code, then testing at the end | Test-first per step — this is what makes each step's verification meaningful |
-| Treating "ad-hoc mode" as license to skip TDD/review | Ad-hoc affects traceability only; test-first and review-before-commit still apply |
-| Running review-code once at the very end | Run it per step, before each commit — cheaper to fix one step's problem than five stacked on it |
-| Silently proceeding when no plan exists | State "no spec/plan found — proceeding ad-hoc" out loud, every time |
-| Re-implementing something the plan already flagged as reusable | Check the plan's reuse notes and grep first |
+| "I'll write all the steps, then test at the end" | Test-first per step is what makes each step's verification mean anything |
+| "There's no plan, so TDD and review are optional" | Ad-hoc affects traceability only; test-first and review-before-commit still apply |
+| "One review at the end is enough" | One step's problem is cheap; five steps stacked on it are not |
+| "While I'm here I'll fix this too" | It goes in NOTICED BUT NOT TOUCHING. An unplanned change has no criterion to check it against |
+| "The failure is probably flaky, I'll move on" | Stop the line. A failure you don't understand is a bug until proven otherwise |
+| "The subagent / tool said tests pass" | Run the verification command yourself. A claim is not evidence |
+| "This already exists but mine is cleaner" | Reuse first; a second version of the same concern is a bug |
+
+## Red flags
+
+- More than ~100 lines written since the last test run
+- A diff touching files the plan step doesn't name
+- A commit that deletes old code and adds its replacement together
+- Starting a step while the suite is red
+- No "no spec/plan found — proceeding ad-hoc" line when there's no plan
+
+## Verification
+
+Per step, before marking it done:
+
+- [ ] The step's verification command ran in this session and passed (paste the result)
+- [ ] `review-code` returned READY for this step's diff
+- [ ] Only this step's files are staged
+- [ ] Out-of-scope finds are listed under NOTICED BUT NOT TOUCHING, not fixed
+- [ ] The plan file shows `Status: done <sha>`
 
 ## Next
 
-After all steps pass review, hand off to `finish-branch`.
+After all steps pass review, call the Skill tool with `finish-branch`.

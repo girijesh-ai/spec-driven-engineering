@@ -27,13 +27,24 @@ commit), only traceability does.
 No — test-first per step, every step. That's what makes "the step is done"
 mean something concrete rather than "the code exists."
 
+**What happens to problems I notice outside the current step?**
+They go in a NOTICED BUT NOT TOUCHING list, and you decide whether they
+become new plan steps or follow-ups. The current step's diff stays about
+the current step.
+
+**What if a test fails and I don't know why?**
+The skill stops the line: it keeps the failing output and calls
+`debug-systematically` instead of moving on to the next step.
+
 **Why run review-code per step instead of once at the end?**
 A standards or spec-compliance problem found one step late is cheap to fix.
 Found five steps late, after other code was built on top of it, it's not.
 
 ## It's working if
 
-- Every commit corresponds to one plan step, test-first, reviewed.
+- Every commit corresponds to one plan step, test-first, reviewed, and the
+  plan file marks that step done with the commit's SHA.
+- Work starts from a suite that was green (or explicitly accepted as red).
 - Ad-hoc mode is always announced, never silent.
 - Nothing gets re-implemented that the plan or a codebase grep already
   showed exists.
