@@ -330,8 +330,9 @@ pressure-testing is a known follow-up, not a v1 requirement.
 
 2.0.0 reworked most of these skills' bodies (see `CHANGELOG.md`). The
 changes have plugin-eval smoke runs ([`evals/README.md`](evals/README.md))
-but no fresh dry run against a real task yet. Four draft skills —
-`doubt-check`, `retro`, `simplify-code`, `source-driven` — ship in
+but no fresh dry run against a real task yet. Five draft skills —
+`doubt-check`, `retro`, `simplify-code`, `source-driven`,
+`plain-technical-writing` — ship in
 `skills/` but aren't listed here until they're dry-run; see
 [`docs/in-progress.md`](docs/in-progress.md).
 

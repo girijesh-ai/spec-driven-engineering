@@ -57,6 +57,11 @@ spec is finalized, not after the code reveals the ambiguity.
    **Consequences**. A changed decision gets a new ADR that marks the old
    one superseded — never edit or delete the old one.
 
+Definitions, glossary entries, and ADRs are read by people joining later.
+Write them per `plain-technical-writing` (call the Skill tool with it):
+plain words, exact meaning, a concrete example of a member and a
+near-miss.
+
 ## Common mistakes
 
 | Mistake | Fix |

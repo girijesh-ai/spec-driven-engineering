@@ -3,6 +3,17 @@
 Versions follow semver (`.claude-plugin/plugin.json`). Renaming a plugin or
 skill is a breaking change.
 
+## Unreleased
+
+- **New draft skill `plain-technical-writing`:** one standard for anything
+  a person reads. Plain words, short sentences, and terms glossed on first
+  use, with no loss of precision: numbers, commands, paths, and `SC-n` IDs
+  stay. Draw a diagram for any flow of 3+ steps: Mermaid in files, ASCII
+  in chat. `spec-from-idea`, `plan-from-spec`, `grill-me`, `handoff`,
+  `finish-branch`, and `domain-modeling` call it. Plans with 4+ steps gain
+  an Order diagram. Prompted by user feedback that output read as too
+  "Claude-like".
+
 ## 2.0.0 — 2026-10-12
 
 **Breaking:** the plugin is renamed `spec-driven-engineering` → `sde`, and

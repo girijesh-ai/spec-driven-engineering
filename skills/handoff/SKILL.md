@@ -31,6 +31,10 @@ session needs and drop what it doesn't.
 
 ## What goes in a handoff doc
 
+A colleague may read it cold. Call the Skill tool with
+`plain-technical-writing` and follow it: lead with where things stand,
+keep every SHA, command, and path exact.
+
 ```markdown
 # Handoff: <topic>
 

@@ -53,6 +53,10 @@ if it were real.
    follow-ups; those are the next questions, asked after this answer.
    The requester reacts to a concrete position faster than to an open
    question, and a wrong guess surfaces the gap just as well.
+   Word both plainly: call the Skill tool with `plain-technical-writing`
+   before the first question. `Q:` is one sentence in the requester's own
+   words; `GUESS:` is the answer plus "because". A term they didn't use
+   gets a short gloss.
 3. **Look up facts, ask about decisions.** If the code, docs, or a quick
    experiment can answer it, find out yourself (or dispatch a subagent)
    and state what you found. Only decisions go to the requester.
@@ -77,6 +81,7 @@ if it were real.
 | Stopping after the first round of questions | Keep going until a round produces nothing new, not until it produces something comfortable |
 | Grilling implementation details in a spec that hasn't settled its goals yet | Grill the goals/approach first — implementation questions are premature if the goal itself is still shaky |
 | Asking an open question with no position of your own | Attach a `GUESS:` — it's not answering for them, it's giving them something to push against |
+| A question the requester has to decode (stacked clauses, jargon they never used) | One plain sentence in their words; gloss any new term, keep it exact |
 | Asking the requester something the repo could answer | Facts are yours to look up; only decisions go to them |
 | Answering your own question instead of asking the requester | Stop after each question and wait for the real answer — self-answering isn't grilling, it's narrating |
 | Treating a "don't stop for questions" bias as overriding this skill | It doesn't — a skill signaling it needs to ask is exactly the case such a bias is meant to defer to |

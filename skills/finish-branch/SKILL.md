@@ -45,7 +45,9 @@ Skill tool with `implement` first.
      linear.
 6. **Write the commit/PR description from the spec and the diff**, not
    from memory — the spec's Context and Goals are the "why," the plan's
-   steps and the diff are the "what." Use this shape:
+   steps and the diff are the "what." Word it per
+   `plain-technical-writing` (call the Skill tool with it): reviewers read
+   it fast. Use this shape:
 
    ```markdown
    ## Summary
