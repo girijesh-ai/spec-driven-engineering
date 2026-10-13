@@ -10,7 +10,7 @@
     {
       "name": "sde",
       "description": "sde (spec-driven-engineering): spec -> plan -> implement -> review -> finish, with supporting standards, architecture, and debugging disciplines",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "source": "./",
       "author": {
         "name": "Girijesh",
