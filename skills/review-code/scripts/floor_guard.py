@@ -171,17 +171,15 @@ def parse_unified_diff(text: str) -> List[FileDiff]:
     return files
 
 
-def is_test_path(path: str) -> bool:
-    parts = Path(path).parts
-    name = parts[-1] if parts else path
-    if any(fnmatch.fnmatch(name, glob) for glob in TEST_PATH_GLOBS):
-        return True
-    return any(part in TEST_DIR_NAMES for part in parts[:-1])
-
-
 def matches_any(path: str, globs: Tuple[str, ...]) -> bool:
     name = Path(path).name
     return any(fnmatch.fnmatch(name, glob) for glob in globs)
+
+
+def is_test_path(path: str) -> bool:
+    return matches_any(path, TEST_PATH_GLOBS) or any(
+        part in TEST_DIR_NAMES for part in Path(path).parts[:-1]
+    )
 
 
 def first_match(pattern: "re.Pattern[str]", line: str) -> Optional[str]:
