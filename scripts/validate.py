@@ -55,6 +55,10 @@ def parse_frontmatter(text: str) -> dict[str, str] | None:
     return fields
 
 
+def headings(text: str) -> set[str]:
+    return set(re.findall(r"^## (.+?)\s*$", text, re.M))
+
+
 def check_skill_frontmatter(errors: list[str]) -> None:
     for path in sorted(REPO_ROOT.glob("skills/*/SKILL.md")):
         skill_name = path.parent.name
@@ -81,9 +85,9 @@ def check_discipline_sections(errors: list[str]) -> None:
         if not path.exists():
             errors.append(f"discipline check: {path} does not exist")
             continue
-        headings = set(re.findall(r"^## (.+?)\s*$", path.read_text(), re.M))
+        found = headings(path.read_text())
         for section in DISCIPLINE_SECTIONS:
-            if section not in headings:
+            if section not in found:
                 errors.append(f"{path}: discipline skill missing '## {section}'")
 
 
@@ -113,11 +117,11 @@ def check_promoted_docs(errors: list[str]) -> None:
             errors.append(
                 f"{doc_path}: missing '**Status:** draft' or '**Status:** stable' line"
             )
-        headings = set(re.findall(r"^## (.+?)\s*$", text, re.M))
+        found = headings(text)
         for section in REQUIRED_DOC_SECTIONS:
-            if section not in headings:
+            if section not in found:
                 errors.append(f"{doc_path}: missing required section '## {section}'")
-        for heading in sorted(headings - set(REQUIRED_DOC_SECTIONS)):
+        for heading in sorted(found - set(REQUIRED_DOC_SECTIONS)):
             errors.append(
                 f"{doc_path}: unexpected section '## {heading}' — docs allow "
                 "exactly the four required sections"
