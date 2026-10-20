@@ -65,9 +65,14 @@ ASSUMPTIONS I'M MAKING:
   in `plan-from-spec` 2.0.1.
 - Claude Code's Agent tool takes the aliases `sonnet` and `opus`, so no
   model IDs are hard-coded.
-- OpenCode sets a subagent's model in its agent definition
-  (`model: provider/model-id`), not per call; with no `model` set, it
-  inherits the caller's model (opencode.ai/docs/agents).
+- OpenCode (1.18.10, from `opencode --version`) sets a subagent's model
+  in its agent definition (`model: provider/model-id`), not per call: the
+  Task tool takes no `model` parameter
+  ([`tool/task.ts:44-58`](https://github.com/anomalyco/opencode/blob/v1.18.10/packages/opencode/src/tool/task.ts#L44-L58)). With no `model` set,
+  the subagent runs on the caller's model
+  ([`tool/task.ts:181`](https://github.com/anomalyco/opencode/blob/v1.18.10/packages/opencode/src/tool/task.ts#L181)). Project agent files go in
+  `.opencode/agents/` (`.opencode/agent/` also loads,
+  [`config/agent.ts:13`](https://github.com/anomalyco/opencode/blob/v1.18.10/packages/opencode/src/config/agent.ts#L13)).
 - SC-4 and SC-5 run on a host where Bash works inside the eval sandbox
   (it did not on the RHEL 8 host in `evals/README.md`).
 
@@ -200,9 +205,6 @@ scaffold need `--scaffold`.
 
 ## Open Questions
 
-- The folder OpenCode reads project agent files from (`.opencode/agent/`
-  or `.opencode/agents/`). Owner: resolved by lookup at planning time; it
-  changes a path, not a criterion.
 - Whether `claude plugin eval` accepts `Agent` in `--allow-tools`. Owner:
   resolved by a trial run at planning time; if not, SC-4 and SC-5 name the
   right flag.
