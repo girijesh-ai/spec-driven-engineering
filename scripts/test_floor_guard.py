@@ -146,6 +146,18 @@ class FloorGuardRepo(unittest.TestCase):
         self.assertEqual(code, 2)
         self.assertIn("Nothing was checked", output)
 
+    def test_relaxed_config_is_flagged(self) -> None:
+        self.write("pyproject.toml", "[tool.coverage.report]\nfail_under = 90\n[tool.mypy]\nstrict = false\n")
+        self.assertEqual(self.rules(), ["RELAXED_CONFIG"])
+
+    def test_stub_is_flagged(self) -> None:
+        self.write("src/app.py", "def add(a, b):\n    raise NotImplementedError\n")
+        self.assertEqual(self.rules(), ["STUB"])
+
+    def test_file_in_test_dir_is_a_test_whatever_its_name(self) -> None:
+        self.write("tests/helpers.py", "import pytest\n\n@pytest.mark.skip\ndef helper():\n    pass\n")
+        self.assertEqual(self.rules(), ["SKIPPED_TEST"])
+
 
 if __name__ == "__main__":
     unittest.main()
