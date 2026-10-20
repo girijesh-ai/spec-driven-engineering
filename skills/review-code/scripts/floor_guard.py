@@ -200,19 +200,16 @@ def scan_file(diff: FileDiff) -> List[Finding]:
     findings: List[Finding] = []
     if matches_any(diff.path, PROSE_GLOBS):
         return findings
+    rules = [("SUPPRESSION", SUPPRESSION), ("STUB", STUB)]
+    if is_test_path(diff.path):
+        rules.append(("SKIPPED_TEST", SKIPPED_TEST))
+    if matches_any(diff.path, CONFIG_GLOBS):
+        rules.append(("RELAXED_CONFIG", RELAXED_CONFIG))
     for number, text in diff.added:
-        for rule, pattern in (("SUPPRESSION", SUPPRESSION), ("STUB", STUB)):
+        for rule, pattern in rules:
             marker = first_match(pattern, text)
             if marker:
                 findings.append(Finding(rule, diff.path, number, marker))
-        if is_test_path(diff.path):
-            marker = first_match(SKIPPED_TEST, text)
-            if marker:
-                findings.append(Finding("SKIPPED_TEST", diff.path, number, marker))
-        if matches_any(diff.path, CONFIG_GLOBS):
-            marker = first_match(RELAXED_CONFIG, text)
-            if marker:
-                findings.append(Finding("RELAXED_CONFIG", diff.path, number, marker))
 
     if is_test_path(diff.path):
         removed = [(n, t) for n, t in diff.removed if ASSERTION.search(t)]
