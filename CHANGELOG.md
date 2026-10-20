@@ -3,6 +3,17 @@
 Versions follow semver (`.claude-plugin/plugin.json`). Renaming a plugin or
 skill is a breaking change.
 
+## 2.0.2 — 2026-10-20
+
+- **`plain-technical-writing` promoted to stable.** Dry run: the
+  sequential-dispatch spec (`docs/specs/2026-10-19-sequential-dispatch.md`)
+  and its `grill-me` log, read in one pass by a colleague outside the work.
+  New doc `docs/productivity/plain-technical-writing.md`; listed in the
+  README; removed from `docs/in-progress.md`.
+- **New spec: sequential dispatch.** `plan-from-spec` writes a plan index
+  plus one file per unit; `implement` runs plans of 3+ units one at a time,
+  each in a fresh subagent on `sonnet` or `opus`. Spec only; not built yet.
+
 ## 2.0.1 — 2026-10-13
 
 - **New draft skill `plain-technical-writing`:** one standard for anything

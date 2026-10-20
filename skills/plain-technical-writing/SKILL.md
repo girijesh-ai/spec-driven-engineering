@@ -4,7 +4,7 @@ description: Use when writing anything a person on the team will read — a spec
 ---
 
 # plain-technical-writing
-Status: draft
+Status: stable
 
 ## Overview
 

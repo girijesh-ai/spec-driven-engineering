@@ -11,7 +11,7 @@ against anything but vibes. `sde` (spec-driven-engineering) makes the spec the
 thing everything else is checked against: one spine (idea → spec → plan
 → code → review → ship) carrying measurable Success Criteria & Evals all
 the way through, plus the standards, architecture, and debugging
-disciplines that spine leans on. 17 skills, free. Ships as a Claude Code
+disciplines that spine leans on. 18 skills, free. Ships as a Claude Code
 plugin (`sde` — skills are `/sde:implement`, `/sde:review-code`, ...) and
 as an [OpenCode](OPENCODE.md) skill catalog.
 
@@ -166,6 +166,7 @@ These plug into the spine; none of them are peers of it.
 | [handoff](docs/productivity/handoff.md) | productivity | standalone → feeds `dev-workflow` (next session) |
 | [writing-for-agents](docs/productivity/writing-for-agents.md) | productivity | governs how every skill here is written |
 | [simple](docs/productivity/simple.md) | productivity | `finish-branch` (stakeholder summary), or standalone for any dense doc |
+| [plain-technical-writing](docs/productivity/plain-technical-writing.md) | productivity | `spec-from-idea`, `plan-from-spec`, `grill-me`, `handoff`, `finish-branch`, `domain-modeling` |
 
 ## Dependency graph
 
@@ -189,6 +190,7 @@ resolve-merge-conflicts (standalone)
 triage-issues ──> spec-from-idea (for non-trivial items)
 handoff ──> dev-workflow (routes the next session back in)
 writing-for-agents (governs authoring, not invoked mid-task)
+plain-technical-writing <── spine skills, grill-me, handoff, domain-modeling
 ```
 
 ## Layout
@@ -316,7 +318,7 @@ don't need to update your own invocations immediately.
 ## Status
 
 Every skill dispatches correctly through the actual `Skill` tool once
-installed, and all 17 are `stable` — dry-run against a real task, per
+installed, and all 18 are `stable` — dry-run against a real task, per
 `CLAUDE.md`'s promotion rule. Six were promoted after a real-repo
 persona test against `huggingface/smolagents`: a genuine root-caused bug
 fix (`debug-systematically`), a manufactured-but-real git conflict
@@ -326,14 +328,16 @@ terminology ambiguity (`domain-modeling`), real backlog triage
 it (`handoff`), and a critique of the target repo's own `AGENTS.md`
 against this skill's rules (`writing-for-agents`). `simple` was promoted
 after producing a real plain-language explainer for a live POC kickoff
-doc — all local-only, nothing pushed upstream. Formal subagent
+doc — all local-only, nothing pushed upstream. `plain-technical-writing`
+was promoted after a real spec and `grill-me` session
+([`docs/specs/2026-10-19-sequential-dispatch.md`](docs/specs/2026-10-19-sequential-dispatch.md))
+read in one pass by a colleague outside the work. Formal subagent
 pressure-testing is a known follow-up, not a v1 requirement.
 
 2.0.0 reworked most of these skills' bodies (see `CHANGELOG.md`). The
 changes have plugin-eval smoke runs ([`evals/README.md`](evals/README.md))
-but no fresh dry run against a real task yet. Five draft skills —
-`doubt-check`, `retro`, `simplify-code`, `source-driven`,
-`plain-technical-writing` — ship in
+but no fresh dry run against a real task yet. Four draft skills —
+`doubt-check`, `retro`, `simplify-code`, `source-driven` — ship in
 `skills/` but aren't listed here until they're dry-run; see
 [`docs/in-progress.md`](docs/in-progress.md).
 
@@ -356,6 +360,7 @@ but no fresh dry run against a real task yet. Five draft skills —
 | `handoff` | stable |
 | `writing-for-agents` | stable |
 | `simple` | stable |
+| `plain-technical-writing` | stable |
 
 ## Credits & prior art
 
