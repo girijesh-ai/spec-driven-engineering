@@ -4,7 +4,7 @@ description: Use when a session or branch has finished and mistakes, rework, or 
 ---
 
 # retro
-Status: draft
+Status: stable
 
 ## Overview
 

@@ -11,7 +11,7 @@ against anything but vibes. `sde` (spec-driven-engineering) makes the spec the
 thing everything else is checked against: one spine (idea → spec → plan
 → code → review → ship) carrying measurable Success Criteria & Evals all
 the way through, plus the standards, architecture, and debugging
-disciplines that spine leans on. 18 skills, free. Ships as a Claude Code
+disciplines that spine leans on. 22 skills, free. Ships as a Claude Code
 plugin (`sde` — skills are `/sde:implement`, `/sde:review-code`, ...) and
 as an [OpenCode](OPENCODE.md) skill catalog.
 
@@ -167,6 +167,10 @@ These plug into the spine; none of them are peers of it.
 | [writing-for-agents](docs/productivity/writing-for-agents.md) | productivity | governs how every skill here is written |
 | [simple](docs/productivity/simple.md) | productivity | `finish-branch` (stakeholder summary), or standalone for any dense doc |
 | [plain-technical-writing](docs/productivity/plain-technical-writing.md) | productivity | `spec-from-idea`, `plan-from-spec`, `grill-me`, `handoff`, `finish-branch`, `domain-modeling` |
+| [doubt-check](docs/engineering/doubt-check.md) | engineering | between `implement` and `review-code`, or standalone |
+| [simplify-code](docs/engineering/simplify-code.md) | engineering | fed by `review-code` findings and `plan-from-spec` prefactor steps |
+| [source-driven](docs/engineering/source-driven.md) | engineering | `implement` |
+| [retro](docs/productivity/retro.md) | productivity | after `finish-branch` |
 
 ## Dependency graph
 
@@ -183,7 +187,8 @@ implement ──┬─> test-driven-development
                                └─> codebase-architecture
        │
        v
-finish-branch ──> simple (stakeholder summary of what shipped)
+finish-branch ──┬─> simple (stakeholder summary of what shipped)
+                 └─> retro (guardrails from what went wrong)
 
 debug-systematically ──> test-driven-development
 resolve-merge-conflicts (standalone)
@@ -191,6 +196,9 @@ triage-issues ──> spec-from-idea (for non-trivial items)
 handoff ──> dev-workflow (routes the next session back in)
 writing-for-agents (governs authoring, not invoked mid-task)
 plain-technical-writing <── spine skills, grill-me, handoff, domain-modeling
+doubt-check (one decision, mid-implement) ──> review-code
+review-code findings ──> simplify-code
+implement ──> source-driven (version-pinned docs)
 ```
 
 ## Layout
@@ -318,7 +326,7 @@ don't need to update your own invocations immediately.
 ## Status
 
 Every skill dispatches correctly through the actual `Skill` tool once
-installed, and all 18 are `stable` — dry-run against a real task, per
+installed, and all 22 are `stable` — dry-run against a real task, per
 `CLAUDE.md`'s promotion rule. Six were promoted after a real-repo
 persona test against `huggingface/smolagents`: a genuine root-caused bug
 fix (`debug-systematically`), a manufactured-but-real git conflict
@@ -331,15 +339,18 @@ after producing a real plain-language explainer for a live POC kickoff
 doc — all local-only, nothing pushed upstream. `plain-technical-writing`
 was promoted after a real spec and `grill-me` session
 ([`docs/specs/2026-10-19-sequential-dispatch.md`](docs/specs/2026-10-19-sequential-dispatch.md))
-read in one pass by a colleague outside the work. Formal subagent
+read in one pass by a colleague outside the work. Four more were
+promoted on that same spec's branch: `doubt-check` (three cycles on its
+Success Criteria, 46 objections accepted and 3 refuted), `simplify-code`
+(three behaviour-preserving commits on `floor_guard.py` and
+`validate.py`), `source-driven` (OpenCode agent facts pinned to the
+`v1.18.10` source), and `retro` (a validator check for half-done
+promotions, `4b1fac0`). Formal subagent
 pressure-testing is a known follow-up, not a v1 requirement.
 
 2.0.0 reworked most of these skills' bodies (see `CHANGELOG.md`). The
 changes have plugin-eval smoke runs ([`evals/README.md`](evals/README.md))
-but no fresh dry run against a real task yet. Four draft skills —
-`doubt-check`, `retro`, `simplify-code`, `source-driven` — ship in
-`skills/` but aren't listed here until they're dry-run; see
-[`docs/in-progress.md`](docs/in-progress.md).
+but no fresh dry run against a real task yet.
 
 | Skill | Status |
 |---|---|
@@ -361,6 +372,10 @@ but no fresh dry run against a real task yet. Four draft skills —
 | `writing-for-agents` | stable |
 | `simple` | stable |
 | `plain-technical-writing` | stable |
+| `doubt-check` | stable |
+| `simplify-code` | stable |
+| `source-driven` | stable |
+| `retro` | stable |
 
 ## Credits & prior art
 
@@ -382,7 +397,7 @@ just inspiration:
 [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)
 0.6.12 — each credited where it's used, and compared in
 [`research/2026-10-12-upstream-findings.md`](research/2026-10-12-upstream-findings.md).
-The draft skills `doubt-check`, `simplify-code`, and `source-driven` adapt
+`doubt-check`, `simplify-code`, and `source-driven` adapt
 agent-skills originals; `retro` adapts mattpocock's. The PR description's
 Summary visuals in `finish-branch` come from Dex Horthy's `show-me`
 (HumanLayer), by way of mattpocock's `pr`.

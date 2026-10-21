@@ -3,6 +3,28 @@
 Versions follow semver (`.claude-plugin/plugin.json`). Renaming a plugin or
 skill is a breaking change.
 
+## 2.0.3 — 2026-10-21
+
+- **`doubt-check`, `simplify-code`, `source-driven` and `retro` promoted
+  to stable.** Each has a doc under `docs/<bucket>/`, a README listing,
+  and a `dev-workflow` route; all four are out of `docs/in-progress.md`.
+  Dry runs: `doubt-check` ran 3 cycles on the sequential-dispatch spec's
+  SC-1 to SC-5 (record in
+  `docs/specs/2026-10-19-sequential-dispatch-doubt-check.md`);
+  `simplify-code` made three behaviour-preserving commits on
+  `floor_guard.py` and `validate.py`; `source-driven` pinned the spec's
+  OpenCode facts to the `v1.18.10` source; `retro` produced the guardrail
+  below.
+- **`source-driven` step 1:** an installed tool with no lockfile or
+  manifest (a CLI, an editor) uses its `--version` output.
+- **`validate.py` fails on a half-done promotion:** a doc's Status must
+  match its SKILL.md, a skill with a docs page must be out of
+  `docs/in-progress.md`, and a stable skill needs a docs page and a README
+  status row.
+- **Sequential-dispatch spec:** SC-1 to SC-5 rewritten so each can be
+  graded by `claude plugin eval`. A unit's own commit marks it `done`;
+  an approval in the request counts only when it names the plan file.
+
 ## 2.0.2 — 2026-10-20
 
 - **`plain-technical-writing` promoted to stable.** Dry run: the

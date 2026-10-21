@@ -4,7 +4,7 @@ description: Use when a non-trivial decision made mid-work (a design choice, a r
 ---
 
 # doubt-check
-Status: draft
+Status: stable
 
 ## Overview
 

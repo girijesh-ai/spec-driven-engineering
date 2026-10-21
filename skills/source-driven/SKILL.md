@@ -4,7 +4,7 @@ description: Use when writing code against a library, framework, or API whose ex
 ---
 
 # source-driven
-Status: draft
+Status: stable
 
 ## Overview
 
@@ -29,7 +29,8 @@ the same way elsewhere in this codebase — copy the local pattern.
 
 1. **Detect** the exact version in use: the lockfile (`package-lock.json`,
    `poetry.lock`, `uv.lock`, `go.sum`, `Cargo.lock`) first, the manifest
-   second. Note it.
+   second. For an installed tool with neither (a CLI, an editor), use its
+   `--version` output. Note it.
 2. **Fetch** the official documentation for that version — the project's
    own docs site, its versioned API reference, or its source at that
    tag. Not blog posts, not answers on forums, not memory.

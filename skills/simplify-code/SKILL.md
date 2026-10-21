@@ -4,7 +4,7 @@ description: Use when existing code works but is harder to read or change than i
 ---
 
 # simplify-code
-Status: draft
+Status: stable
 
 ## Overview
 

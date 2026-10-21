@@ -32,6 +32,10 @@ digraph routing {
     "Context needs to move to another session" [shape=box];
     "Vocabulary in a requirement is fuzzy" [shape=box];
     "Deciding file/module boundaries" [shape=box];
+    "A decision others will build on" [shape=box];
+    "Working code is too complex" [shape=box];
+    "Using a library/API version" [shape=box];
+    "Branch finished with rework" [shape=box];
 
     "What's the task?" -> "Feasibility question only" -> "spec-from-idea (spike path)";
     "What's the task?" -> "Nothing written down yet" -> "spec-from-idea";
@@ -46,6 +50,10 @@ digraph routing {
     "What's the task?" -> "Context needs to move to another session" -> "handoff";
     "What's the task?" -> "Vocabulary in a requirement is fuzzy" -> "domain-modeling";
     "What's the task?" -> "Deciding file/module boundaries" -> "codebase-architecture";
+    "What's the task?" -> "A decision others will build on" -> "doubt-check";
+    "What's the task?" -> "Working code is too complex" -> "simplify-code";
+    "What's the task?" -> "Using a library/API version" -> "source-driven";
+    "What's the task?" -> "Branch finished with rework" -> "retro";
 }
 ```
 
@@ -65,6 +73,10 @@ digraph routing {
 | Ending a session, need to hand off context | `handoff` |
 | Vocabulary in a requirement is fuzzy | `domain-modeling` |
 | Deciding file/module boundaries | `codebase-architecture` |
+| A decision others will build on needs challenging | `doubt-check` |
+| Working code is more complex than it needs to be | `simplify-code` |
+| Adding or upgrading a dependency, or a first API use | `source-driven` |
+| Branch finished, with rework or near-misses | `retro` |
 
 Short paths: a bug fix is `debug-systematically` → `test-driven-development`
 → `review-code`; a one-line change is `implement` (ad-hoc) → `review-code`.
