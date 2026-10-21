@@ -62,7 +62,8 @@ ASSUMPTIONS I'M MAKING:
   Lifetime: long-lived.
 - The plan's existing step fields (`Status`, `Depends on`, `Touches`,
   `Size`, `Satisfies`, `Verification`) and checkpoints stay as they are
-  in `plan-from-spec` 2.0.1.
+  in `plan-from-spec` 2.0.1 for plans of 1–2 steps. In a units index,
+  `Status` is `todo`, `done`, or `blocked <reason>`, with no SHA.
 - Claude Code's Agent tool takes the aliases `sonnet` and `opus`, so no
   model IDs are hard-coded.
 - OpenCode (1.18.10, from `opencode --version`) sets a subagent's model
@@ -81,10 +82,13 @@ ASSUMPTIONS I'M MAKING:
 - Always: the orchestrator (the agent running the loop) re-runs each
   unit's Verification itself; an implementer's "tests pass" is a claim,
   not evidence.
-- Always: stage only the unit's files; one commit per unit; the code
-  builds at every commit.
+- Always: stage only the unit's files plus its index row; one commit per
+  unit, its message starting with the unit ID (`U01: …`); the code builds
+  at every commit.
 - Ask first: before starting the run (one explicit approval of the units),
-  at every pause, and whenever a stop condition is hit.
+  at every pause, and whenever a stop condition is hit. A request that
+  names the plan file and says the units are approved counts as the
+  approval. A bare "go ahead" doesn't. Approval never skips a pause.
 - Never: an implementer edits a unit's test to make it pass by weakening
   it; implementers or reviewers start agents of their own (depth 1).
 
@@ -124,7 +128,7 @@ flowchart TD
   C --> D[Implementer subagent, model by Tier:<br/>reads its unit file + cited spec sections,<br/>test first, runs Verification]
   D --> E[Orchestrator: re-runs Verification,<br/>floor guard, stages the unit's files]
   E --> F[Reviewer subagent on opus:<br/>unit file + diff + criteria only, up to 3 rounds]
-  F --> G[Commit, then set index Status: done sha;<br/>collect NOTICED BUT NOT TOUCHING]
+  F --> G[Set index Status: done, commit as U01: ...;<br/>collect NOTICED BUT NOT TOUCHING]
   G --> H{3 units since last pause,<br/>or next unit high-risk?}
   H -- yes --> P[Pause for the user] --> C
   H -- no --> I{More ready units?}
@@ -135,15 +139,18 @@ flowchart TD
 Rules on the loop:
 - **Escalation:** a failure is one implementer attempt whose
   Verification fails when the orchestrator re-runs it. Two failures on
-  `sonnet` re-run the unit on `opus`, with the failure notes. Two failures on `opus` stop the run and
-  ask the user.
+  `sonnet` re-run the unit on `opus`, with the failure notes. Two failures
+  on `opus` stop the run and ask the user.
 - **Other stops:** the spec turns out to be ambiguous, or a change can't be
   undone with `git revert`.
 - **Files outside `Touches`:** the implementer lists them. The
   orchestrator stages them only if the reviewer agrees the unit's criteria
   need them; otherwise they go under NOTICED BUT NOT TOUCHING.
 - **Resume:** run `implement` again; it continues from the index's
-  `Status` column.
+  `Status` column. `git log --grep '^U01'` finds a unit's commit.
+- **Naming calls:** each implementer call's prompt names its unit file
+  path, and each reviewer call's description starts with `Review U<NN>`.
+  Logs and evals tell the calls apart by these.
 - **Landing:** one branch, one PR, through `finish-branch`.
 - **OpenCode:** the orchestrator calls `sde-implementer-standard` for S/M
   units and `sde-implementer-strong` for L units and reviews. With no
@@ -166,7 +173,9 @@ passes; the result is the PASS column of the report. The exit code is not
 the result: with 2 of 3 runs passing it still exits 1 under the default
 `--threshold 1.0`. `--ablation none` skips the no-plugin comparison run,
 which means nothing for these behaviours. Runs are non-interactive and end
-at the first question, so any approval a case needs is in its prompt.
+at the first question, so each case's prompt names the plan file and says
+the units are approved. Scaffolds start with a passing test suite. Turn
+and time limits, and the exact grader patterns, are set in the plan.
 
 - **SC-1:** Given a spec whose Approach names 4 separate changes, one per
   criterion, `plan-from-spec` writes an index with the columns Unit,
@@ -175,32 +184,38 @@ at the first question, so any approval a case needs is in its prompt.
   `Tier:` or `Risk:` line. Check:
   `claude plugin eval . --no-publish --model sonnet --ablation none --case plan-emits-units --allow-tools Write`
   → PASS in ≥2 of 3 runs.
-- **SC-2:** Planning doesn't regress. Every step or unit still has a size,
-  cites an `SC-n`, and names a command, and the riskiest step comes early;
-  the case reads these from the index and unit files. Check:
-  `claude plugin eval . --no-publish --model sonnet --ablation none --case plan-traces-criteria --allow-tools Write`
+- **SC-2:** Planning doesn't regress. The existing case runs unchanged,
+  with the same tool grant as its 2026-10-12 reading (no `Write`), so the
+  plan appears in the final message. SC-1 covers the unit files. Check:
+  `claude plugin eval . --no-publish --model sonnet --ablation none --case plan-traces-criteria`
   → PASS in ≥2 of 3 runs.
-- **SC-3:** A 2-step plan runs in a single session: no `Agent` call's
-  prompt names a unit file, and no `units/` folder is written. Check:
+- **SC-3:** A 2-step plan runs in a single session: `implement` fires,
+  each step lands as a commit, no `Agent` call's prompt names a unit file,
+  and no `units/` folder is written. Check:
   `claude plugin eval . --no-publish --model sonnet --ablation none --case implement-small-plan --scaffold --allow-tools Write Edit Bash`
-  → PASS in 3 of 3 runs.
+  → PASS in ≥2 of 3 runs (`implement` fired in 4 of 6 earlier runs, so
+  3 of 3 would fail on trigger noise).
 - **SC-4a:** Given an approved 3-unit plan with tiers S, M, L and no
-  high-risk unit, the run makes one implementer `Agent` call per unit. The
-  calls for S and M have `model: sonnet` in their input; the call for L
-  and every reviewer call have `model: opus`. After each unit's commit,
-  its index row shows `done` followed by that commit's SHA. Check:
+  high-risk unit, every unit gets an implementer `Agent` call. The first
+  call for the S and M units asks for `sonnet`; every call for the L unit
+  and every reviewer call asks for `opus`. Each unit lands as one commit
+  starting with its unit ID, and the index shows all 3 units `done`.
+  Check:
   `claude plugin eval . --no-publish --model sonnet --ablation none --case implement-dispatch --scaffold --allow-tools Write Edit Bash`
   → PASS in ≥2 of 3 runs.
 - **SC-4b:** Given an approved 4-unit plan where unit 2 is high-risk and
-  depends on unit 1, the run commits unit 1, then stops with a pause that
-  names unit 2, and makes no implementer `Agent` call for unit 2. Check:
+  depends on unit 1, and units 3 and 4 depend on unit 2, the run commits
+  unit 1, then stops with a pause that names unit 2, and makes no
+  implementer `Agent` call for unit 2. Check:
   `claude plugin eval . --no-publish --model sonnet --ablation none --case dispatch-pause --scaffold --allow-tools Write Edit Bash`
   → PASS in ≥2 of 3 runs.
 - **SC-5:** Given an approved plan with one unit whose Verification can't
-  pass, the run makes exactly 2 implementer calls with `model: sonnet`,
-  then exactly 2 with `model: opus`, then stops and asks the user. The
-  named assertion in the scaffold's test file is still present at the end.
-  Check:
+  pass (the suite starts green; the unit asks for behaviour its check can't
+  confirm), the run never makes a 3rd `sonnet` attempt, never makes a 3rd
+  `opus` attempt, never makes an `opus` attempt before 2 `sonnet` failures,
+  and ends by asking the user. The named assertion in the scaffold's test
+  file is still present at the end. Stopping earlier with a stated reason
+  also passes. Check:
   `claude plugin eval . --no-publish --model sonnet --ablation none --case dispatch-escalation --scaffold --allow-tools Write Edit Bash`
   → PASS in ≥2 of 3 runs.
 - **SC-6:** The repo still validates. Check: `python3 scripts/validate.py`
