@@ -63,7 +63,8 @@ ASSUMPTIONS I'M MAKING:
 - The plan's existing step fields (`Status`, `Depends on`, `Touches`,
   `Size`, `Satisfies`, `Verification`) and checkpoints stay as they are
   in `plan-from-spec` 2.0.1 for plans of 1–2 steps. In a units index,
-  `Status` is `todo`, `done`, or `blocked <reason>`, with no SHA.
+  `Status` is `todo`, `done`, or `blocked <reason>`, with no SHA, and
+  `Risk` is `high` or `normal`.
 - Claude Code's Agent tool takes the aliases `sonnet` and `opus`, so no
   model IDs are hard-coded.
 - OpenCode (1.18.10, from `opencode --version`) sets a subagent's model
@@ -148,9 +149,12 @@ Rules on the loop:
   need them; otherwise they go under NOTICED BUT NOT TOUCHING.
 - **Resume:** run `implement` again; it continues from the index's
   `Status` column. `git log --grep '^U01'` finds a unit's commit.
-- **Naming calls:** each implementer call's prompt names its unit file
-  path, and each reviewer call's description starts with `Review U<NN>`.
-  Logs and evals tell the calls apart by these.
+- **Naming calls:** each implementer call's description starts with
+  `Implement U<NN>` and each reviewer call's with `Review U<NN>`. Every
+  call names its `model`, even when it matches the caller's. Logs and
+  evals tell the calls apart by these.
+- **No Write tool:** `plan-from-spec` prints the index and every unit
+  file in its reply instead of asking how to proceed.
 - **Landing:** one branch, one PR, through `finish-branch`.
 - **OpenCode:** the orchestrator calls `sde-implementer-standard` for S/M
   units and `sde-implementer-strong` for L units and reviews. With no
@@ -169,19 +173,26 @@ Rules on the loop:
 ## Success Criteria & Evals
 
 Each eval case runs 3 times. A run passes when every scored grader in it
-passes; the result is the PASS column of the report. The exit code is not
-the result: with 2 of 3 runs passing it still exits 1 under the default
-`--threshold 1.0`. `--ablation none` skips the no-plugin comparison run,
+passes. The result is the report's `PASS%` column (runs scoring 1.0 ÷
+runs), so "≥2 of 3" means `PASS%` ≥ 67%. The exit code is not the result:
+with 2 of 3 runs passing it still exits 1 under the default
+`--threshold 1.0`. SC-2's case exists; the plan writes the cases for
+SC-1, SC-3, SC-4a, SC-4b and SC-5. Graders read a file's contents with a
+`{source: file, path}` target and bound call counts with `tool_used`'s
+`min`/`max`. `--ablation none` skips the no-plugin comparison run,
 which means nothing for these behaviours. Runs are non-interactive and end
-at the first question, so each case's prompt names the plan file and says
-the units are approved. Scaffolds start with a passing test suite. Turn
+at the first question. Planning cases' prompts say the spec is approved;
+dispatch cases' prompts name the plan file and say the units are
+approved. Scaffolds start with a passing test suite. Turn
 and time limits, and the exact grader patterns, are set in the plan.
 
 - **SC-1:** Given a spec whose Approach names 4 separate changes, one per
   criterion, `plan-from-spec` writes an index with the columns Unit,
   Status, Depends on, Satisfies, Tier, Risk, and at least 3 files under
-  `units/`. No unit file has a `Status:`, `Depends on:`, `Satisfies:`,
-  `Tier:` or `Risk:` line. Check:
+  `units/` (the `01-`, `02-` and `03-` files exist). No `Write` to a
+  unit file contains `Status`, `Depends on`, `Satisfies`, `Tier` or
+  `Risk` as a label in any form: a `Field:` line, a table cell, or a
+  heading. Check:
   `claude plugin eval . --no-publish --model sonnet --ablation none --case plan-emits-units --allow-tools Write`
   → PASS in ≥2 of 3 runs.
 - **SC-2:** Planning doesn't regress. The existing case runs unchanged,
@@ -190,11 +201,11 @@ and time limits, and the exact grader patterns, are set in the plan.
   `claude plugin eval . --no-publish --model sonnet --ablation none --case plan-traces-criteria`
   → PASS in ≥2 of 3 runs.
 - **SC-3:** A 2-step plan runs in a single session: `implement` fires,
-  each step lands as a commit, no `Agent` call's prompt names a unit file,
-  and no `units/` folder is written. Check:
+  each step lands as a commit, no `Agent` call's description starts with
+  `Implement U`, and no `units/` folder is written. Check:
   `claude plugin eval . --no-publish --model sonnet --ablation none --case implement-small-plan --scaffold --allow-tools Write Edit Bash`
-  → PASS in ≥2 of 3 runs (`implement` fired in 4 of 6 earlier runs, so
-  3 of 3 would fail on trigger noise).
+  → PASS in ≥2 of 3 runs (the existing `implement-ad-hoc` case fired in
+  4 of 6 runs, so 3 of 3 would fail on trigger noise).
 - **SC-4a:** Given an approved 3-unit plan with tiers S, M, L and no
   high-risk unit, every unit gets an implementer `Agent` call. The first
   call for the S and M units asks for `sonnet`; every call for the L unit
@@ -206,16 +217,17 @@ and time limits, and the exact grader patterns, are set in the plan.
 - **SC-4b:** Given an approved 4-unit plan where unit 2 is high-risk and
   depends on unit 1, and units 3 and 4 depend on unit 2, the run commits
   unit 1, then stops with a pause that names unit 2, and makes no
-  implementer `Agent` call for unit 2. Check:
+  implementer `Agent` call for unit 2. The pause message says unit 2 is
+  high-risk. Check:
   `claude plugin eval . --no-publish --model sonnet --ablation none --case dispatch-pause --scaffold --allow-tools Write Edit Bash`
   → PASS in ≥2 of 3 runs.
-- **SC-5:** Given an approved plan with one unit whose Verification can't
-  pass (the suite starts green; the unit asks for behaviour its check can't
-  confirm), the run never makes a 3rd `sonnet` attempt, never makes a 3rd
-  `opus` attempt, never makes an `opus` attempt before 2 `sonnet` failures,
-  and ends by asking the user. The named assertion in the scaffold's test
-  file is still present at the end. Stopping earlier with a stated reason
-  also passes. Check:
+- **SC-5:** Given an approved 3-unit plan whose unit 1 (tier S) has a
+  Verification that can't pass (the suite starts green; the unit's test
+  asserts what an existing passing test rules out), the run makes exactly
+  2 `Implement U01` calls on `sonnet` and 1–2 on `opus`, the first
+  `sonnet` call before the first `opus` call. It makes no `Write` or
+  `Edit` to the scaffold's test file, and its final message names U01 and
+  asks the user. Check:
   `claude plugin eval . --no-publish --model sonnet --ablation none --case dispatch-escalation --scaffold --allow-tools Write Edit Bash`
   → PASS in ≥2 of 3 runs.
 - **SC-6:** The repo still validates. Check: `python3 scripts/validate.py`
