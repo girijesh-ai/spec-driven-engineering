@@ -130,7 +130,8 @@ flowchart TD
   C --> D[Implementer subagent, model by Tier:<br/>reads its unit file + cited spec sections,<br/>test first, runs Verification]
   D --> E[Orchestrator: re-runs Verification,<br/>floor guard, stages the Touches files]
   E --> F[Reviewer subagent on opus: unit file, staged diff,<br/>extras' diff, criteria only; up to 3 rounds]
-  F --> G[Set index Status: done, commit as U01: ...;<br/>collect NOTICED BUT NOT TOUCHING]
+  F --> X[Stage approved extras; discard the rest,<br/>then re-run Verification]
+  X --> G[Set index Status: done, commit as U01: ...;<br/>collect NOTICED BUT NOT TOUCHING]
   G --> H{3 units since last pause,<br/>or next unit high-risk?}
   H -- yes --> P[Pause for the user] --> C
   H -- no --> I{More ready units?}
@@ -147,8 +148,11 @@ Rules on the loop:
   undone with `git revert`.
 - **Files outside `Touches`:** the implementer lists them. The reviewer
   sees their diff next to the staged one. The orchestrator stages them
-  only if the reviewer agrees the unit's criteria need them; otherwise
-  they are reverted and go under NOTICED BUT NOT TOUCHING.
+  only if the reviewer agrees the unit's criteria need them. The rest are
+  discarded from the working tree (new files deleted) and go under
+  NOTICED BUT NOT TOUCHING. If any were discarded, the orchestrator
+  re-runs Verification before the commit; a failure counts as an attempt
+  failure.
 - **Resume:** run `implement` again; it continues from the index's
   `Status` column. `git log --grep '^U01'` finds a unit's commit.
 - **Naming calls:** each implementer call's description starts with

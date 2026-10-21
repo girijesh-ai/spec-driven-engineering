@@ -165,7 +165,7 @@ class CheckPromotionState(unittest.TestCase):
     def test_draft_skill_listed_in_readme(self) -> None:
         self.skill("early", "draft")
         self.readme_rows.append("| `early` | stable |")
-        self.assertTrue(any("early" in e and "README.md" in e for e in self.errors()))
+        self.assertTrue(any("lists draft skill 'early'" in e for e in self.errors()))
 
     def test_stable_skill_missing_from_readme_status_table(self) -> None:
         self.readme_rows = []

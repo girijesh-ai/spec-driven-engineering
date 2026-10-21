@@ -28,7 +28,7 @@ digraph routing {
     "Something's broken" [shape=box];
     "Merge/rebase conflict" [shape=box];
     "Backlog needs grooming" [shape=box];
-    "A plan/decision needs pressure-testing" [shape=box];
+    "A written plan/spec needs pressure-testing" [shape=box];
     "Context needs to move to another session" [shape=box];
     "Vocabulary in a requirement is fuzzy" [shape=box];
     "Deciding file/module boundaries" [shape=box];
@@ -46,7 +46,7 @@ digraph routing {
     "What's the task?" -> "Something's broken" -> "debug-systematically";
     "What's the task?" -> "Merge/rebase conflict" -> "resolve-merge-conflicts";
     "What's the task?" -> "Backlog needs grooming" -> "triage-issues";
-    "What's the task?" -> "A plan/decision needs pressure-testing" -> "grill-me";
+    "What's the task?" -> "A written plan/spec needs pressure-testing" -> "grill-me";
     "What's the task?" -> "Context needs to move to another session" -> "handoff";
     "What's the task?" -> "Vocabulary in a requirement is fuzzy" -> "domain-modeling";
     "What's the task?" -> "Deciding file/module boundaries" -> "codebase-architecture";
