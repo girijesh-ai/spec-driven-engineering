@@ -155,6 +155,9 @@ def check_promotion_state(errors: list[str]) -> None:
                 )
             if re.search(row, in_progress_text, re.M):
                 errors.append(f"{in_progress}: still lists '{name}', which has a docs page")
+        listed = re.search(row, readme_text, re.M)
+        if status == "draft" and listed:
+            errors.append(f"{readme}: lists draft skill '{name}'")
         if status == "stable":
             if not doc:
                 errors.append(f"{path}: stable but has no docs page")
