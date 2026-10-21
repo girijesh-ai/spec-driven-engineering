@@ -38,8 +38,8 @@ On the `feat/promote-plain-technical-writing` branch. It found 7 items:
 mechanical item was live during the run: three docs said `stable` while
 their SKILL.md said `draft`, and `scripts/validate.py` still passed. The
 approved guardrail, `check_promotion_state` plus 5 tests, landed in
-`4b1fac0`. It flagged those three skills until their promotion was
-finished.
+`4b1fac0`. In the working tree, it flagged those three skills until their
+promotion was finished.
 
 ## It's working if
 

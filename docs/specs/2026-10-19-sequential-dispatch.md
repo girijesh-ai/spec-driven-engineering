@@ -13,7 +13,7 @@ new subagent on a model picked by how hard the unit is.
 
 The idea and its rules come from
 [`research/2026-10-12-tickets-and-parallel-implement.md`](../../research/2026-10-12-tickets-and-parallel-implement.md).
-Its five open decisions, and three new ones, were settled in a `grill-me`
+Its five open decisions, and four more, were settled in a `grill-me`
 session on 2026-10-19. All three prerequisites landed in 2.0.0:
 
 - the floor guard (`d4aa33c`): a script that flags changes that weaken
@@ -83,7 +83,8 @@ ASSUMPTIONS I'M MAKING:
 - Always: the orchestrator (the agent running the loop) re-runs each
   unit's Verification itself; an implementer's "tests pass" is a claim,
   not evidence.
-- Always: stage only the unit's files plus its index row; one commit per
+- Always: stage only the unit's files (its `Touches`, plus any extras the
+  reviewer approved) and its index row; one commit per
   unit, its message starting with the unit ID (`U01: …`); the code builds
   at every commit.
 - Ask first: before starting the run (one explicit approval of the units),
@@ -127,8 +128,8 @@ flowchart TD
   A -- yes --> B[Clean baseline + one explicit approval]
   B --> C[Next ready unit: dependencies done, riskiest first]
   C --> D[Implementer subagent, model by Tier:<br/>reads its unit file + cited spec sections,<br/>test first, runs Verification]
-  D --> E[Orchestrator: re-runs Verification,<br/>floor guard, stages the unit's files]
-  E --> F[Reviewer subagent on opus:<br/>unit file + diff + criteria only, up to 3 rounds]
+  D --> E[Orchestrator: re-runs Verification,<br/>floor guard, stages the Touches files]
+  E --> F[Reviewer subagent on opus: unit file, staged diff,<br/>extras' diff, criteria only; up to 3 rounds]
   F --> G[Set index Status: done, commit as U01: ...;<br/>collect NOTICED BUT NOT TOUCHING]
   G --> H{3 units since last pause,<br/>or next unit high-risk?}
   H -- yes --> P[Pause for the user] --> C
@@ -144,9 +145,10 @@ Rules on the loop:
   on `opus` stop the run and ask the user.
 - **Other stops:** the spec turns out to be ambiguous, or a change can't be
   undone with `git revert`.
-- **Files outside `Touches`:** the implementer lists them. The
-  orchestrator stages them only if the reviewer agrees the unit's criteria
-  need them; otherwise they go under NOTICED BUT NOT TOUCHING.
+- **Files outside `Touches`:** the implementer lists them. The reviewer
+  sees their diff next to the staged one. The orchestrator stages them
+  only if the reviewer agrees the unit's criteria need them; otherwise
+  they are reverted and go under NOTICED BUT NOT TOUCHING.
 - **Resume:** run `implement` again; it continues from the index's
   `Status` column. `git log --grep '^U01'` finds a unit's commit.
 - **Naming calls:** each implementer call's description starts with

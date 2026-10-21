@@ -19,8 +19,8 @@ skill is a breaking change.
   manifest (a CLI, an editor) uses its `--version` output.
 - **`validate.py` fails on a half-done promotion:** a doc's Status must
   match its SKILL.md, a skill with a docs page must be out of
-  `docs/in-progress.md`, and a stable skill needs a docs page and a README
-  status row.
+  `docs/in-progress.md`, a stable skill needs a docs page and a README
+  status row, and a draft skill has no README row.
 - **Sequential-dispatch spec:** SC-1 to SC-5 rewritten so each can be
   graded by `claude plugin eval`. A unit's own commit marks it `done`;
   an approval in the request counts only when it names the plan file.

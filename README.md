@@ -167,9 +167,9 @@ These plug into the spine; none of them are peers of it.
 | [writing-for-agents](docs/productivity/writing-for-agents.md) | productivity | governs how every skill here is written |
 | [simple](docs/productivity/simple.md) | productivity | `finish-branch` (stakeholder summary), or standalone for any dense doc |
 | [plain-technical-writing](docs/productivity/plain-technical-writing.md) | productivity | `spec-from-idea`, `plan-from-spec`, `grill-me`, `handoff`, `finish-branch`, `domain-modeling` |
-| [doubt-check](docs/engineering/doubt-check.md) | engineering | between `implement` and `review-code`, or standalone |
-| [simplify-code](docs/engineering/simplify-code.md) | engineering | fed by `review-code` findings and `plan-from-spec` prefactor steps |
-| [source-driven](docs/engineering/source-driven.md) | engineering | `implement` |
+| [doubt-check](docs/engineering/doubt-check.md) | engineering | standalone, mid-`implement`, before `review-code` |
+| [simplify-code](docs/engineering/simplify-code.md) | engineering | standalone, on `review-code` findings or a `plan-from-spec` prefactor step |
+| [source-driven](docs/engineering/source-driven.md) | engineering | standalone, while `implement` writes code against a dependency |
 | [retro](docs/productivity/retro.md) | productivity | after `finish-branch` |
 
 ## Dependency graph
@@ -196,9 +196,7 @@ triage-issues ──> spec-from-idea (for non-trivial items)
 handoff ──> dev-workflow (routes the next session back in)
 writing-for-agents (governs authoring, not invoked mid-task)
 plain-technical-writing <── spine skills, grill-me, handoff, domain-modeling
-doubt-check (one decision, mid-implement) ──> review-code
-review-code findings ──> simplify-code
-implement ──> source-driven (version-pinned docs)
+doubt-check, simplify-code, source-driven (standalone; no skill calls them)
 ```
 
 ## Layout
@@ -349,8 +347,9 @@ promotions, `4b1fac0`). Formal subagent
 pressure-testing is a known follow-up, not a v1 requirement.
 
 2.0.0 reworked most of these skills' bodies (see `CHANGELOG.md`). The
-changes have plugin-eval smoke runs ([`evals/README.md`](evals/README.md))
-but no fresh dry run against a real task yet.
+changes have plugin-eval smoke runs ([`evals/README.md`](evals/README.md));
+the 17 skills reworked then have had no fresh dry run against a real task
+since.
 
 | Skill | Status |
 |---|---|
