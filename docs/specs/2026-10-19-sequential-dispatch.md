@@ -68,13 +68,13 @@ ASSUMPTIONS I'M MAKING:
 - OpenCode (1.18.10, from `opencode --version`) sets a subagent's model
   in its agent definition (`model: provider/model-id`), not per call: the
   Task tool takes no `model` parameter
-  ([`tool/task.ts:44-58`](https://github.com/anomalyco/opencode/blob/v1.18.10/packages/opencode/src/tool/task.ts#L44-L58)). With no `model` set,
-  the subagent runs on the caller's model
-  ([`tool/task.ts:181`](https://github.com/anomalyco/opencode/blob/v1.18.10/packages/opencode/src/tool/task.ts#L181)). Project agent files go in
-  `.opencode/agents/` (`.opencode/agent/` also loads,
+  ([`tool/task.ts:44-58`](https://github.com/anomalyco/opencode/blob/v1.18.10/packages/opencode/src/tool/task.ts#L44-L58)).
+  With no `model` set, the subagent runs on the caller's model
+  ([`tool/task.ts:181`](https://github.com/anomalyco/opencode/blob/v1.18.10/packages/opencode/src/tool/task.ts#L181)).
+  Project agent files go in `.opencode/agents/` (`.opencode/agent/` also loads,
   [`config/agent.ts:13`](https://github.com/anomalyco/opencode/blob/v1.18.10/packages/opencode/src/config/agent.ts#L13)).
-- SC-4 and SC-5 run on a host where Bash works inside the eval sandbox
-  (it did not on the RHEL 8 host in `evals/README.md`).
+- SC-3, SC-4a, SC-4b and SC-5 run on a host where Bash works inside the
+  eval sandbox (it did not on the RHEL 8 host in `evals/README.md`).
 
 ## Boundaries
 
@@ -124,7 +124,7 @@ flowchart TD
   C --> D[Implementer subagent, model by Tier:<br/>reads its unit file + cited spec sections,<br/>test first, runs Verification]
   D --> E[Orchestrator: re-runs Verification,<br/>floor guard, stages the unit's files]
   E --> F[Reviewer subagent on opus:<br/>unit file + diff + criteria only, up to 3 rounds]
-  F --> G[Commit; index Status: done sha;<br/>collect NOTICED BUT NOT TOUCHING]
+  F --> G[Commit, then set index Status: done sha;<br/>collect NOTICED BUT NOT TOUCHING]
   G --> H{3 units since last pause,<br/>or next unit high-risk?}
   H -- yes --> P[Pause for the user] --> C
   H -- no --> I{More ready units?}
@@ -133,8 +133,9 @@ flowchart TD
 ```
 
 Rules on the loop:
-- **Escalation:** two failed verifications on `sonnet` re-run the unit on
-  `opus`, with the failure notes. Two failures on `opus` stop the run and
+- **Escalation:** a failure is one implementer attempt whose
+  Verification fails when the orchestrator re-runs it. Two failures on
+  `sonnet` re-run the unit on `opus`, with the failure notes. Two failures on `opus` stop the run and
   ask the user.
 - **Other stops:** the spec turns out to be ambiguous, or a change can't be
   undone with `git revert`.
@@ -160,32 +161,48 @@ Rules on the loop:
 
 ## Success Criteria & Evals
 
-Eval runs use the harness default of 3 runs per case. Cases with a
-scaffold need `--scaffold`.
+Each eval case runs 3 times. A run passes when every scored grader in it
+passes; the result is the PASS column of the report. The exit code is not
+the result: with 2 of 3 runs passing it still exits 1 under the default
+`--threshold 1.0`. `--ablation none` skips the no-plugin comparison run,
+which means nothing for these behaviours. Runs are non-interactive and end
+at the first question, so any approval a case needs is in its prompt.
 
-- **SC-1:** Given a spec with 4 criteria, `plan-from-spec` writes the index
-  table (Unit, Status, Depends on, Satisfies, Tier, Risk) and one unit file
-  per unit, and no index field appears in a unit file. Check:
-  `claude plugin eval . --no-publish --model sonnet --case plan-emits-units`
-  → all graders pass in ≥2 of 3 runs.
-- **SC-2:** Planning doesn't regress. Check:
-  `claude plugin eval . --no-publish --model sonnet --case plan-traces-criteria`
-  → passes in ≥2 of 3 runs.
-- **SC-3:** A 2-step plan runs in a single session: no subagent starts and
-  no units folder is written. Check:
-  `claude plugin eval . --no-publish --model sonnet --case implement-small-plan --scaffold --allow-tools Write Edit Bash`
-  → passes in 3 of 3 runs.
-- **SC-4:** A 4-unit plan (tiers M, S, L, M; one high-risk unit) gets one
-  implementer subagent per unit; S and M run on `sonnet`, the L unit and
-  every reviewer on `opus`; each commit sets that unit's
-  `Status: done <sha>`; the run pauses before the high-risk unit. Check:
-  `claude plugin eval . --no-publish --model sonnet --case implement-dispatch --scaffold --allow-tools Write Edit Bash Agent`
-  → passes in ≥2 of 3 runs.
-- **SC-5:** A unit whose verification can't pass is re-run on `opus` after
-  2 `sonnet` failures; after 2 `opus` failures the run stops and asks; no
-  test is weakened. Check:
-  `claude plugin eval . --no-publish --model sonnet --case dispatch-escalation --scaffold --allow-tools Write Edit Bash Agent`
-  → passes in ≥2 of 3 runs.
+- **SC-1:** Given a spec whose Approach names 4 separate changes, one per
+  criterion, `plan-from-spec` writes an index with the columns Unit,
+  Status, Depends on, Satisfies, Tier, Risk, and at least 3 files under
+  `units/`. No unit file has a `Status:`, `Depends on:`, `Satisfies:`,
+  `Tier:` or `Risk:` line. Check:
+  `claude plugin eval . --no-publish --model sonnet --ablation none --case plan-emits-units --allow-tools Write`
+  → PASS in ≥2 of 3 runs.
+- **SC-2:** Planning doesn't regress. Every step or unit still has a size,
+  cites an `SC-n`, and names a command, and the riskiest step comes early;
+  the case reads these from the index and unit files. Check:
+  `claude plugin eval . --no-publish --model sonnet --ablation none --case plan-traces-criteria --allow-tools Write`
+  → PASS in ≥2 of 3 runs.
+- **SC-3:** A 2-step plan runs in a single session: no `Agent` call's
+  prompt names a unit file, and no `units/` folder is written. Check:
+  `claude plugin eval . --no-publish --model sonnet --ablation none --case implement-small-plan --scaffold --allow-tools Write Edit Bash`
+  → PASS in 3 of 3 runs.
+- **SC-4a:** Given an approved 3-unit plan with tiers S, M, L and no
+  high-risk unit, the run makes one implementer `Agent` call per unit. The
+  calls for S and M have `model: sonnet` in their input; the call for L
+  and every reviewer call have `model: opus`. After each unit's commit,
+  its index row shows `done` followed by that commit's SHA. Check:
+  `claude plugin eval . --no-publish --model sonnet --ablation none --case implement-dispatch --scaffold --allow-tools Write Edit Bash`
+  → PASS in ≥2 of 3 runs.
+- **SC-4b:** Given an approved 4-unit plan where unit 2 is high-risk and
+  depends on unit 1, the run commits unit 1, then stops with a pause that
+  names unit 2, and makes no implementer `Agent` call for unit 2. Check:
+  `claude plugin eval . --no-publish --model sonnet --ablation none --case dispatch-pause --scaffold --allow-tools Write Edit Bash`
+  → PASS in ≥2 of 3 runs.
+- **SC-5:** Given an approved plan with one unit whose Verification can't
+  pass, the run makes exactly 2 implementer calls with `model: sonnet`,
+  then exactly 2 with `model: opus`, then stops and asks the user. The
+  named assertion in the scaffold's test file is still present at the end.
+  Check:
+  `claude plugin eval . --no-publish --model sonnet --ablation none --case dispatch-escalation --scaffold --allow-tools Write Edit Bash`
+  → PASS in ≥2 of 3 runs.
 - **SC-6:** The repo still validates. Check: `python3 scripts/validate.py`
   → `All checks passed.`; `python3 scripts/test_validate.py` and
   `python3 scripts/test_floor_guard.py` → `OK`.
@@ -205,6 +222,5 @@ scaffold need `--scaffold`.
 
 ## Open Questions
 
-- Whether `claude plugin eval` accepts `Agent` in `--allow-tools`. Owner:
-  resolved by a trial run at planning time; if not, SC-4 and SC-5 name the
-  right flag.
+None. The `--allow-tools Agent` question is closed: the eval harness
+always grants `Agent` (Claude Code 2.1.303), so the commands don't pass it.
