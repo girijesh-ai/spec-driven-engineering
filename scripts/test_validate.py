@@ -107,5 +107,65 @@ class CheckDisciplineSections(unittest.TestCase):
             self.assertTrue(any("'## Red flags'" in e for e in errors), errors)
 
 
+class CheckPromotionState(unittest.TestCase):
+    """A promotion edits SKILL.md, its doc, README.md and docs/in-progress.md.
+    Each half-done state must fail, not just the doc's own structure.
+    """
+
+    def setUp(self) -> None:
+        original_root = validate.REPO_ROOT
+        self.addCleanup(setattr, validate, "REPO_ROOT", original_root)
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        self.root = Path(tmp.name)
+        self.skill("done", "stable")
+        self.doc("done", "stable")
+        self.readme_rows = ["| `done` | stable |"]
+        self.in_progress_rows: list[str] = []
+
+    def skill(self, name: str, status: str) -> None:
+        skill_dir = self.root / "skills" / name
+        skill_dir.mkdir(parents=True)
+        (skill_dir / "SKILL.md").write_text(f"# {name}\nStatus: {status}\n")
+
+    def doc(self, name: str, status: str) -> None:
+        bucket_dir = self.root / "docs" / "engineering"
+        bucket_dir.mkdir(parents=True, exist_ok=True)
+        (bucket_dir / f"{name}.md").write_text(f"# {name}\n\n**Status:** {status}\n")
+
+    def errors(self) -> list[str]:
+        (self.root / "README.md").write_text("\n".join(self.readme_rows) + "\n")
+        (self.root / "docs" / "in-progress.md").write_text(
+            "\n".join(self.in_progress_rows) + "\n"
+        )
+        validate.REPO_ROOT = self.root
+        errors: list[str] = []
+        validate.check_promotion_state(errors)
+        return errors
+
+    def test_fully_promoted_and_untouched_draft_are_clean(self) -> None:
+        self.skill("wip", "draft")
+        self.in_progress_rows.append("| `wip` | engineering |")
+        self.assertEqual(self.errors(), [])
+
+    def test_doc_status_differs_from_skill_status(self) -> None:
+        self.skill("half", "draft")
+        self.doc("half", "stable")
+        self.assertTrue(any("half" in e and "Status" in e for e in self.errors()))
+
+    def test_skill_with_doc_page_still_in_progress(self) -> None:
+        self.in_progress_rows.append("| `done` | engineering |")
+        self.assertTrue(any("in-progress.md" in e for e in self.errors()))
+
+    def test_stable_skill_without_doc_page(self) -> None:
+        self.skill("bare", "stable")
+        self.readme_rows.append("| `bare` | stable |")
+        self.assertTrue(any("bare" in e and "docs page" in e for e in self.errors()))
+
+    def test_stable_skill_missing_from_readme_status_table(self) -> None:
+        self.readme_rows = []
+        self.assertTrue(any("README.md" in e for e in self.errors()))
+
+
 if __name__ == "__main__":
     unittest.main()
