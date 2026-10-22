@@ -157,8 +157,11 @@ but anything handed to `implement` as "the plan" gets the file.
 | One giant step "migrate all callers" | Expand / migrate in batches / contract, each batch its own step |
 | Rewriting a plan file that already has done steps | Stop and ask; extend or re-cut, never silently overwrite |
 | Step names in abstract jargon ("Implement resilience layer") | Name what changes: "Retry failed chunk uploads, up to 3 times" |
+| Starting `implement` on a plan nobody approved | Show it and wait for an explicit yes; a step's scope is cheapest to change before code exists |
 | Planning without reading the full spec | Half-read specs produce plans that miss non-goals and re-litigate settled questions |
 
 ## Next
 
-Call the Skill tool with `implement`, step by step.
+Show the plan and get an explicit yes on it before any code: "go",
+"approved", "yes". "Looks reasonable" is not a yes; ask which step they'd
+change. Then call the Skill tool with `implement`, step by step.
