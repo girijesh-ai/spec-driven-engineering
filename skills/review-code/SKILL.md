@@ -48,7 +48,9 @@ List every changed file and the total additions/deletions. State in one
 sentence what the change is trying to do.
 
 Size check: ~100 changed lines reviews well, ~300 is acceptable, ~1000
-should have been split — say so. A refactor mixed into a feature diff is
+should have been split — say so. Whole-file deletions and codemod output
+don't count toward the size: check their intent, not every line. A
+refactor mixed into a feature diff is
 a finding: they belong in separate commits.
 
 ### Step 2 — Axis 1: spec compliance
@@ -133,15 +135,20 @@ typechecker, CI checks): report only what would get past those tools.
 
 Also check:
 - **Smells** — the baseline in `engineering-standards`'
-  `references/smells.md`. Always judgement calls; a documented repo
+  `references/smells.md`, in code the diff added or changed only. Name the
+  smell and quote the hunk. Always judgement calls; a documented repo
   standard overrides them.
 - **Refactors** — does it reduce complexity or just move it? Count the
   concepts a reader needs before and after.
 - **Performance** — queries or calls inside loops, unbounded reads or
   result sets, work repeated on a hot path.
 - **Dead code and dependencies** — list code the change made unreachable
-  and ask before deleting it. More than one new dependency in a change is
-  a finding; read the lockfile diff for what came along with it.
+  and ask before deleting it. For each new dependency, ask: does the
+  standard library or an existing dependency already do this? Is it
+  maintained, of a reasonable size, with a compatible license and no known
+  vulnerabilities? A "no" is a finding. Read the lockfile diff for what
+  came along with it. An upgrade is one dependency per change, with its
+  changelog read.
 
 For the final whole-branch review (before `finish-branch`), you may run
 Axis 1 and Axis 2 in separate subagents so neither colours the other.
