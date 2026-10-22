@@ -41,6 +41,14 @@ works".
 bullets with the operative verb or term in bold — **Stop**, **Run**,
 **Never overwrite** — so a reader skimming mid-task lands on it.
 
+**Use leading words.** A leading word is one compact term the model
+already knows (*tracer bullet*, *red*, *tight loop*) that stands for a
+whole behaviour. Repeat the word, not its definition: "the loop goes
+*red* on the bug" replaces "a check you trust that fails on the bug".
+When a doc spells out the same idea at three sites, collapse it into one
+word. Prefer an existing word to a coined one; a coined word needs a
+definition the model doesn't already have.
+
 **Two loads, two budgets.** *Context load* is how much text the doc puts
 in the window; *cognitive load* is how much the reader must hold in mind
 to follow it. Cut both: a short doc full of cross-conditions is still
@@ -98,6 +106,7 @@ problem that no longer exists.
 | A cross-reference with no stated requirement level | State whether it's required or optional explicitly |
 | "Run `x`" or "see `x`" where the skill must actually load | "Call the Skill tool with `x`" |
 | A step with no way to tell it's finished | Add the completion criterion and the evidence to show |
+| The same idea spelled out in several places | Collapse it into one leading word, defined once |
 | A rule phrased only as "don't…" | Lead with the positive action; keep the prohibition as a second clause if needed |
 
 ## Next
