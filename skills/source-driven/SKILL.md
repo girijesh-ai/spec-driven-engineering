@@ -22,8 +22,9 @@ reviewer can check it. Adapted from addyosmani/agent-skills'
 - A review or test shows code was written against the wrong version of
   an API
 
-Skip for: the language's standard library basics, and APIs already used
-the same way elsewhere in this codebase — copy the local pattern.
+Skip for: the language's standard library basics, and APIs used the
+same way elsewhere in this codebase at the version now pinned. A local
+pattern written against an older version isn't checked; fetch the docs.
 
 ## Process
 
