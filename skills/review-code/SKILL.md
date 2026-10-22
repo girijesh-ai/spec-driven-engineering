@@ -39,7 +39,10 @@ full — standards compliance never depends on a spec existing.
 ### Step 1 — Pin the fixed point, establish scope
 
 Record exactly what is under review: `git rev-parse HEAD` and the base
-(merge-base with the target branch). Confirm the diff between them is
+(merge-base with the target branch). Before a commit (the per-step review
+inside `implement`) the work isn't in HEAD yet: review `git diff <base>`,
+which runs to the working tree, plus untracked files from `git status
+--porcelain`. `<base>...HEAD` would miss all of it. Confirm the diff is
 non-empty — reviewing an empty or wrong range reports READY on nothing.
 List every changed file and the total additions/deletions. State in one
 sentence what the change is trying to do.
@@ -56,10 +59,12 @@ criterion describes, don't eyeball it. Report each criterion as met, not
 met, or not applicable, with why.
 
 **Mutation spot-check.** For at least one criterion the diff claims to
-satisfy, break the code it depends on — invert one condition, return
-early — run that criterion's check, then restore the code. If the check
-stays green, it doesn't guard the criterion: that's a confirmed finding
-against the test, not the code.
+satisfy, copy the file, then break the code it depends on — invert one
+condition, return early. Confirm the mutation landed (diff against the
+copy), run that criterion's check, then restore the file from the copy.
+If the check stays green, it doesn't guard the criterion: that's a
+confirmed finding against the test, not the code. Name the test case
+that's missing.
 
 **Scope creep.** Also report behaviour in the diff that no criterion or
 goal asked for. Unrequested behaviour has nothing to be checked against.
@@ -209,7 +214,7 @@ open.
 
 Before issuing the verdict:
 
-- [ ] HEAD and base SHAs are recorded and the diff is non-empty
+- [ ] HEAD and base SHAs are recorded, uncommitted work is in the range, and the diff is non-empty
 - [ ] Each criterion's check ran in this session (or the axis is explicitly skipped)
 - [ ] At least one mutation spot-check ran and went red
 - [ ] Floor guard exit code is in the report
