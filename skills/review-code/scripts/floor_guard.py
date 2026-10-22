@@ -52,7 +52,8 @@ SKIPPED_TEST = re.compile(
 STUB = re.compile(
     r"\braise\s+NotImplementedError\b|throw\s+new\s+Error\(\s*['\"]not\s+implemented"
     r"|\btodo!\(|\bunimplemented!\(|panic\(\s*\"not\s+implemented"
-    r"|catch\s*(\(\s*\w*\s*\))?\s*\{\s*\}|\bpass\s*#\s*stub\b|(?-i:\bTODO\b)",
+    r"|catch\s*(\([^)]*\))?\s*\{\s*(/\*.*?\*/)?\s*\}|\bpass\s*#\s*stub\b"
+    r"|(?-i:(#|//|/\*|--)\s*TODO\b)",  # a TODO comment, not the word in a string
     re.I,
 )
 ASSERTION = re.compile(

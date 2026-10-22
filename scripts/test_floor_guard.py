@@ -152,8 +152,12 @@ class FloorGuardRepo(unittest.TestCase):
         self.write("src/b.py", "def f():\n    pass  # stub\n# TODO: handle errors\n")
         self.assertEqual(self.rules(), ["STUB"] * 4)
 
-    def test_lowercase_todo_in_text_is_not_a_stub(self) -> None:
-        self.write("src/a.py", 'label = "add a todo item"\n')
+    def test_typed_or_commented_empty_catch_is_a_stub(self) -> None:
+        self.write("src/A.java", "} catch (IOException e) {}\n} catch (A | B e) { /* ignore */ }\n")
+        self.assertEqual(self.rules(), ["STUB"] * 2)
+
+    def test_todo_outside_a_comment_is_not_a_stub(self) -> None:
+        self.write("src/a.py", 'label = "add a todo item"\nSTATUS = "TODO"\n')
         self.assertEqual(self.rules(), [])
 
     def test_constraints_rule_removed_or_number_changed_is_flagged(self) -> None:
