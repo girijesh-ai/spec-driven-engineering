@@ -590,3 +590,27 @@ These apply to [tickets-and-parallel-implement](2026-10-12-tickets-and-parallel-
 | Compose existing skills before adding a new one | M `.out-of-scope/new-skills.md:9` | `CLAUDE.md` | decide |
 | No `AskUserQuestion` in grilling | M `.out-of-scope/native-question-tool.md` | `grill-me` | decide |
 | A new rule needs an observed failure behind it | M `SCOPE.md:9` | `CLAUDE.md` | decide |
+
+### Outcome, 2026-10-22 (branch `fix/upstream-drift`)
+
+**Fixed:** every B and D row marked *fix*, one commit per skill. See the CHANGELOG's Unreleased
+section. `implement`'s status line is now `Status: done` in the step's own commit, because a
+commit can't contain its own SHA.
+
+**The unverified rows, now checked:**
+- 8 prose hand-offs: not confirmed. The remaining mentions hand back to the calling skill or
+  describe it, which `writing-for-agents` allows. No change.
+- domain-modeling: confirmed for the ADR (M is 1-3 sentences); fixed. Batching: no real gap,
+  since ours writes definitions into the spec. No change.
+- handoff: confirmed for location (M saves to the OS temp dir); fixed. The re-verify step isn't in
+  M. No change.
+- idempotency: confirmed dropped. Theme 12 lists it (`:264`), the done line (`:456`) leaves it
+  out. Now **decide**: we have no API-design skill to carry it.
+
+**D, eval order:** already covered. `implement-ad-hoc` and `debug-loop-first` grade that the test
+or reproduction ran before the fix, not just that the skill fired. No change.
+
+**Section C:** no edits. The sequential-dispatch spec was on the closed PR #8 branch, not on
+`main`. These rows apply when dispatch is re-specified.
+
+**Still open:** every row marked **decide**, for the owner.
