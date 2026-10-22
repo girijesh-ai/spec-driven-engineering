@@ -314,6 +314,12 @@ def run(repo: Path, base: Optional[str]) -> Tuple[List[Finding], str, str, int]:
         fields = row.split("\t")
         if len(fields) == 2 and fields[0] == "D" and is_test_path(fields[1]):
             findings.append(Finding("DELETED_TEST_FILE", fields[1], 0, "deleted"))
+        # Deleting CONSTRAINTS.md, or renaming it, drops every rule at once.
+        gone = fields[0] == "D" or (
+            fields[0].startswith("R") and Path(fields[-1]).name != CONSTRAINTS_FILE
+        )
+        if gone and Path(fields[1]).name == CONSTRAINTS_FILE:
+            findings.append(Finding("CONSTRAINT_REMOVED", fields[1], 0, "file removed"))
 
     return findings, merge_base, ref, len(diffs)
 

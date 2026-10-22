@@ -181,6 +181,16 @@ class FloorGuardRepo(unittest.TestCase):
         self.write("CONSTRAINTS.md", "- Coverage: at least 90% of lines, per package\n- No sleeps in tests\n")
         self.assertEqual(self.rules(), [])
 
+    def test_constraints_file_deleted_or_renamed_away_is_flagged(self) -> None:
+        self.write("CONSTRAINTS.md", "- Coverage: at least 90% lines\n")
+        self.commit("constraints")
+        self._git("branch", "-f", "main")  # the rules are on the base
+        self._git("rm", "-q", "CONSTRAINTS.md")
+        self.assertEqual(self.rules(), ["CONSTRAINT_REMOVED"])
+        self.write("docs/rules.md", "- Coverage: at least 90% lines\n")
+        self._git("add", "-A")
+        self.assertEqual(self.rules(), ["CONSTRAINT_REMOVED"])
+
     def test_missing_base_exits_two(self) -> None:
         code, output = self.guard("--base", "no-such-branch")
         self.assertEqual(code, 2)
