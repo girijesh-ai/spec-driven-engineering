@@ -66,10 +66,14 @@ yourself.
 classed "valid, fix it" means you are validating, not doubting. Stop and
 escalate to the user; don't proceed on your own say-so.
 
-**Cross-model escalation.** For a decision that is high-risk and still
-contested after reconciling, offer to run step 3 again on a different
-model tier. Always offer it in that case and let the user decide; never
-skip the offer silently.
+**Cross-model check.** A doubter on the same model shares the author's
+blind spots. After step 3 in every cycle, before reconciling, ask the user
+whether to also run it on a different model (another CLI, or a manual
+review they paste in). The user decides; say "proceeding with
+single-model findings" when they skip. Run an external CLI only with the
+user's yes for that exact command, each time: pipe the prompt in from a
+file, read-only mode where the tool has one. In an unattended run, skip it
+and say so in the output.
 
 ## Output
 
@@ -89,6 +93,8 @@ Result: decision kept | decision changed to <...>
 | Refuting an objection with an opinion | Refute with a command, a line, or a criterion — or accept it |
 | Running cycles until one comes back clean | Cap at 3, then hand it to the user |
 | Dismissing every objection, cycle after cycle | That's doubt theatre: stop and escalate |
+| Skipping the cross-model offer because the decision feels low-risk | Offer it every cycle; the user decides |
+| Running an external CLI on an earlier yes | Each run needs its own yes for that exact command |
 | Running doubt-check inside a subagent | It needs a fresh subagent; hand it back to the main session |
 
 ## Next
