@@ -52,7 +52,7 @@ SKIPPED_TEST = re.compile(
 STUB = re.compile(
     r"\braise\s+NotImplementedError\b|throw\s+new\s+Error\(\s*['\"]not\s+implemented"
     r"|\btodo!\(|\bunimplemented!\(|panic\(\s*\"not\s+implemented"
-    r"|catch\s*(\([^)]*\))?\s*\{\s*(/\*.*?\*/)?\s*\}|\bpass\s*#\s*stub\b"
+    r"|catch\s*(\([^)]*\))?\s*\{\s*(/\*((?!\*/).)*\*/)?\s*\}|\bpass\s*#\s*stub\b"
     r"|(?-i:(#|//|/\*|--)\s*TODO\b)",  # a TODO comment, not the word in a string
     re.I,
 )
@@ -86,6 +86,7 @@ CONFIG_GLOBS = (
 CONSTRAINTS_FILE = "CONSTRAINTS.md"
 NUMBER = re.compile(r"\d+(?:\.\d+)?")
 EXCEPTIONS_HEADING = re.compile(r"#+\s*Exceptions?\b", re.I)
+SEPARATOR_ROW = re.compile(r"\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)*\|?")
 # Prose that *mentions* a suppression or a skip isn't one.
 PROSE_GLOBS = ("*.md", "*.rst", "*.txt", "*.adoc")
 # Thresholds also live in CI and build files; code files are excluded so a
@@ -233,7 +234,7 @@ def exception_rows(repo: Path, path: str) -> FrozenSet[int]:
             inside = bool(EXCEPTIONS_HEADING.match(stripped))
             continue
         below = lines[number].strip() if number < len(lines) else ""
-        is_header = bool(below) and set(below) <= set("|:- ")
+        is_header = bool(SEPARATOR_ROW.fullmatch(below))
         if inside and rule_key(stripped) is not None and not is_header:
             rows.add(number)
     return frozenset(rows)

@@ -156,6 +156,10 @@ class FloorGuardRepo(unittest.TestCase):
         self.write("src/A.java", "} catch (IOException e) {}\n} catch (A | B e) { /* ignore */ }\n")
         self.assertEqual(self.rules(), ["STUB"] * 2)
 
+    def test_catch_with_code_between_comments_is_not_a_stub(self) -> None:
+        self.write("src/a.js", "try { f() } catch (e) { /* x */ log(e); /* y */ }\n")
+        self.assertEqual(self.rules(), [])
+
     def test_todo_outside_a_comment_is_not_a_stub(self) -> None:
         self.write("src/a.py", 'label = "add a todo item"\nSTATUS = "TODO"\n')
         self.assertEqual(self.rules(), [])
@@ -196,6 +200,14 @@ class FloorGuardRepo(unittest.TestCase):
         )
         findings, _, _, _ = floor_guard.run(self.repo, None)
         self.assertEqual([(f.rule, f.line) for f in findings], [("CONSTRAINT_EXCEPTION", 9)])
+
+    def test_exception_row_above_an_empty_row_is_flagged(self) -> None:
+        table = "## Exceptions\n| Rule | Owner |\n|---|---|\n| C1 | ann |\n"
+        self.write("CONSTRAINTS.md", table + "| | |\n")
+        self.commit("constraints")
+        self._git("branch", "-f", "main")  # the rules are on the base
+        self.write("CONSTRAINTS.md", table + "| C9 | bob |\n| | |\n")
+        self.assertEqual(self.rules(), ["CONSTRAINT_EXCEPTION"])
 
     def test_constraints_file_deleted_or_renamed_away_is_flagged(self) -> None:
         self.write("CONSTRAINTS.md", "- Coverage: at least 90% lines\n")
