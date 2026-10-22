@@ -3,6 +3,15 @@
 Date: 2026-10-12 (revised same day: sequential dispatch is now the default; parallel deferred).
 Status: **idea under assessment — nothing decided or implemented.**
 
+> **Partly superseded, 2026-10-22.** A re-check against the upstream source found misread
+> credits and a stale gap table in this proposal. Section C of the
+> [findings addendum](2026-10-12-upstream-findings.md#addendum-2026-10-22-re-check-against-source)
+> lists them. In short: the "what's missing" table (`:53-61`) is stale, the credits at `:96`,
+> `:101`, `:104`, `:107` and `:109` are wrong, and the proposal doesn't address A's
+> sequential-orchestrator anti-pattern or the fact that a subagent can't spawn the
+> `review-code` and `doubt-check` subagents it relies on. Read section C before building on
+> anything below.
+
 Related: [upstream findings](2026-10-12-upstream-findings.md) — themes 4 and 15 (mattpocock's
 `to-tickets` / `implement-spec`, agent-skills' `/build auto`), plus 6, 10, 14 and 16 for the
 robustness rules below. Credits use the findings doc's tags: **A** = addyosmani/agent-skills
