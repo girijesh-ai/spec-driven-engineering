@@ -72,18 +72,26 @@ Not every task needs the full spine.
 
 ## Phase boundaries
 
-Between phases (spec done, plan done, a step done), pick the lightest move
-that works, in this order:
+Decide only between phases (spec done, plan done, a step done). Mid-phase
+there is nothing to decide: continue, or split the remaining work into
+subagents. Compacting mid-phase loses the thread.
 
-1. **Continue** — same phase, context still has room.
-2. **Clear and restart** — the next phase starts from artifacts on disk
-   (spec, plan, commits); a fresh session reads them.
-3. **Handoff** — something must travel the artifacts don't hold (new
-   harness or directory, a colleague, a side task mid-phase): call the
-   Skill tool with `handoff`.
-4. **Subagent** — a side task whose result is small: dispatch it and keep
-   the main context.
-5. **Compact** — context is full mid-phase and none of the above fits.
+At the boundary, take the first that fits:
+
+1. **Continue** — the next phase needs this session's reasoning as it
+   happened (interview → spec is the usual case), or ~150k tokens of
+   room remain. It costs nothing, so rule it out first.
+2. **Clear** — everything in this session is disposable: the next phase
+   starts from artifacts on disk (spec, plan, commits). Clearing a
+   session whose *why* isn't written down loses it for good.
+3. **Handoff** — something must travel: a new harness or directory, a
+   colleague, or a side task found mid-phase. Call the Skill tool with
+   `handoff`.
+4. **Subagent** — the next task can run with nobody steering (a review
+   of a diff is the usual case): dispatch it and leave this session as is.
+5. **Compact** — the context matters, you stay in the loop, and nothing
+   above fits. Say what the next phase needs so the summary keeps it.
+   This is where the order often lands, but it is never the first reach.
 
 ## Operating rules
 
