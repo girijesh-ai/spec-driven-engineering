@@ -128,6 +128,9 @@ layer-boundary direction). A change can be fully spec-compliant and pass every o
 standards check and still be over-engineered — check necessity
 explicitly, don't assume it falls out of the other checks.
 
+Skip anything the project's tooling already enforces (formatter, linter,
+typechecker, CI checks): report only what would get past those tools.
+
 Also check:
 - **Smells** — the baseline in `engineering-standards`'
   `references/smells.md`. Always judgement calls; a documented repo
