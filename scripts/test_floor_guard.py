@@ -141,6 +141,46 @@ class FloorGuardRepo(unittest.TestCase):
         self.assertIn("src/app.py:1", output)
         self.assertNotIn("sk-secret-value", output)
 
+    def test_new_suppression_markers_are_flagged(self) -> None:
+        self.write("src/a.ts", "// biome-ignore lint: x\n")
+        self.write("src/b.py", 'KEY = "x"  # gitleaks:allow\n')
+        self.write("src/c.ts", "// Stryker disable all\n")
+        self.assertEqual(self.rules(), ["SUPPRESSION"] * 3)
+
+    def test_empty_catch_todo_and_pass_stub_are_stubs(self) -> None:
+        self.write("src/a.ts", "try { f() } catch (e) {}\ntry { g() } catch {}\n")
+        self.write("src/b.py", "def f():\n    pass  # stub\n# TODO: handle errors\n")
+        self.assertEqual(self.rules(), ["STUB"] * 4)
+
+    def test_lowercase_todo_in_text_is_not_a_stub(self) -> None:
+        self.write("src/a.py", 'label = "add a todo item"\n')
+        self.assertEqual(self.rules(), [])
+
+    def test_constraints_rule_removed_or_number_changed_is_flagged(self) -> None:
+        self.write(
+            "CONSTRAINTS.md",
+            "- Coverage: at least 90% lines\n- No network in tests\n| C3 | max 400 lines per file |\n",
+        )
+        self.commit("constraints")
+        self._git("branch", "-f", "main")  # the rules are on the base
+        self.write("CONSTRAINTS.md", "- Coverage: at least 80% lines\n| C3 | max 600 lines per file |\n")
+        findings, _, _, _ = floor_guard.run(self.repo, None)
+        self.assertEqual(
+            sorted((f.rule, f.marker) for f in findings),
+            [
+                ("CONSTRAINT_CHANGED", "C3"),
+                ("CONSTRAINT_CHANGED", "Coverage"),
+                ("CONSTRAINT_REMOVED", "No network in tests"),
+            ],
+        )
+
+    def test_constraints_reworded_or_added_rule_is_silent(self) -> None:
+        self.write("CONSTRAINTS.md", "- Coverage: at least 90% lines\n")
+        self.commit("constraints")
+        self._git("branch", "-f", "main")  # the rules are on the base
+        self.write("CONSTRAINTS.md", "- Coverage: at least 90% of lines, per package\n- No sleeps in tests\n")
+        self.assertEqual(self.rules(), [])
+
     def test_missing_base_exits_two(self) -> None:
         code, output = self.guard("--base", "no-such-branch")
         self.assertEqual(code, 2)

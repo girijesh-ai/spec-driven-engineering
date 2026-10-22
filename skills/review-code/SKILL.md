@@ -110,9 +110,10 @@ security- or correctness-critical should be silently skipped there.
 
 Run this skill's `scripts/floor_guard.py` from the repo under review:
 `python3 <this skill's dir>/scripts/floor_guard.py --base <target branch>`.
-It flags new suppressions, skipped or focused tests, stubs, deleted test
-files, net-removed assertions, lowered coverage thresholds, and relaxed
-lint/type config. Exit 0 = clean, 1 = findings, **2 = it didn't run** —
+It flags new suppressions, skipped or focused tests, stubs (including an
+empty `catch` and `TODO`), deleted test files, net-removed assertions,
+lowered coverage thresholds, relaxed lint/type config, and rules removed
+from `CONSTRAINTS.md` or with their numbers changed. Exit 0 = clean, 1 = findings, **2 = it didn't run** —
 report a 2 as "floor guard did not run", never as clean. Each finding is a
 confirmed issue unless the spec or plan explicitly calls for that change.
 If the project has a `CONSTRAINTS.md`, check its enforced rules too.

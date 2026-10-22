@@ -5,7 +5,8 @@ Scans the diff from the merge-base with a base branch to the working tree
 (staged, unstaged and untracked files) and reports anything that makes a
 check easier to pass without making the code better: new suppressions,
 skipped or focused tests, stubs, deleted test files, net-removed assertions,
-lowered thresholds, relaxed lint/type config.
+lowered thresholds, relaxed lint/type config, and rules removed from or
+renumbered in CONSTRAINTS.md.
 
 Tightening the bar is silent; loosening it is loud.
 
@@ -40,7 +41,7 @@ SUPPRESSION = re.compile(
     r"|eslint-disable|@ts-ignore|@ts-expect-error|@ts-nocheck"
     r"|istanbul\s+ignore|c8\s+ignore|nosemgrep|#\s*nosec\b|NOSONAR"
     r"|pragma:\s*no\s*cover|//\s*nolint|#\[allow\(|@SuppressWarnings"
-    r"|rubocop:disable|phpcs:ignore"
+    r"|rubocop:disable|phpcs:ignore|biome-ignore|gitleaks:allow|Stryker\s+disable"
 )
 SKIPPED_TEST = re.compile(
     r"@pytest\.mark\.(skip|skipif|xfail)\b|\bpytest\.skip\(|@unittest\.skip"
@@ -50,7 +51,8 @@ SKIPPED_TEST = re.compile(
 )
 STUB = re.compile(
     r"\braise\s+NotImplementedError\b|throw\s+new\s+Error\(\s*['\"]not\s+implemented"
-    r"|\btodo!\(|\bunimplemented!\(|panic\(\s*\"not\s+implemented",
+    r"|\btodo!\(|\bunimplemented!\(|panic\(\s*\"not\s+implemented"
+    r"|catch\s*(\(\s*\w*\s*\))?\s*\{\s*\}|\bpass\s*#\s*stub\b|(?-i:\bTODO\b)",
     re.I,
 )
 ASSERTION = re.compile(
@@ -77,6 +79,10 @@ CONFIG_GLOBS = (
     "tsconfig*.json", ".golangci.*", ".rubocop.yml", "biome.json",
     "jest.config.*", "vitest.config.*", ".coveragerc", "package.json",
 )
+# A CONSTRAINTS.md rule is a bullet (keyed by its text before the first
+# colon) or a table row (keyed by its first cell).
+CONSTRAINTS_FILE = "CONSTRAINTS.md"
+NUMBER = re.compile(r"\d+(?:\.\d+)?")
 # Prose that *mentions* a suppression or a skip isn't one.
 PROSE_GLOBS = ("*.md", "*.rst", "*.txt", "*.adoc")
 # Thresholds also live in CI and build files; code files are excluded so a
@@ -198,8 +204,46 @@ def thresholds(lines: List[Tuple[int, str]]) -> Dict[str, Tuple[int, float]]:
     return found
 
 
+def rule_key(text: str) -> Optional[str]:
+    stripped = text.strip()
+    if stripped.startswith("|"):
+        cells = [c.strip() for c in stripped.strip("|").split("|")]
+        if cells and cells[0] and not re.fullmatch(r":?-+:?", cells[0]):
+            return cells[0]
+        return None
+    if re.match(r"[-*] ", stripped):
+        return stripped[2:].split(":")[0].strip() or None
+    return None  # prose, headings: not a rule
+
+
+def scan_constraints(diff: FileDiff) -> List[Finding]:
+    """Removing a rule or changing its numbers can lower the bar.
+
+    The guard can't tell which way a number moved the bar ("at least 90"
+    vs "at most 400"), so any changed number is reported for a person to
+    judge. Rewording with the same numbers, and new rules, stay silent.
+    """
+    findings: List[Finding] = []
+    added = {}
+    for number, text in diff.added:
+        key = rule_key(text)
+        if key is not None:
+            added.setdefault(key, (number, text))
+    for number, text in diff.removed:
+        key = rule_key(text)
+        if key is None:
+            continue
+        if key not in added:
+            findings.append(Finding("CONSTRAINT_REMOVED", diff.path, number, key))
+        elif NUMBER.findall(text) != NUMBER.findall(added[key][1]):
+            findings.append(Finding("CONSTRAINT_CHANGED", diff.path, added[key][0], key))
+    return findings
+
+
 def scan_file(diff: FileDiff) -> List[Finding]:
     findings: List[Finding] = []
+    if Path(diff.path).name == CONSTRAINTS_FILE:
+        return scan_constraints(diff)
     if matches_any(diff.path, PROSE_GLOBS):
         return findings
     for number, text in diff.added:
