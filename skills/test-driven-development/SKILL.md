@@ -20,7 +20,10 @@ code exists to rationalize around.
   `pytest`. Run it once so you know what green looks like.
 - **Test at the agreed seam.** The spec's Testing Seams section (or the
   plan step) names where tests attach. Pick the highest seam that observes
-  the behaviour; don't invent new seams per test.
+  the behaviour; don't invent new seams per test. With no spec or plan
+  (ad-hoc work), propose the seams first, each with a one-line note on what
+  it catches and what it misses, and get the user's yes before the first
+  test.
 
 ## The cycle
 
@@ -78,6 +81,7 @@ Before handing back to the calling skill:
 
 - [ ] The test was seen failing, for the expected reason (paste the failure line)
 - [ ] It now passes, and the full file it lives in passes
+- [ ] The full suite passes with the repo's own test command, before handing back
 - [ ] No test was skipped, deleted, or loosened to get there
 - [ ] Coverage of the touched code didn't drop, where the project measures it
 
@@ -99,6 +103,8 @@ Before handing back to the calling skill:
 - A new `skip`, `xfail`, `.only`, or commented-out assertion in the diff
 - Expected values built with the same expressions as the code under test
 - A mock of a module the project owns
+- An assertion on how many times, or in what order, a collaborator was called
+- A test that checks through a side channel (querying the database) instead of the interface it's testing
 - Several new failing tests at once
 
 ## Next
