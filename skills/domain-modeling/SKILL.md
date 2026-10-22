@@ -52,10 +52,11 @@ spec is finalized, not after the code reveals the ambiguity.
 7. **Offer an ADR only when all three hold:** the decision is hard to
    reverse, it would surprise a reader who lacks today's context, and
    there was a real trade-off. Follow the repo's existing ADR convention
-   if it has one; otherwise `docs/adr/NNNN-<title>.md` with **Status**,
-   **Context**, **Decision**, **Alternatives considered**,
-   **Consequences**. A changed decision gets a new ADR that marks the old
-   one superseded — never edit or delete the old one.
+   if it has one; otherwise `docs/adr/NNNN-<title>.md`: a title and 1-3
+   sentences on the context, the decision, and why. Add Status,
+   Alternatives or Consequences only when they tell the reader something
+   the paragraph doesn't. A changed decision gets a new ADR that marks the
+   old one superseded — never edit or delete the old one.
 
 Definitions, glossary entries, and ADRs are read by people joining later.
 Write them per `plain-technical-writing` (call the Skill tool with it):
