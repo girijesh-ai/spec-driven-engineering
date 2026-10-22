@@ -35,8 +35,10 @@ explicitly marked not applicable. Optional, Nit, and FYI findings, and
 **What is the floor guard?**
 A script bundled with this skill (`scripts/floor_guard.py`, stdlib Python)
 that scans the branch's changes for ways of passing checks without
-improving the code: new suppressions, skipped tests, deleted tests,
-removed assertions, lowered coverage thresholds, relaxed lint config. If
+improving the code: new suppressions, skipped tests, stubs (an empty
+`catch`, a `TODO` comment), deleted tests, removed assertions, lowered
+coverage thresholds, relaxed lint config, and loosened `CONSTRAINTS.md`
+rules (removed, renumbered, a new exception, the file deleted). If
 it can't run, the review says so — it never reports a failure to run as
 clean.
 
