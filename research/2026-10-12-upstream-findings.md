@@ -593,8 +593,8 @@ These apply to [tickets-and-parallel-implement](2026-10-12-tickets-and-parallel-
 
 ### Outcome, 2026-10-22 (branch `fix/upstream-drift`)
 
-**Fixed:** every B and D row marked *fix*, one commit per skill. See the CHANGELOG's Unreleased
-section. `implement`'s status line is now `Status: done` in the step's own commit, because a
+**Fixed:** every B and D row marked *fix*, one commit per skill. See the CHANGELOG's 2.0.2
+entry. `implement`'s status line is now `Status: done` in the step's own commit, because a
 commit can't contain its own SHA.
 
 **The unverified rows, now checked:**
