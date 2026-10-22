@@ -62,14 +62,23 @@ throughout. Simpler words, never less precision.
    `HYPOTHESIS: <what you think they want>` and
    `CONFIDENCE: ~N% — missing: <what would raise it>`.
 3. **Ask clarifying questions one at a time**, each carrying your guess:
-   `Q: <question>` / `GUESS: <your recommended answer and why>`. One
+   `Q: <question>` / `GUESS: <your recommended answer and why>`. Word the
+   question so "yes" accepts the guess: "Keep exports under 10k rows?",
+   not "How big can exports get?". One
    question is one decision — never a bundle of sub-questions under one
    `Q:`. Cover purpose, constraints, who's affected, what "done" looks
    like, across successive questions. When an
    answer is a buzzword, probe it: "If you didn't have to justify this to
    anyone, what would you actually want?"
+
+   The interview needs a live user. In an unattended run (CI, a loop, a
+   scheduled job), don't answer your own questions: list them as blockers
+   and stop.
 4. **Stop asking when you can predict the answers to your next three
-   questions.** Then restate in six lines and get a real yes:
+   questions.** If several rounds pass and you still can't, stop and say
+   so: something foundational is missing, so ask whether to step back and
+   reframe. Once you can predict them, restate in six lines and get a
+   real yes:
    Outcome / User / Why now / Success / Constraint / Out of scope.
    "Sounds good", "sure", "whatever you think" are not a yes — ask the
    one question that would change the design.
@@ -129,7 +138,8 @@ gets a Mermaid diagram.
 
 ## Testing Seams
 Where tests attach: the highest seam that observes the behaviour, and as
-few seams as possible. Confirmed with the user.
+few seams as possible. One line per seam on what it catches and what it
+misses. Confirmed with the user.
 
 ## Success Criteria & Evals
 Numbered, measurable, pass/fail — never "test manually" or "works
