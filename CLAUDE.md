@@ -27,6 +27,14 @@ are tracked in documentation, not directory structure:
 
 ## Skill quality bar
 
+- A new skill has to be something existing skills can't do together. If
+  the behaviour is a sequence of existing skills, it's a route in
+  `dev-workflow` or a line in the calling skill, not a new skill: each
+  skill is permanent upkeep.
+- A new or changed rule in a skill names the failure behind it: a real
+  session where the skill went wrong, or the upstream source that
+  records one. "It would be better if…" with no failure is not enough.
+
 - Every skill has a `SKILL.md` with YAML frontmatter: `name` (letters,
   numbers, hyphens only) and `description` (third person, starts with
   "Use when...", leads with triggering conditions — a single trailing clause
