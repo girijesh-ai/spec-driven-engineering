@@ -106,6 +106,17 @@ class CheckDisciplineSections(unittest.TestCase):
             self.assertEqual(len(errors), 2 * len(validate.DISCIPLINE_SKILLS), errors)
             self.assertTrue(any("'## Red flags'" in e for e in errors), errors)
 
+    def test_heading_inside_a_code_fence_does_not_count(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self._write_skills(
+                root,
+                "## Common rationalizations\n```markdown\n## Red flags\n```\n## Verification\n",
+            )
+            errors = self._errors_for(root)
+            self.assertEqual(len(errors), len(validate.DISCIPLINE_SKILLS), errors)
+            self.assertTrue(all("'## Red flags'" in e for e in errors), errors)
+
 
 if __name__ == "__main__":
     unittest.main()
