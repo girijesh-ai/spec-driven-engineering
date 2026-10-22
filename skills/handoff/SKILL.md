@@ -86,6 +86,9 @@ original changes.
    Y" — only what's true now and what's next.
 5. **Redact.** Replace secrets, tokens, and personal data in commands and
    outputs with `<REDACTED>` before writing the file.
+6. **Save it outside the repo** — the OS temp directory, unless the user
+   names a place — so it isn't committed with the work. Give the user the
+   full path.
 
 ## Common mistakes
 
