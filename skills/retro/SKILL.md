@@ -26,7 +26,18 @@ Skip when the session went cleanly — don't manufacture findings.
 
 1. **List what went wrong**, from evidence: review findings, reverted
    commits, failed verifications, floor-guard hits, user corrections.
-   One line each, with where it showed up. No narrative.
+   One line each, with where it showed up. No narrative. Also look past
+   outright mistakes:
+   - **Navigation** — the agent took long to find a file or fact; a
+     pointer would have saved it.
+   - **Tool economy** — an expensive or repeated tool call that a
+     script or narrower command would replace.
+   - **No-ops** — lines in `CLAUDE.md` or a skill that changed nothing
+     the agent did.
+   - **Information access** — something the agent needed and couldn't
+     see (server logs, a read-only view of a service).
+   - **Steering size** — a large `CLAUDE.md` whose rules belong in
+     checks or `CONSTRAINTS.md`.
 2. **Classify each item:**
    - **Mechanical** — a rule a tool could check (an import direction, a
      forbidden call, a missing test file, a format).
@@ -47,7 +58,8 @@ Skip when the session went cleanly — don't manufacture findings.
 4. **Flag a repo with no guardrail.** No pre-commit hook and no CI job
    running the lint, typecheck or test command is itself a finding,
    whatever went wrong in the session.
-5. **Present, then ask.** Show the table and ask which to apply. Apply
+5. **Present, then ask.** Show the table, most severe first, and ask
+   which to apply. Apply
    only the approved ones, each as its own commit.
 
 ## Output
