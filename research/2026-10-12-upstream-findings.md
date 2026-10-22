@@ -613,4 +613,14 @@ or reproduction ran before the fix, not just that the skill fired. No change.
 **Section C:** no edits. The sequential-dispatch spec was on the closed PR #8 branch, not on
 `main`. These rows apply when dispatch is re-specified.
 
-**Still open:** every row marked **decide**, for the owner.
+**Decided by the owner, 2026-10-22** (released as 2.0.2):
+- Applied: cross-model offer every cycle with a per-command yes for a CLI; retro's other areas and
+  severity order; source-driven's local-pattern skip only at the pinned version; dependency
+  question list instead of a count; smells only in changed code with a hunk quoted; deletions and
+  codemods exempt from the size check; compose-before-adding and observed-failure rules in
+  `CLAUDE.md`.
+- Kept ours: writing-for-agents still says to cut cognitive load.
+- Not taken: review-code deferral path and presumptive blockers.
+- Deferred: idempotency rules, until an API-heavy project needs them. All of section C, until
+  dispatch is re-specified. No `AskUserQuestion` in grilling: no change needed, since we
+  never adopted it.
