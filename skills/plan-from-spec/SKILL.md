@@ -117,7 +117,7 @@ changes in plain words, and every command, path, and `SC-n` stays exact.
 
 ## Steps
 ### 1. <step name>
-- Status: todo                 ← todo / done <commit sha> / blocked <reason>
+- Status: todo                 ← todo / done / blocked <reason>
 - Depends on: none
 - Touches: <files>
 - Size: S

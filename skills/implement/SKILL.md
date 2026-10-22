@@ -31,11 +31,14 @@ against beyond what's obviously implied by the request.
 
 ## Process
 
-0. **Start from a clean baseline.** Discover the project's test, build,
-   and typecheck commands (read the repo — never assume `npm test`), run
-   the suite once, and note the result. If it's already red, say so and
-   ask before building on it — otherwise a failure later can't be blamed
-   on the step that caused it.
+0. **Start from a clean baseline.** Run `git status --porcelain`. If it
+   shows changes other than the spec and plan, stop and ask whether to
+   commit, stash or keep them: a step's commit must not absorb someone
+   else's work. Then discover the project's test, build, and typecheck
+   commands (read the repo — never assume `npm test`), run the suite once,
+   and note the result. If it's already red, say so and ask before
+   building on it — otherwise a failure later can't be blamed on the step
+   that caused it.
 1. **Take one step at a time.** Never start a step whose dependencies (per
    the plan) aren't done. Call the Skill tool with `engineering-standards`
    once per session and write against it as you go —
@@ -70,13 +73,14 @@ against beyond what's obviously implied by the request.
    just at the end of the whole plan. Catching a standards or
    spec-compliance problem one step late is cheaper than catching it after
    five steps built on top of it.
-7. **Commit** only after review passes (or documented findings are
-   addressed). Stage only this step's files. Keep each commit revertable
-   on its own: the code compiles at every commit, and never delete an old
+7. **Mark the step done** in the plan file (`Status: done`). The plan
+   file, not your memory, is the record a resumed session starts from.
+8. **Commit** only after review passes (or documented findings are
+   addressed). Stage only this step's files plus the plan's status line,
+   so the tree is clean before the next step; `git blame` on the status
+   line gives the step's commit. Keep each commit revertable on its own:
+   the code compiles at every commit, and never delete an old
    implementation and add its replacement in the same commit.
-8. **Mark the step done** in the plan file (`Status: done <sha>`), then
-   move to the next step. The plan file, not your memory, is the record a
-   resumed session starts from.
 
 ## Reuse before writing
 
@@ -111,9 +115,9 @@ Per step, before marking it done:
 
 - [ ] The step's verification command ran in this session and passed (paste the result)
 - [ ] `review-code` returned READY for this step's diff
-- [ ] Only this step's files are staged
+- [ ] Only this step's files and the plan's status line are staged
 - [ ] Out-of-scope finds are listed under NOTICED BUT NOT TOUCHING, not fixed
-- [ ] The plan file shows `Status: done <sha>`
+- [ ] The plan file shows `Status: done`, in the same commit, and `git status` is clean after it
 
 ## Next
 

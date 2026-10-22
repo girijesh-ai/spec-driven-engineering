@@ -43,7 +43,7 @@ Found five steps late, after other code was built on top of it, it's not.
 ## It's working if
 
 - Every commit corresponds to one plan step, test-first, reviewed, and the
-  plan file marks that step done with the commit's SHA.
+  plan file marks that step done in the same commit.
 - Work starts from a suite that was green (or explicitly accepted as red).
 - Ad-hoc mode is always announced, never silent.
 - Nothing gets re-implemented that the plan or a codebase grep already
