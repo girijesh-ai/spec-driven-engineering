@@ -38,8 +38,8 @@ that scans the branch's changes for ways of passing checks without
 improving the code: new suppressions, skipped tests, stubs (an empty
 `catch`, a `TODO` comment), deleted tests, removed assertions, lowered
 coverage thresholds, relaxed lint config, and loosened `CONSTRAINTS.md`
-rules (removed, renumbered, a new exception, the file deleted). If
-it can't run, the review says so — it never reports a failure to run as
+rules (removed, renumbered, a new exception, the file deleted or renamed
+away). If it can't run, the review says so — it never reports a failure to run as
 clean.
 
 **Why break the code on purpose during review?**
