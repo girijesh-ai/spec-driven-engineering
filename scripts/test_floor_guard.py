@@ -185,6 +185,18 @@ class FloorGuardRepo(unittest.TestCase):
         self.write("CONSTRAINTS.md", "- Coverage: at least 90% of lines, per package\n- No sleeps in tests\n")
         self.assertEqual(self.rules(), [])
 
+    def test_constraints_new_exception_row_is_flagged(self) -> None:
+        table = "## Exceptions\n\n| Rule | Owner | Expires |\n|---|---|---|\n| C1 | ann | 2026-12 |\n"
+        self.write("CONSTRAINTS.md", "- C1: max 400 lines per file\n\n" + table)
+        self.commit("constraints")
+        self._git("branch", "-f", "main")  # the rules are on the base
+        self.write(
+            "CONSTRAINTS.md",
+            "- C1: max 400 lines per file\n- C2: no sleeps\n\n" + table + "| C2 | bob | 2027-01 |\n",
+        )
+        findings, _, _, _ = floor_guard.run(self.repo, None)
+        self.assertEqual([(f.rule, f.line) for f in findings], [("CONSTRAINT_EXCEPTION", 9)])
+
     def test_constraints_file_deleted_or_renamed_away_is_flagged(self) -> None:
         self.write("CONSTRAINTS.md", "- Coverage: at least 90% lines\n")
         self.commit("constraints")

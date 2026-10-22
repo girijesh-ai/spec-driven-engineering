@@ -5,8 +5,8 @@ Scans the diff from the merge-base with a base branch to the working tree
 (staged, unstaged and untracked files) and reports anything that makes a
 check easier to pass without making the code better: new suppressions,
 skipped or focused tests, stubs, deleted test files, net-removed assertions,
-lowered thresholds, relaxed lint/type config, and rules removed from or
-renumbered in CONSTRAINTS.md.
+lowered thresholds, relaxed lint/type config, and in CONSTRAINTS.md: rules
+removed or renumbered, new exception rows, or the file itself removed.
 
 Tightening the bar is silent; loosening it is loud.
 
@@ -32,7 +32,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
-from typing import Dict, List, NamedTuple, Optional, Tuple
+from typing import Dict, FrozenSet, List, NamedTuple, Optional, Tuple
 
 DEFAULT_BASES = ("origin/HEAD", "main", "master")
 
@@ -81,9 +81,11 @@ CONFIG_GLOBS = (
     "jest.config.*", "vitest.config.*", ".coveragerc", "package.json",
 )
 # A CONSTRAINTS.md rule is a bullet (keyed by its text before the first
-# colon) or a table row (keyed by its first cell).
+# colon) or a table row (keyed by its first cell). A new row in a table
+# under an "Exceptions" heading is an exception to a rule.
 CONSTRAINTS_FILE = "CONSTRAINTS.md"
 NUMBER = re.compile(r"\d+(?:\.\d+)?")
+EXCEPTIONS_HEADING = re.compile(r"#+\s*Exceptions?\b", re.I)
 # Prose that *mentions* a suppression or a skip isn't one.
 PROSE_GLOBS = ("*.md", "*.rst", "*.txt", "*.adoc")
 # Thresholds also live in CI and build files; code files are excluded so a
@@ -217,8 +219,29 @@ def rule_key(text: str) -> Optional[str]:
     return None  # prose, headings: not a rule
 
 
-def scan_constraints(diff: FileDiff) -> List[Finding]:
-    """Removing a rule or changing its numbers can lower the bar.
+def exception_rows(repo: Path, path: str) -> FrozenSet[int]:
+    """Line numbers of the data rows in tables under an Exceptions heading."""
+    try:
+        lines = (repo / path).read_text(encoding="utf-8").splitlines()
+    except (OSError, UnicodeDecodeError):
+        return frozenset()
+    rows = set()
+    inside = False
+    for number, line in enumerate(lines, start=1):
+        stripped = line.strip()
+        if stripped.startswith("#"):
+            inside = bool(EXCEPTIONS_HEADING.match(stripped))
+            continue
+        below = lines[number].strip() if number < len(lines) else ""
+        is_header = bool(below) and set(below) <= set("|:- ")
+        if inside and rule_key(stripped) is not None and not is_header:
+            rows.add(number)
+    return frozenset(rows)
+
+
+def scan_constraints(diff: FileDiff, exceptions: FrozenSet[int]) -> List[Finding]:
+    """Removing a rule, changing its numbers, or adding an exception can
+    lower the bar.
 
     The guard can't tell which way a number moved the bar ("at least 90"
     vs "at most 400"), so any changed number is reported for a person to
@@ -230,21 +253,27 @@ def scan_constraints(diff: FileDiff) -> List[Finding]:
         key = rule_key(text)
         if key is not None:
             added.setdefault(key, (number, text))
+    removed_keys = set()
     for number, text in diff.removed:
         key = rule_key(text)
         if key is None:
             continue
+        removed_keys.add(key)
         if key not in added:
             findings.append(Finding("CONSTRAINT_REMOVED", diff.path, number, key))
         elif NUMBER.findall(text) != NUMBER.findall(added[key][1]):
             findings.append(Finding("CONSTRAINT_CHANGED", diff.path, added[key][0], key))
+    for number, text in diff.added:
+        key = rule_key(text)
+        if number in exceptions and key not in removed_keys:
+            findings.append(Finding("CONSTRAINT_EXCEPTION", diff.path, number, key or ""))
     return findings
 
 
-def scan_file(diff: FileDiff) -> List[Finding]:
+def scan_file(diff: FileDiff, exceptions: FrozenSet[int] = frozenset()) -> List[Finding]:
     findings: List[Finding] = []
     if Path(diff.path).name == CONSTRAINTS_FILE:
-        return scan_constraints(diff)
+        return scan_constraints(diff, exceptions)
     if matches_any(diff.path, PROSE_GLOBS):
         return findings
     for number, text in diff.added:
@@ -308,7 +337,9 @@ def run(repo: Path, base: Optional[str]) -> Tuple[List[Finding], str, str, int]:
 
     findings: List[Finding] = []
     for diff in diffs:
-        findings.extend(scan_file(diff))
+        is_constraints = Path(diff.path).name == CONSTRAINTS_FILE
+        exceptions = exception_rows(repo, diff.path) if is_constraints else frozenset()
+        findings.extend(scan_file(diff, exceptions))
 
     status = git(repo, "diff", "--name-status", "-M", merge_base)
     for row in status.splitlines():
@@ -344,7 +375,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     print(f"floor-guard: {len(findings)} finding(s) against {where}")
     for finding in sorted(findings, key=lambda f: (f.path, f.line, f.rule)):
         location = f"{finding.path}:{finding.line}" if finding.line else finding.path
-        print(f"  {finding.rule:<18} {location}  ({finding.marker})")
+        print(f"  {finding.rule:<20} {location}  ({finding.marker})")
     return 1
 
 

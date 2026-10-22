@@ -27,9 +27,11 @@ Fixes from re-checking the skills against their upstream sources
   a question list instead of a one-per-change limit (that limit is for
   upgrades). Smells only in changed code, with the hunk quoted. Large
   deletions and codemods don't count toward the size check.
-- **Floor guard:** reports rules removed from `CONSTRAINTS.md`, or kept
-  with changed numbers. Flags empty `catch`, `pass # stub`, `TODO`,
-  `biome-ignore`, `gitleaks:allow`, `Stryker disable`.
+- **Floor guard:** reports rules removed from `CONSTRAINTS.md` or kept
+  with changed numbers, new Exceptions-table rows, and the file deleted or
+  renamed away. Flags empty `catch` (typed or with a comment), `pass #
+  stub`, a `TODO` comment, `biome-ignore`, `gitleaks:allow`, `Stryker
+  disable`.
 - **`dev-workflow`:** phase-boundary order matches upstream; never compact
   mid-phase.
 - **`retro`:** judgement rules go where the reviewer reads them
