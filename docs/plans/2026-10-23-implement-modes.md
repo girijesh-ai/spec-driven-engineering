@@ -40,7 +40,7 @@ flowchart LR
 ## Steps
 
 ### 1. Give every plan step a `Model:` line
-- Status: todo
+- Status: blocked — eval not run (the eval child can't sign in on this host)
 - Depends on: none
 - Touches: `skills/plan-from-spec/SKILL.md`, `evals/plan-traces-criteria/case.yaml`
 - Size: S
