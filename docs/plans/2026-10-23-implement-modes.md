@@ -58,7 +58,7 @@ flowchart LR
 - Also in this step: the OpenCode line (one model, said once) and the one-line deviation from agent-skills. Riskiest step: it is the first to show whether this Mac's eval sandbox runs Bash and whether the trace shows the Agent call's `model`. If either fails, stop and decide before step 3.
 
 ### 3. Retry a failing step on opus, stop after 2 opus failures
-- Status: todo
+- Status: blocked — eval not run (the eval child can't sign in on this host)
 - Depends on: step 2
 - Touches: `skills/implement/SKILL.md`, `evals/implement-escalates/{case.yaml,scaffold.sh}`
 - Size: S

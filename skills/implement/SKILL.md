@@ -101,6 +101,14 @@ choice to the harness; this plugin picks per step so routine steps run on
 a cheaper model. On OpenCode, which can't pick a model per call, say so
 once and code each step in the main session.
 
+**When a step's check fails.** A failed check is your re-run of the
+verification failing, or `review-code` returning NEEDS FIXES. Send the
+failure output back to a subagent on the same model. After 2 failed
+checks, send it to `opus` instead. After 2 failures on `opus`, stop: show
+the failures and ask the user. Don't start a fifth call. The step stays open
+while it retries, so this is still stopping the line (Process step 5):
+nothing moves on. When you stop, offer `debug-systematically`.
+
 ## Reuse before writing
 
 Before writing new code for a step, check what the plan already flagged as
