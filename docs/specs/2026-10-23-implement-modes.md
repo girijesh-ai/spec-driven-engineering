@@ -28,10 +28,9 @@ of the addendum in `research/2026-10-12-upstream-findings.md` (lines
 - In code-journey, the engineer reads a plain write-up of each step before
   any code for it is written, and a plain "What changed" note before it is
   committed.
-- `plan-from-spec` gives every step a tier (S, M or L) and the model that
-  tier maps to, with a one-line reason. The engineer can change it when
-  approving the plan.
-- In both modes, each step's coding runs in a subagent on the tier's model.
+- `plan-from-spec` gives every step a model (`sonnet` or `opus`) with a
+  one-line reason. The engineer can change it when approving the plan.
+- In both modes, each step's coding runs in a subagent on the step's model.
 - After 2 failed checks, a step is retried on `opus`. After 2 failures on
   `opus`, the run stops and asks the engineer.
 
@@ -39,8 +38,8 @@ of the addendum in `research/2026-10-12-upstream-findings.md` (lines
 
 - Parallel steps or git worktrees: PR #8 was closed over this complexity;
   one engineer follows one step at a time.
-- `haiku` as a tier: no step in this repo's plans is mechanical enough to
-  trust it with code, and a third tier is more to explain.
+- `haiku` as a third model: no step in this repo's plans is mechanical
+  enough to trust it with code, and a third choice is more to explain.
 - A separate test-writer subagent: the implementer writes test then code,
   as `test-driven-development` already says.
 - Units as GitHub issues: the unit files in the repo are enough for one
@@ -50,7 +49,14 @@ of the addendum in `research/2026-10-12-upstream-findings.md` (lines
 - A config option to skip the mode question: one question per plan costs
   little, and a hidden default is how the engineer loses track.
 - Unit files in code-auto: code-auto's plan stays as it is today, plus the
-  `Tier` line.
+  `Model` line.
+- A tier scale (S/M/L) next to the model: plans already have `Size:
+  XS–XL`, and a second scale with the same letters would mean two things.
+- Keeping XS steps in the main session: no one has measured delegation as
+  slow. The first 3 plans record it (see Open Questions); add the rule
+  then, with numbers, if needed.
+- A separate `references/` file for delegation: the mechanics are about 30
+  lines, under the repo's 100-line bar for `references/`.
 
 ## Assumptions
 
@@ -61,7 +67,7 @@ ASSUMPTIONS I'M MAKING:
   today (`sonnet`, `opus`, `haiku`, `fable`).
 - Subagents can't start subagents, so review, floor guard, verification and
   commit stay in the main session (addendum Section C).
-- An ad-hoc change with no plan has no tier, so `implement` codes it in the
+- An ad-hoc change with no plan has no `Model:` line, so `implement` codes it in the
   main session, as today. "Delegate every step" applies to plan steps.
 - OpenCode has no per-call model choice. There, `implement` says so once
   and codes every step on the session's model.
@@ -87,10 +93,10 @@ ASSUMPTIONS I'M MAKING:
 **Recommended: extend `implement` and `plan-from-spec`.** No new skill.
 
 `plan-from-spec` adds one line to every step:
-`Tier: <S|M|L> → <model> (<reason>)`. Tier is scored from size, complexity
-and blast radius (how much breaks if the step is wrong). S and M map to
-`sonnet`; L maps to `opus`. `Size` stays as it is: it measures how much
-work, and `Tier` measures how hard.
+`Model: <sonnet|opus> (<reason>)`. The model is picked from size,
+complexity and blast radius (how much breaks if the step is wrong):
+`sonnet` by default, `opus` for a step sized L, or one that is hard to get
+right or costly if wrong. The reason names which.
 
 After the plan's explicit yes, `implement` asks: "code-auto or
 code-journey?", with code-auto preselected. Then, per step:
@@ -102,7 +108,7 @@ flowchart TD
     B -->|code-journey| J1[Main: write unit file]
     J1 --> P1([Pause: engineer reads, says go])
     P1 --> C
-    C --> D[Subagent on Tier's model: test first, then code]
+    C --> D[Subagent on the step's model: test first, then code]
     D --> E[Main: re-run verification, floor guard, review-code]
     E -->|fails twice| F[Retry on opus with failure notes]
     F -->|fails twice on opus| X([Stop and ask])
@@ -129,9 +135,10 @@ flowchart TD
   one commit per step.
 - **Checkpoints** in code-auto stay as the plan sets them (every 2-3 steps).
   In code-journey each step already pauses twice.
-- **Mechanics** go in `skills/implement/references/delegation.md`: brief
-  shape, tier table, escalation rule, and the wording of both pauses.
-  `implement/SKILL.md` gets a short "Modes" section that points there.
+- **Mechanics** go in a short "Modes" section in `implement/SKILL.md`:
+  brief shape, escalation rule, and the wording of both pauses.
+- **code-journey ships as draft** inside `implement` (its doc says so)
+  until the dry run passes SC-8.
 - **Upstream deviation:** addyosmani/agent-skills says model choice
   "belongs to the harness". `implement` says in one line that this plugin
   chooses per step, and why: to cut cost on routine steps.
@@ -144,18 +151,26 @@ before commit) needs a hook inside each step.
 
 ## Testing Seams
 
-- **Plugin evals** (`claude plugin eval`, one case per behaviour, under
-  `evals/`). They watch the whole trace: Agent calls and their `model`,
+- **Plugin evals** (`claude plugin eval`, under `evals/`) check
+  **behaviour**. They watch the whole trace: Agent calls and their `model`,
   Skill calls, file edits, and the final message. This is the highest seam
-  that sees the behaviour. It catches skipped pauses, missing `model`
-  parameters and review run in the wrong place. It misses whether the plain
-  write-ups are actually easy to read; an `llm` grader covers that only
-  roughly.
+  that sees the behaviour. It catches skipped pauses, a missing `model`
+  parameter, and review run in the wrong place.
+- **A human check in the dry run** (SC-8) checks **readability**. Evals
+  can't: their `llm` grader is one model (default `haiku`) judging another
+  model's writing for a person.
 - **`scripts/validate.py`** for skill structure and docs.
+- A case is one prompt, so a case that stops at a pause can't also show
+  what happens after it. That's why the cases that check a pause (SC-2,
+  SC-5) are separate from the ones that run past it (SC-3, SC-6), whose
+  prompts give the mode or the "go" up front. The pause cases stop early
+  and need no Bash.
 - Cases that run tests need `--scaffold --allow-tools Write Edit Bash`, and
   Bash needs a working OS sandbox (see `evals/README.md`). Where the sandbox
   fails, their trigger graders still count; outcome graders are reported as
   "not run".
+- Run the evals when `implement` or `plan-from-spec` text changes and
+  before a release, not on every commit. `--max-cost-usd` caps a run.
 
 ## Success Criteria & Evals
 
@@ -163,32 +178,32 @@ Each eval runs 3 times (the default). "Pass" means every grader in the
 case passes in at least 2 of 3 runs (≥ 67%).
 
 - **SC-1:** `plan-from-spec` gives every step a line matching
-  `Tier: (S|M|L) → (sonnet|opus) \(.+\)`, and every L step maps to `opus`.
-  Check: `claude plugin eval . --no-publish --model sonnet --case plan-tiers`
+  `Model: (sonnet|opus) \(.+\)`, and every step sized L has `opus`.
+  Check: `claude plugin eval . --no-publish --model sonnet --case plan-models`
   → ≥ 67%.
 - **SC-2:** after the plan's yes, `implement` asks for code-auto or
   code-journey, code-auto preselected, before any Edit or Write to a source
   file. Check: `claude plugin eval . --no-publish --model sonnet --case
-  implement-asks-mode --scaffold --allow-tools Write Edit Bash` → ≥ 67%.
+  implement-asks-mode --scaffold --allow-tools Write Edit` → ≥ 67%.
 - **SC-3 (code-auto):** every implementer Agent call names `model` matching
-  its step's tier. The verification re-run, `review-code` and `git commit`
-  appear in the main trace after each Agent call returns. Check: `claude
-  plugin eval . --no-publish --model sonnet --case implement-code-auto
-  --scaffold --allow-tools Write Edit Bash` → ≥ 67%.
+  its step's `Model:` line. The verification re-run, `review-code` and `git
+  commit` appear in the main trace after each Agent call returns. Check:
+  `claude plugin eval . --no-publish --model sonnet --case
+  implement-code-auto --scaffold --allow-tools Write Edit Bash` → ≥ 67%.
 - **SC-4 (escalation):** the scaffold holds a step whose verification can't
   pass. The trace shows 2 Agent calls with `model: sonnet`, then 2 with
   `model: opus`, then a final message that stops and asks; there is no fifth
   Agent call and no commit. Check: `claude plugin eval . --no-publish
   --model sonnet --case implement-escalates --scaffold --allow-tools Write
   Edit Bash` → ≥ 67%.
-- **SC-5 (code-journey, before):** the first turn creates
+- **SC-5 (code-journey, before):** the run creates
   `docs/plans/*/units/01-*.md` with a picture section and a "how we'll know"
   line naming the verification command. It ends with the pause message, with
   no Edit or Write to any source file. Check: `claude plugin eval .
   --no-publish --model sonnet --case journey-pause-before --scaffold
-  --allow-tools Write Edit Bash` → ≥ 67%.
-- **SC-6 (code-journey, after):** after "go", the unit file gains a
-  `## What changed` section before `git commit` runs, and `git show --stat
+  --allow-tools Write Edit` → ≥ 67%.
+- **SC-6 (code-journey, after):** given "go" on unit 1, the unit file gains
+  a `## What changed` section before `git commit` runs, and `git show --stat
   HEAD` in the scaffold lists the unit file. Check: `claude plugin eval .
   --no-publish --model sonnet --case journey-what-changed --scaffold
   --allow-tools Write Edit Bash` → ≥ 67%.
@@ -197,9 +212,17 @@ case passes in at least 2 of 3 runs (≥ 67%).
   "code-auto|code-journey" docs/engineering/implement.md
   docs/engineering/plan-from-spec.md` → a count of at least 1 for each
   file; `rg -n "\bauto mode\b" -i skills/implement` → no matches.
+- **SC-8 (readability, human):** in the code-journey dry run on a real
+  task, the engineer reads each unit file and, without opening the code,
+  says in one sentence what the step does. Each unit is recorded under a
+  `## Dry run` section added to this spec, one line per unit:
+  `- <unit file>: understood` or `- <unit file>: not understood`. At least
+  2 of the first 3 must be "understood" before code-journey leaves draft.
+  Check: `rg -c ': understood$' docs/specs/2026-10-23-implement-modes.md` →
+  ≥ 2.
 
 ## Open Questions
 
-- Whether `fable` should replace `opus` for the L tier once it's measured on
-  real plans. Owner: the engineer running the first 3 code-journey plans.
-  Not needed for this spec.
+- Is delegating XS steps too slow? The engineer running the first 3 plans
+  notes the time per XS step. If XS steps are clearly slow, keeping them in
+  the main session becomes a spec change, with those numbers behind it.
