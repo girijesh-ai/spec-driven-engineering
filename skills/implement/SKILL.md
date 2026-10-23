@@ -53,6 +53,7 @@ against beyond what's obviously implied by the request.
    refactor. Run typecheck and the single test file often; the full suite
    at each plan checkpoint and before the final review. If you've written
    about 100 lines without running a test, stop and run one.
+   For a plan step, a subagent does this part: see **Modes** below.
 3. **Stay inside the step.** Anything you notice outside the step's scope —
    a bug, a smell, a missing test — goes in a list, not in this diff:
 
@@ -81,6 +82,24 @@ against beyond what's obviously implied by the request.
    line gives the step's commit. Keep each commit revertable on its own:
    the code compiles at every commit, and never delete an old
    implementation and add its replacement in the same commit.
+
+## Modes
+
+For a plan step only. An ad-hoc change with no plan is coded in the
+main session, as above.
+
+**Delegate the coding.** For each step, call the Agent tool with `model`
+set to the step's `Model:` line (`sonnet` or `opus`). The brief holds the
+step text, the spec lines it cites, the files to touch, the pattern to
+follow and known gotchas, and ends: "Write the failing test first, then
+the code. Don't commit, run review, or start subagents. Report the files
+changed, the test output, and anything you noticed but didn't touch."
+The rest stays in the main session: re-run the step's verification
+yourself (the subagent's "tests pass" is a claim), the floor guard,
+`review-code`, the status line and the commit. agent-skills leaves model
+choice to the harness; this plugin picks per step so routine steps run on
+a cheaper model. On OpenCode, which can't pick a model per call, say so
+once and code each step in the main session.
 
 ## Reuse before writing
 

@@ -49,7 +49,7 @@ flowchart LR
 - Note: this adds graders to the existing case rather than a new `plan-models` case. One case to maintain, not two. The spec's SC-1 check names `plan-models`; it changes to `plan-traces-criteria` on your yes.
 
 ### 2. Hand each plan step's coding to a subagent on the step's model (code-auto)
-- Status: todo
+- Status: blocked — eval not run (the eval child can't sign in on this host)
 - Depends on: step 1
 - Touches: `skills/implement/SKILL.md`, `evals/implement-code-auto/{case.yaml,scaffold.sh}`
 - Size: M
