@@ -179,7 +179,7 @@ case passes in at least 2 of 3 runs (≥ 67%).
 
 - **SC-1:** `plan-from-spec` gives every step a line matching
   `Model: (sonnet|opus) \(.+\)`, and every step sized L has `opus`.
-  Check: `claude plugin eval . --no-publish --model sonnet --case plan-models`
+  Check: `claude plugin eval . --no-publish --model sonnet --case plan-traces-criteria`
   → ≥ 67%.
 - **SC-2:** after the plan's yes, `implement` asks for code-auto or
   code-journey, code-auto preselected, before any Edit or Write to a source
