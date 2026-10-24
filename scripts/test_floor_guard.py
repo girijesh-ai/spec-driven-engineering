@@ -141,6 +141,92 @@ class FloorGuardRepo(unittest.TestCase):
         self.assertIn("src/app.py:1", output)
         self.assertNotIn("sk-secret-value", output)
 
+    def test_new_suppression_markers_are_flagged(self) -> None:
+        self.write("src/a.ts", "// biome-ignore lint: x\n")
+        self.write("src/b.py", 'KEY = "x"  # gitleaks:allow\n')
+        self.write("src/c.ts", "// Stryker disable all\n")
+        self.assertEqual(self.rules(), ["SUPPRESSION"] * 3)
+
+    def test_empty_catch_todo_and_pass_stub_are_stubs(self) -> None:
+        self.write("src/a.ts", "try { f() } catch (e) {}\ntry { g() } catch {}\n")
+        self.write("src/b.py", "def f():\n    pass  # stub\n# TODO: handle errors\n")
+        self.assertEqual(self.rules(), ["STUB"] * 4)
+
+    def test_typed_or_commented_empty_catch_is_a_stub(self) -> None:
+        self.write("src/A.java", "} catch (IOException e) {}\n} catch (A | B e) { /* ignore */ }\n")
+        self.assertEqual(self.rules(), ["STUB"] * 2)
+
+    def test_catch_with_code_between_comments_is_not_a_stub(self) -> None:
+        self.write("src/a.js", "try { f() } catch (e) { /* x */ log(e); /* y */ }\n")
+        self.assertEqual(self.rules(), [])
+
+    def test_todo_outside_a_comment_is_not_a_stub(self) -> None:
+        self.write("src/a.py", 'label = "add a todo item"\nSTATUS = "TODO"\n')
+        self.assertEqual(self.rules(), [])
+
+    def test_constraints_rule_removed_or_number_changed_is_flagged(self) -> None:
+        self.write(
+            "CONSTRAINTS.md",
+            "- Coverage: at least 90% lines\n- No network in tests\n| C3 | max 400 lines per file |\n",
+        )
+        self.commit("constraints")
+        self._git("branch", "-f", "main")  # the rules are on the base
+        self.write("CONSTRAINTS.md", "- Coverage: at least 80% lines\n| C3 | max 600 lines per file |\n")
+        findings, _, _, _ = floor_guard.run(self.repo, None)
+        self.assertEqual(
+            sorted((f.rule, f.marker) for f in findings),
+            [
+                ("CONSTRAINT_CHANGED", "C3"),
+                ("CONSTRAINT_CHANGED", "Coverage"),
+                ("CONSTRAINT_REMOVED", "No network in tests"),
+            ],
+        )
+
+    def test_constraints_reworded_or_added_rule_is_silent(self) -> None:
+        self.write("CONSTRAINTS.md", "- Coverage: at least 90% lines\n")
+        self.commit("constraints")
+        self._git("branch", "-f", "main")  # the rules are on the base
+        self.write("CONSTRAINTS.md", "- Coverage: at least 90% of lines, per package\n- No sleeps in tests\n")
+        self.assertEqual(self.rules(), [])
+
+    def test_constraints_new_exception_row_is_flagged(self) -> None:
+        table = "## Exceptions\n\n| Rule | Owner | Expires |\n|---|---|---|\n| C1 | ann | 2026-12 |\n"
+        self.write("CONSTRAINTS.md", "- C1: max 400 lines per file\n\n" + table)
+        self.commit("constraints")
+        self._git("branch", "-f", "main")  # the rules are on the base
+        self.write(
+            "CONSTRAINTS.md",
+            "- C1: max 400 lines per file\n- C2: no sleeps\n\n" + table + "| C2 | bob | 2027-01 |\n",
+        )
+        findings, _, _, _ = floor_guard.run(self.repo, None)
+        self.assertEqual([(f.rule, f.line) for f in findings], [("CONSTRAINT_EXCEPTION", 9)])
+
+    def test_removing_an_exception_row_is_silent(self) -> None:
+        table = "## Exceptions\n\n| Rule | Owner | Expires |\n|---|---|---|\n"
+        self.write("CONSTRAINTS.md", "- C1: max 400 lines per file\n\n" + table + "| C1 | ann | 2026-12 |\n")
+        self.commit("constraints")
+        self._git("branch", "-f", "main")  # the rules are on the base
+        self.write("CONSTRAINTS.md", "- C1: max 400 lines per file\n\n" + table)
+        self.assertEqual(self.rules(), [])
+
+    def test_exception_row_above_an_empty_row_is_flagged(self) -> None:
+        table = "## Exceptions\n| Rule | Owner |\n|---|---|\n| C1 | ann |\n"
+        self.write("CONSTRAINTS.md", table + "| | |\n")
+        self.commit("constraints")
+        self._git("branch", "-f", "main")  # the rules are on the base
+        self.write("CONSTRAINTS.md", table + "| C9 | bob |\n| | |\n")
+        self.assertEqual(self.rules(), ["CONSTRAINT_EXCEPTION"])
+
+    def test_constraints_file_deleted_or_renamed_away_is_flagged(self) -> None:
+        self.write("CONSTRAINTS.md", "- Coverage: at least 90% lines\n")
+        self.commit("constraints")
+        self._git("branch", "-f", "main")  # the rules are on the base
+        self._git("rm", "-q", "CONSTRAINTS.md")
+        self.assertEqual(self.rules(), ["CONSTRAINT_REMOVED"])
+        self.write("docs/rules.md", "- Coverage: at least 90% lines\n")
+        self._git("add", "-A")
+        self.assertEqual(self.rules(), ["CONSTRAINT_REMOVED"])
+
     def test_missing_base_exits_two(self) -> None:
         code, output = self.guard("--base", "no-such-branch")
         self.assertEqual(code, 2)

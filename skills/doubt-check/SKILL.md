@@ -24,39 +24,63 @@ finished diff; this checks one decision while it's still cheap to change.
 - A root-cause conclusion from `debug-systematically` before the fix lands
 - A claim that a Success Criterion is met when the evidence is indirect
 
-Skip for: decisions already covered by an approved spec, and anything
-cheap to reverse.
+Skip for: choices the approved spec itself made (pressure-test the spec
+with `grill-me` instead), and anything cheap to reverse.
+
+Run it from the main session. A subagent can't start another subagent, so
+inside one, say that doubt-check can't run there and hand the decision
+back to the main session. Don't fake a fresh context by questioning
+yourself.
 
 ## Process
 
 1. **Claim.** Write the decision in 2-3 lines: what you decided and what
-   it's supposed to achieve.
+   it's supposed to achieve. This is for you; the doubter never sees it.
 2. **Extract.** Gather the artifact (the code, schema, or conclusion) and
    the contract it must satisfy — the relevant spec Success Criteria, or
    the bug's red-capable command. Leave out your reasoning, alternatives
-   you rejected, and how confident you are.
-3. **Doubt.** Dispatch a fresh subagent with only the claim, artifact, and
-   contract, and this instruction: "Find what is wrong with this. Do not
-   validate it. List concrete failure cases, each with the input or
-   condition that triggers it." Use a strong model for this subagent.
-4. **Reconcile.** For each objection: **accept** (change the decision) or
-   **refute** with evidence — a command run, a line of code, a criterion.
-   "I think it's fine" is not a refutation.
-5. **Stop** when a cycle produces nothing actionable, or after 3 cycles.
-   Two cycles in a row with nothing actionable means further doubting is
-   theatre — stop and proceed.
+   you rejected, and how confident you are. If the artifact is too big to
+   hold in one read, split it and doubt the parts.
+3. **Doubt.** Dispatch a fresh subagent with the artifact and contract
+   only, never the claim: a stated conclusion invites agreement. Give it
+   this instruction: "Find what is wrong with this. Do not validate it.
+   List concrete failure cases, each with the input or condition that
+   triggers it, or say you found none." Use a strong model for this
+   subagent.
+4. **Reconcile.** Re-read the artifact against each objection, then put
+   it in the first class that fits:
+   - **Contract misread** — the contract you sent was unclear. Fix the
+     contract; re-classify next cycle.
+   - **Valid, fix it** — change the artifact, then run another cycle.
+   - **Valid trade-off** — real, but fixing costs more than accepting.
+     Write the trade-off down so the user sees it.
+   - **Noise** — correct given context the doubter didn't have. Refute it
+     with evidence: a command run, a line of code, a criterion. "I think
+     it's fine" is not a refutation.
+5. **Stop** when a cycle returns only trivial or already-considered
+   objections, or the user says to proceed. After 3 cycles, stop and hand
+   it to the user: substantive objections still coming after 3 cycles say
+   the decision isn't ready. Don't run a fourth alone.
 
-**Cross-model escalation.** For a decision that is high-risk and still
-contested after reconciling, offer to run step 3 again on a different
-model tier. Always offer it in that case and let the user decide; never
-skip the offer silently.
+**Doubt theatre.** Two or more cycles of substantive objections with none
+classed "valid, fix it" means you are validating, not doubting. Stop and
+escalate to the user; don't proceed on your own say-so.
+
+**Cross-model check.** A doubter on the same model shares the author's
+blind spots. After step 3 in every cycle, before reconciling, ask the user
+whether to also run it on a different model (another CLI, or a manual
+review they paste in). The user decides; say "proceeding with
+single-model findings" when they skip. Run an external CLI only with the
+user's yes for that exact command, each time: pipe the prompt in from a
+file, read-only mode where the tool has one. In an unattended run, skip it
+and say so in the output.
 
 ## Output
 
 ```markdown
 ## Doubt check: <claim, one line>
 Cycles: N
-- Objection: <failure case> → accepted: <change made> | refuted: <evidence>
+- Objection: <failure case> → fixed: <change> | trade-off: <why accepted> | contract misread: <contract fix> | noise: <evidence>
 Result: decision kept | decision changed to <...>
 ```
 
@@ -64,10 +88,14 @@ Result: decision kept | decision changed to <...>
 
 | Mistake | Fix |
 |---|---|
-| Passing your reasoning to the doubter | Send claim, artifact, and contract only — reasoning invites agreement |
+| Passing the claim or your reasoning to the doubter | Send artifact and contract only — a conclusion invites agreement |
 | Asking the doubter to "review" or "check" | Ask it to find what's wrong; a validator finds reasons to agree |
 | Refuting an objection with an opinion | Refute with a command, a line, or a criterion — or accept it |
-| Running cycles until one comes back clean | Cap at 3; two empty cycles in a row means stop |
+| Running cycles until one comes back clean | Cap at 3, then hand it to the user |
+| Dismissing every objection, cycle after cycle | That's doubt theatre: stop and escalate |
+| Skipping the cross-model offer because the decision feels low-risk | Offer it every cycle; the user decides |
+| Running an external CLI on an earlier yes | Each run needs its own yes for that exact command |
+| Running doubt-check inside a subagent | It needs a fresh subagent; hand it back to the main session |
 
 ## Next
 

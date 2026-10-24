@@ -81,7 +81,9 @@ def check_discipline_sections(errors: list[str]) -> None:
         if not path.exists():
             errors.append(f"discipline check: {path} does not exist")
             continue
-        headings = set(re.findall(r"^## (.+?)\s*$", path.read_text(), re.M))
+        # A heading inside a code fence (a template, an example) isn't a section.
+        text = re.sub(r"^(```|~~~).*?^\1[^\n]*$", "", path.read_text(), flags=re.M | re.S)
+        headings = set(re.findall(r"^## (.+?)\s*$", text, re.M))
         for section in DISCIPLINE_SECTIONS:
             if section not in headings:
                 errors.append(f"{path}: discipline skill missing '## {section}'")

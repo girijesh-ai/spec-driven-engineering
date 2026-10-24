@@ -26,7 +26,18 @@ Skip when the session went cleanly — don't manufacture findings.
 
 1. **List what went wrong**, from evidence: review findings, reverted
    commits, failed verifications, floor-guard hits, user corrections.
-   One line each, with where it showed up. No narrative.
+   One line each, with where it showed up. No narrative. Also look past
+   outright mistakes:
+   - **Navigation** — the agent took long to find a file or fact; a
+     pointer would have saved it.
+   - **Tool economy** — an expensive or repeated tool call that a
+     script or narrower command would replace.
+   - **No-ops** — lines in `CLAUDE.md` or a skill that changed nothing
+     the agent did.
+   - **Information access** — something the agent needed and couldn't
+     see (server logs, a read-only view of a service).
+   - **Steering size** — a large `CLAUDE.md` whose rules belong in
+     checks or `CONSTRAINTS.md`.
 2. **Classify each item:**
    - **Mechanical** — a rule a tool could check (an import direction, a
      forbidden call, a missing test file, a format).
@@ -35,12 +46,20 @@ Skip when the session went cleanly — don't manufacture findings.
 3. **Propose the guardrail:**
    - Mechanical → a deterministic check: lint rule, pre-commit hook, CI
      step, test, or a floor-guard rule. Name the exact file it goes in.
-   - Judgement → a written standard: the project's `CLAUDE.md`,
-     `CONSTRAINTS.md`, `engineering-standards`, or the skill that should
-     have caught it. Quote the line to add.
-4. **Flag gaps.** An item where nothing in the environment would have
-   caught it is itself a finding: "no guardrail at all".
-5. **Present, then ask.** Show the table and ask which to apply. Apply
+     Read the repo's own check commands first (`package.json` scripts,
+     `Makefile`, CI workflow): a check that exists but isn't wired in, or
+     is silently broken, is the finding, not a new check.
+   - Judgement → a rule the reviewer enforces, since the reviewer has the
+     least context pressure: the project's `CONSTRAINTS.md` (which
+     `review-code` checks), or the skill that should have caught it.
+     Quote the line to add. `CLAUDE.md` loads into every session, so use
+     it only for navigation pointers ("auth rules live in
+     `docs/auth.md`"), not rules.
+4. **Flag a repo with no guardrail.** No pre-commit hook and no CI job
+   running the lint, typecheck or test command is itself a finding,
+   whatever went wrong in the session.
+5. **Present, then ask.** Show the table, most severe first, and ask
+   which to apply. Apply
    only the approved ones, each as its own commit.
 
 ## Output
@@ -51,7 +70,7 @@ Skip when the session went cleanly — don't manufacture findings.
 | What went wrong | Where | Kind | Guardrail | Goes in |
 |---|---|---|---|---|
 | Import from api/ into core/ | review of step 3 | Mechanical | import-linter contract | `.importlinter` |
-| Asked the user a fact the repo answers | spec interview | Judgement | "Look facts up before asking" | `CLAUDE.md` |
+| Hand-rolled retry instead of `lib/retry` | review of step 2 | Judgement | "Use `lib/retry` for any retried call" | `CONSTRAINTS.md` |
 ```
 
 ## Common mistakes
@@ -60,6 +79,8 @@ Skip when the session went cleanly — don't manufacture findings.
 |---|---|
 | Writing lessons learned as prose | Each item becomes a check or a quoted rule with a file location |
 | Encoding a mechanical rule as a written standard | If a tool can check it, make the tool check it |
+| Putting a judgement rule in `CLAUDE.md` | Put it where the reviewer reads it; `CLAUDE.md` holds navigation pointers |
+| Proposing a new check the repo already has | Read its check commands and CI first; an unwired check is the finding |
 | Applying every proposed change without asking | Present the table; apply only what's approved |
 | Inventing findings for a clean session | Say it went cleanly and stop |
 

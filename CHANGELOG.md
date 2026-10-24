@@ -3,6 +3,63 @@
 Versions follow semver (`.claude-plugin/plugin.json`). Renaming a plugin or
 skill is a breaking change.
 
+## 2.0.2 — 2026-10-22
+
+Fixes from re-checking the skills against their upstream sources
+(`research/2026-10-12-upstream-findings.md`, addendum 2026-10-22).
+
+- **`doubt-check`:** the doubter never sees the claim. Objections are
+  classed as contract misread, fix, trade-off, or noise. After 3 cycles,
+  hand it to the user. "Doubt theatre" (substantive objections, all
+  dismissed) now means escalate, not proceed. It can't run inside a
+  subagent. The cross-model check is offered every cycle; an external CLI
+  runs only with a yes for that exact command.
+- **`implement`:** checks `git status --porcelain` before starting. The
+  plan's `Status: done` goes in the step's own commit; the old
+  `done <sha>` could only be written after it, leaving the tree dirty.
+  `plan-from-spec`'s status format drops the SHA to match.
+- **`plan-from-spec`:** needs an explicit yes on the plan before
+  `implement`.
+- **`review-code`:** per-step review covers uncommitted work (base to
+  working tree, plus untracked files). The mutation check copies the file,
+  proves the mutation landed, restores from the copy and names the missing
+  test. Skips what the project's tooling enforces. A new dependency gets
+  a question list instead of a one-per-change limit (that limit is for
+  upgrades). Smells only in changed code, with the hunk quoted. Large
+  deletions and codemods don't count toward the size check.
+- **Floor guard:** reports rules removed from `CONSTRAINTS.md` or kept
+  with changed numbers, new entries under an Exceptions heading, and the
+  file deleted or renamed away. Removing an exception stays silent: it
+  raises the bar. Flags empty `catch` (typed or with a comment), `pass #
+  stub`, a `TODO` comment, `biome-ignore`, `gitleaks:allow`, `Stryker
+  disable`.
+- **`dev-workflow`:** phase-boundary order matches upstream; never compact
+  mid-phase.
+- **`retro`:** judgement rules go where the reviewer reads them
+  (`CONSTRAINTS.md`), not `CLAUDE.md`. A repo with no pre-commit hook or CI
+  is a finding. Five more areas to look at (navigation, tool economy,
+  no-ops, information access, steering size); findings most severe first.
+- **`debug-systematically`:** hypotheses state a prediction; the seam must
+  replay the real call chain; re-run the un-minimized scenario; an exit
+  when no loop can be built.
+- **`test-driven-development`:** ad-hoc seams confirmed with the user;
+  full suite before handing back; call-count and side-channel red flags.
+- **`simplify-code`:** scoped to what the change touches, in its own PR;
+  project conventions first; limits on over-simplifying.
+- **`source-driven`:** ask when no version is pinned; UNVERIFIED when docs
+  are silent; a citation per pattern; no outbound endpoint from a doc
+  example without a yes. A local pattern skips the docs only if it was
+  written for the pinned version.
+- **`spec-from-idea`, `grill-me`:** word questions so "yes" accepts the
+  guess; no self-interview in unattended runs; stop and reframe when
+  rounds never converge; seams note what they catch and miss.
+- **`writing-for-agents`:** leading-words rule. **`domain-modeling`:** an
+  ADR can be one paragraph. **`handoff`:** saved outside the repo.
+- **Repo rules (`CLAUDE.md`):** compose existing skills before adding one;
+  a new rule names the failure behind it.
+- **`validate.py`:** headings inside code fences don't satisfy the
+  discipline-section check.
+
 ## 2.0.1 — 2026-10-13
 
 - **New draft skill `plain-technical-writing`:** one standard for anything

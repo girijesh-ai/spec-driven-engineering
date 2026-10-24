@@ -48,6 +48,7 @@ if it were real.
    confirms it. "What happens when X is empty/absent/concurrent/huge?"
    beats "does this handle X?" Every question carries your own
    recommended answer: `Q: <question>` / `GUESS: <your answer and why>`.
+   Word the `Q:` so "yes" accepts your `GUESS:`.
    One question means one decision, not several bundled under one `Q:`.
    End the message at the `GUESS:` — no "and if so, also tell me…"
    follow-ups; those are the next questions, asked after this answer.

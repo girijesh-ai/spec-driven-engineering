@@ -5,7 +5,8 @@ Scans the diff from the merge-base with a base branch to the working tree
 (staged, unstaged and untracked files) and reports anything that makes a
 check easier to pass without making the code better: new suppressions,
 skipped or focused tests, stubs, deleted test files, net-removed assertions,
-lowered thresholds, relaxed lint/type config.
+lowered thresholds, relaxed lint/type config, and in CONSTRAINTS.md: rules
+removed or renumbered, new exception rows, or the file itself removed.
 
 Tightening the bar is silent; loosening it is loud.
 
@@ -31,7 +32,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
-from typing import Dict, List, NamedTuple, Optional, Tuple
+from typing import Dict, FrozenSet, List, NamedTuple, Optional, Tuple
 
 DEFAULT_BASES = ("origin/HEAD", "main", "master")
 
@@ -40,7 +41,7 @@ SUPPRESSION = re.compile(
     r"|eslint-disable|@ts-ignore|@ts-expect-error|@ts-nocheck"
     r"|istanbul\s+ignore|c8\s+ignore|nosemgrep|#\s*nosec\b|NOSONAR"
     r"|pragma:\s*no\s*cover|//\s*nolint|#\[allow\(|@SuppressWarnings"
-    r"|rubocop:disable|phpcs:ignore"
+    r"|rubocop:disable|phpcs:ignore|biome-ignore|gitleaks:allow|Stryker\s+disable"
 )
 SKIPPED_TEST = re.compile(
     r"@pytest\.mark\.(skip|skipif|xfail)\b|\bpytest\.skip\(|@unittest\.skip"
@@ -50,7 +51,9 @@ SKIPPED_TEST = re.compile(
 )
 STUB = re.compile(
     r"\braise\s+NotImplementedError\b|throw\s+new\s+Error\(\s*['\"]not\s+implemented"
-    r"|\btodo!\(|\bunimplemented!\(|panic\(\s*\"not\s+implemented",
+    r"|\btodo!\(|\bunimplemented!\(|panic\(\s*\"not\s+implemented"
+    r"|catch\s*(\([^)]*\))?\s*\{\s*(/\*((?!\*/).)*\*/)?\s*\}|\bpass\s*#\s*stub\b"
+    r"|(?-i:(#|//|/\*|--)\s*TODO\b)",  # a TODO comment, not the word in a string
     re.I,
 )
 ASSERTION = re.compile(
@@ -77,6 +80,13 @@ CONFIG_GLOBS = (
     "tsconfig*.json", ".golangci.*", ".rubocop.yml", "biome.json",
     "jest.config.*", "vitest.config.*", ".coveragerc", "package.json",
 )
+# A CONSTRAINTS.md rule is a bullet (keyed by its text before the first
+# colon) or a table row (keyed by its first cell). A new row in a table
+# under an "Exceptions" heading is an exception to a rule.
+CONSTRAINTS_FILE = "CONSTRAINTS.md"
+NUMBER = re.compile(r"\d+(?:\.\d+)?")
+EXCEPTIONS_HEADING = re.compile(r"#+\s*Exceptions?\b", re.I)
+SEPARATOR_ROW = re.compile(r"\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)*\|?")
 # Prose that *mentions* a suppression or a skip isn't one.
 PROSE_GLOBS = ("*.md", "*.rst", "*.txt", "*.adoc")
 # Thresholds also live in CI and build files; code files are excluded so a
@@ -198,8 +208,101 @@ def thresholds(lines: List[Tuple[int, str]]) -> Dict[str, Tuple[int, float]]:
     return found
 
 
-def scan_file(diff: FileDiff) -> List[Finding]:
+def rule_key(text: str) -> Optional[str]:
+    stripped = text.strip()
+    if stripped.startswith("|"):
+        cells = [c.strip() for c in stripped.strip("|").split("|")]
+        if cells and cells[0] and not re.fullmatch(r":?-+:?", cells[0]):
+            return cells[0]
+        return None
+    if re.match(r"[-*] ", stripped):
+        return stripped[2:].split(":")[0].strip() or None
+    return None  # prose, headings: not a rule
+
+
+def exception_rows(repo: Path, path: str) -> FrozenSet[int]:
+    """Line numbers of the data rows in tables under an Exceptions heading."""
+    try:
+        text = (repo / path).read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return frozenset()
+    return exception_rows_in(text)
+
+
+def base_exception_rows(repo: Path, merge_base: str, path: str) -> FrozenSet[int]:
+    """The same, in the base version of the file (empty if it's new there)."""
+    try:
+        text = git(repo, "show", f"{merge_base}:{path}")
+    except GuardError:
+        return frozenset()
+    return exception_rows_in(text)
+
+
+def exception_rows_in(text: str) -> FrozenSet[int]:
+    lines = text.splitlines()
+    rows = set()
+    inside = False
+    for number, line in enumerate(lines, start=1):
+        stripped = line.strip()
+        if stripped.startswith("#"):
+            inside = bool(EXCEPTIONS_HEADING.match(stripped))
+            continue
+        below = lines[number].strip() if number < len(lines) else ""
+        is_header = bool(SEPARATOR_ROW.fullmatch(below))
+        if inside and rule_key(stripped) is not None and not is_header:
+            rows.add(number)
+    return frozenset(rows)
+
+
+def scan_constraints(
+    diff: FileDiff,
+    exceptions: FrozenSet[int],
+    base_exceptions: FrozenSet[int] = frozenset(),
+) -> List[Finding]:
+    """Removing a rule, changing its numbers, or adding an exception can
+    lower the bar. Removing an exception raises it, so that stays silent.
+
+    The guard can't tell which way a number moved the bar ("at least 90"
+    vs "at most 400"), so any changed number is reported for a person to
+    judge. New rules stay silent, and so does rewording with the same
+    numbers as long as the rule's key is kept: the text before a bullet's
+    colon, or a table row's first cell. A bullet with no colon is keyed
+    on its whole text, so rewording it reads as a removal. Only `-` and
+    `*` bullets and table rows count as rules; numbered items don't.
+    """
     findings: List[Finding] = []
+    added = {}
+    for number, text in diff.added:
+        key = rule_key(text)
+        if key is not None:
+            added.setdefault(key, (number, text))
+    removed_keys = set()
+    for number, text in diff.removed:
+        key = rule_key(text)
+        if key is None:
+            continue
+        removed_keys.add(key)
+        if key not in added and number in base_exceptions:
+            continue
+        if key not in added:
+            findings.append(Finding("CONSTRAINT_REMOVED", diff.path, number, key))
+        elif NUMBER.findall(text) != NUMBER.findall(added[key][1]):
+            findings.append(Finding("CONSTRAINT_CHANGED", diff.path, added[key][0], key))
+    for number, text in diff.added:
+        key = rule_key(text)
+        if number in exceptions and key not in removed_keys:
+            findings.append(Finding("CONSTRAINT_EXCEPTION", diff.path, number, key or ""))
+    return findings
+
+
+def scan_file(
+    diff: FileDiff,
+    exceptions: FrozenSet[int] = frozenset(),
+    base_exceptions: FrozenSet[int] = frozenset(),
+) -> List[Finding]:
+    findings: List[Finding] = []
+    if Path(diff.path).name == CONSTRAINTS_FILE:
+        return scan_constraints(diff, exceptions, base_exceptions)
     if matches_any(diff.path, PROSE_GLOBS):
         return findings
     for number, text in diff.added:
@@ -263,13 +366,24 @@ def run(repo: Path, base: Optional[str]) -> Tuple[List[Finding], str, str, int]:
 
     findings: List[Finding] = []
     for diff in diffs:
-        findings.extend(scan_file(diff))
+        is_constraints = Path(diff.path).name == CONSTRAINTS_FILE
+        exceptions = base_exceptions = frozenset()
+        if is_constraints:
+            exceptions = exception_rows(repo, diff.path)
+            base_exceptions = base_exception_rows(repo, merge_base, diff.path)
+        findings.extend(scan_file(diff, exceptions, base_exceptions))
 
     status = git(repo, "diff", "--name-status", "-M", merge_base)
     for row in status.splitlines():
         fields = row.split("\t")
         if len(fields) == 2 and fields[0] == "D" and is_test_path(fields[1]):
             findings.append(Finding("DELETED_TEST_FILE", fields[1], 0, "deleted"))
+        # Deleting CONSTRAINTS.md, or renaming it, drops every rule at once.
+        gone = fields[0] == "D" or (
+            fields[0].startswith("R") and Path(fields[-1]).name != CONSTRAINTS_FILE
+        )
+        if gone and Path(fields[1]).name == CONSTRAINTS_FILE:
+            findings.append(Finding("CONSTRAINT_REMOVED", fields[1], 0, "file removed"))
 
     return findings, merge_base, ref, len(diffs)
 
@@ -293,7 +407,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     print(f"floor-guard: {len(findings)} finding(s) against {where}")
     for finding in sorted(findings, key=lambda f: (f.path, f.line, f.rule)):
         location = f"{finding.path}:{finding.line}" if finding.line else finding.path
-        print(f"  {finding.rule:<18} {location}  ({finding.marker})")
+        print(f"  {finding.rule:<20} {location}  ({finding.marker})")
     return 1
 
 

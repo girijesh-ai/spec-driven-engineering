@@ -39,13 +39,18 @@ full — standards compliance never depends on a spec existing.
 ### Step 1 — Pin the fixed point, establish scope
 
 Record exactly what is under review: `git rev-parse HEAD` and the base
-(merge-base with the target branch). Confirm the diff between them is
+(merge-base with the target branch). Before a commit (the per-step review
+inside `implement`) the work isn't in HEAD yet: review `git diff <base>`,
+which runs to the working tree, plus untracked files from `git status
+--porcelain`. `<base>...HEAD` would miss all of it. Confirm the diff is
 non-empty — reviewing an empty or wrong range reports READY on nothing.
 List every changed file and the total additions/deletions. State in one
 sentence what the change is trying to do.
 
 Size check: ~100 changed lines reviews well, ~300 is acceptable, ~1000
-should have been split — say so. A refactor mixed into a feature diff is
+should have been split — say so. Whole-file deletions and codemod output
+don't count toward the size: check their intent, not every line. A
+refactor mixed into a feature diff is
 a finding: they belong in separate commits.
 
 ### Step 2 — Axis 1: spec compliance
@@ -56,10 +61,12 @@ criterion describes, don't eyeball it. Report each criterion as met, not
 met, or not applicable, with why.
 
 **Mutation spot-check.** For at least one criterion the diff claims to
-satisfy, break the code it depends on — invert one condition, return
-early — run that criterion's check, then restore the code. If the check
-stays green, it doesn't guard the criterion: that's a confirmed finding
-against the test, not the code.
+satisfy, copy the file, then break the code it depends on — invert one
+condition, return early. Confirm the mutation landed (diff against the
+copy), run that criterion's check, then restore the file from the copy.
+If the check stays green, it doesn't guard the criterion: that's a
+confirmed finding against the test, not the code. Name the test case
+that's missing.
 
 **Scope creep.** Also report behaviour in the diff that no criterion or
 goal asked for. Unrequested behaviour has nothing to be checked against.
@@ -105,11 +112,14 @@ security- or correctness-critical should be silently skipped there.
 
 Run this skill's `scripts/floor_guard.py` from the repo under review:
 `python3 <this skill's dir>/scripts/floor_guard.py --base <target branch>`.
-It flags new suppressions, skipped or focused tests, stubs, deleted test
-files, net-removed assertions, lowered coverage thresholds, and relaxed
-lint/type config. Exit 0 = clean, 1 = findings, **2 = it didn't run** —
-report a 2 as "floor guard did not run", never as clean. Each finding is a
-confirmed issue unless the spec or plan explicitly calls for that change.
+It flags new suppressions, skipped or focused tests, stubs (including an
+empty `catch` and a `TODO` comment), deleted test files, net-removed
+assertions, lowered coverage thresholds, relaxed lint/type config, and in
+`CONSTRAINTS.md`: rules removed or with their numbers changed, new
+entries under an Exceptions heading, or the file deleted or renamed away.
+Exit 0 = clean, 1 = findings, **2 = it didn't run** — report a 2 as
+"floor guard did not run", never as clean. Each finding is a confirmed
+issue unless the spec or plan explicitly calls for that change.
 If the project has a `CONSTRAINTS.md`, check its enforced rules too.
 
 ### Step 7 — Axis 2: standards and architecture
@@ -122,17 +132,25 @@ layer-boundary direction). A change can be fully spec-compliant and pass every o
 standards check and still be over-engineered — check necessity
 explicitly, don't assume it falls out of the other checks.
 
+Skip anything the project's tooling already enforces (formatter, linter,
+typechecker, CI checks): report only what would get past those tools.
+
 Also check:
 - **Smells** — the baseline in `engineering-standards`'
-  `references/smells.md`. Always judgement calls; a documented repo
+  `references/smells.md`, in code the diff added or changed only. Name the
+  smell and quote the hunk. Always judgement calls; a documented repo
   standard overrides them.
 - **Refactors** — does it reduce complexity or just move it? Count the
   concepts a reader needs before and after.
 - **Performance** — queries or calls inside loops, unbounded reads or
   result sets, work repeated on a hot path.
 - **Dead code and dependencies** — list code the change made unreachable
-  and ask before deleting it. More than one new dependency in a change is
-  a finding; read the lockfile diff for what came along with it.
+  and ask before deleting it. For each new dependency, ask: does the
+  standard library or an existing dependency already do this? Is it
+  maintained, of a reasonable size, with a compatible license and no known
+  vulnerabilities? A "no" is a finding. Read the lockfile diff for what
+  came along with it. An upgrade is one dependency per change, with its
+  changelog read.
 
 For the final whole-branch review (before `finish-branch`), you may run
 Axis 1 and Axis 2 in separate subagents so neither colours the other.
@@ -209,7 +227,7 @@ open.
 
 Before issuing the verdict:
 
-- [ ] HEAD and base SHAs are recorded and the diff is non-empty
+- [ ] HEAD and base SHAs are recorded, uncommitted work is in the range, and the diff is non-empty
 - [ ] Each criterion's check ran in this session (or the axis is explicitly skipped)
 - [ ] At least one mutation spot-check ran and went red
 - [ ] Floor guard exit code is in the report
