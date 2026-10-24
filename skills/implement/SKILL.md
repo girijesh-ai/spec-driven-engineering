@@ -88,6 +88,12 @@ against beyond what's obviously implied by the request.
 For a plan step only. An ad-hoc change with no plan is coded in the
 main session, as above.
 
+**Ask the mode.** After the user's yes on the plan, ask once, before any
+code edit: "code-auto (default: I code each step; you look at the
+checkpoints) or code-journey (before each step I write a plain unit file
+for you to read; after it, a plain note on what changed)?" If the user
+already named one, use it. Switching modes partway needs the user's ask.
+
 **Delegate the coding.** For each step, call the Agent tool with `model`
 set to the step's `Model:` line (`sonnet` or `opus`). The brief holds the
 step text, the spec lines it cites, the files to touch, the pattern to

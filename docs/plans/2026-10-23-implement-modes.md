@@ -68,7 +68,7 @@ flowchart LR
 **Checkpoint:** `python3 scripts/validate.py`, `python3 scripts/test_validate.py`, `python3 scripts/test_floor_guard.py` all green; you read the code-auto text before code-journey builds on it.
 
 ### 4. Ask "code-auto or code-journey?" after the plan's yes
-- Status: todo
+- Status: blocked — eval not run (the eval child can't sign in on this host)
 - Depends on: step 2
 - Touches: `skills/implement/SKILL.md`, `evals/implement-asks-mode/{case.yaml,scaffold.sh}`
 - Size: S
