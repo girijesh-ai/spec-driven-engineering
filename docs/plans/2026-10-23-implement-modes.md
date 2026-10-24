@@ -89,7 +89,7 @@ flowchart LR
 - Touches: `skills/implement/SKILL.md`, `evals/journey-what-changed/{case.yaml,scaffold.sh}`
 - Size: S
 - Satisfies: SC-6
-- Verification: `claude plugin eval . --no-publish --model sonnet --case journey-what-changed --scaffold --allow-tools Write Edit Bash` → ≥ 67%. The scaffold already holds unit 1's file; the prompt says "go".
+- Verification: `claude plugin eval . --no-publish --model sonnet --case journey-what-changed --scaffold --allow-tools Write Edit Bash` → ≥ 67%. The scaffold already holds unit 1's file; the prompt says "go". The run ends at the after-pause, so the case checks the note and "no commit yet"; the commit holding the unit file is checked in step 8 (SC-8).
 
 **Checkpoint:** the three suites from step 3's checkpoint green; `wc -l skills/implement/SKILL.md` — if the Modes section pushed it past ~200 lines, say so before step 7.
 

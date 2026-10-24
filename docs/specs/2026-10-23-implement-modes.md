@@ -202,9 +202,11 @@ case passes in at least 2 of 3 runs (≥ 67%).
   no Edit or Write to any source file. Check: `claude plugin eval .
   --no-publish --model sonnet --case journey-pause-before --scaffold
   --allow-tools Write Edit` → ≥ 67%.
-- **SC-6 (code-journey, after):** given "go" on unit 1, the unit file gains
-  a `## What changed` section before `git commit` runs, and `git show --stat
-  HEAD` in the scaffold lists the unit file. Check: `claude plugin eval .
+- **SC-6 (code-journey, after):** given "go" on unit 1, the step is coded
+  and checked, the unit file gains a `## What changed` section, and the run
+  ends with the after-pause message, with no commit after the scaffold's
+  first. (One eval prompt can't also answer "next"; that the commit holds
+  the unit file is checked in the dry run, SC-8.) Check: `claude plugin eval .
   --no-publish --model sonnet --case journey-what-changed --scaffold
   --allow-tools Write Edit Bash` → ≥ 67%.
 - **SC-7:** the repo's own checks pass, and the docs use the new names.
@@ -216,10 +218,11 @@ case passes in at least 2 of 3 runs (≥ 67%).
   task, the engineer reads each unit file and, without opening the code,
   says in one sentence what the step does. Each unit is recorded under a
   `## Dry run` section added to this spec, one line per unit:
-  `- <unit file>: understood` or `- <unit file>: not understood`. At least
-  2 of the first 3 must be "understood" before code-journey leaves draft.
-  Check: `rg -c ': understood$' docs/specs/2026-10-23-implement-modes.md` →
-  ≥ 2.
+  `- <unit file> (<commit sha>): understood` or `...: not understood`. At
+  least 2 of the first 3 must be "understood" before code-journey leaves
+  draft, and each listed commit must hold its unit file. Check: `rg -c
+  ': understood$' docs/specs/2026-10-23-implement-modes.md` → ≥ 2; `git show
+  --stat <sha>` for each listed sha → lists that unit file.
 
 ## Open Questions
 
