@@ -21,6 +21,17 @@ track of fast, dense output while coding alongside Claude Code.
 - **Evals:** five new `implement` cases; `plan-traces-criteria` checks the
   `Model:` line. None has run yet: the eval child couldn't sign in on the
   host they were written on.
+- **`spec-from-idea`:** with the first question, ask once for a ticket,
+  doc or thread to read. Only design-changing decisions are asked one at
+  a time; low-stakes guesses go under `ASSUMPTIONS I'M MAKING:` for one
+  reply. Earlier interviews spent a turn per minor guess (runs of
+  one-word "agree" replies). The `spec-interview` eval checks the ask.
+- **`spec-from-idea`, `grill-me`:** `GUESS:` is at most 2 sentences, and
+  any term a new graduate engineer wouldn't know, the project's own names
+  included, is glossed the first time. In the sequential-dispatch grill,
+  4-5 sentence guesses full of repo terms (floor guard, mutation
+  spot-check, tier-L) took about 5 rounds to settle one question. Both
+  interview evals check it.
 
 ## 2.0.2 — 2026-10-22
 
