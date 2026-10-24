@@ -3,6 +3,25 @@
 Versions follow semver (`.claude-plugin/plugin.json`). Renaming a plugin or
 skill is a breaking change.
 
+## 2.1.0 — 2026-10-24
+
+Two ways to run `implement`, and a model per plan step
+(`docs/specs/2026-10-23-implement-modes.md`). Prompted by engineers losing
+track of fast, dense output while coding alongside Claude Code.
+
+- **`plan-from-spec`:** every step has a `Model:` line, `sonnet` or
+  `opus`, with a reason.
+- **`implement`:** after the plan's yes, asks for **code-auto** (default)
+  or **code-journey**. Each plan step is coded by a subagent on its model;
+  the main session re-runs the check, runs the floor guard and
+  `review-code`, and commits. After 2 failed checks a step moves to
+  `opus`; after 2 failures there, it stops and asks. code-journey (draft)
+  writes a plain unit file before each step and a "What changed" note
+  after it, pausing at both. OpenCode codes in the main session.
+- **Evals:** five new `implement` cases; `plan-traces-criteria` checks the
+  `Model:` line. None has run yet: the eval child couldn't sign in on the
+  host they were written on.
+
 ## 2.0.2 — 2026-10-22
 
 Fixes from re-checking the skills against their upstream sources

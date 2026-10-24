@@ -94,7 +94,7 @@ flowchart LR
 **Checkpoint:** the three suites from step 3's checkpoint green; `wc -l skills/implement/SKILL.md` — if the Modes section pushed it past ~200 lines, say so before step 7.
 
 ### 7. Describe both modes in the docs
-- Status: todo
+- Status: done
 - Depends on: steps 3, 6
 - Touches: `docs/engineering/implement.md`, `docs/engineering/plan-from-spec.md`, `evals/README.md`, `CHANGELOG.md`, `.claude-plugin/plugin.json`
 - Size: S

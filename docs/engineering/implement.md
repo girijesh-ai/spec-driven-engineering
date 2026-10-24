@@ -40,6 +40,25 @@ The skill stops the line: it keeps the failing output and calls
 A standards or spec-compliance problem found one step late is cheap to fix.
 Found five steps late, after other code was built on top of it, it's not.
 
+**What are code-auto and code-journey?**
+After you approve a plan, `implement` asks which to use. In both, each
+step is coded by a subagent on the model the plan names, and the main
+session re-runs the check, runs `review-code` and commits.
+- **code-auto** (the default) works through the steps and stops at the
+  plan's checkpoints.
+- **code-journey** stops twice per step. Before the code, it writes a
+  plain unit file (`docs/plans/<plan>/units/NN-<slug>.md`) for you to read
+  and say go. After it, it adds a plain "What changed" note and waits for
+  next. The unit file is committed with the code. code-journey is
+  **draft** until a dry run on a real task shows engineers understand the
+  unit files.
+
+They're named so they don't clash with Claude Code's Auto Mode.
+
+**What if a step keeps failing?**
+After 2 failed checks it moves to `opus`; after 2 failures there, it stops
+and asks you.
+
 ## It's working if
 
 - Every commit corresponds to one plan step, test-first, reviewed, and the
