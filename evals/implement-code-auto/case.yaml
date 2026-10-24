@@ -33,6 +33,7 @@ graders:
     focus: trace
     criteria: |
       - Each step's code was written by an Agent (subagent) call, not by the main session's own Edit or Write on utils.py.
+      - Step 1's Agent call used model sonnet and step 2's used opus, matching each step's `Model:` line.
       - After each Agent call returned, the main session itself ran that step's verification command and showed the output.
       - review-code ran in the main session for each step before that step's commit.
       - There are two commits after init, one per step, and each marks its step `Status: done` in the plan file.
