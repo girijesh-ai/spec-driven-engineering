@@ -201,6 +201,14 @@ class FloorGuardRepo(unittest.TestCase):
         findings, _, _, _ = floor_guard.run(self.repo, None)
         self.assertEqual([(f.rule, f.line) for f in findings], [("CONSTRAINT_EXCEPTION", 9)])
 
+    def test_removing_an_exception_row_is_silent(self) -> None:
+        table = "## Exceptions\n\n| Rule | Owner | Expires |\n|---|---|---|\n"
+        self.write("CONSTRAINTS.md", "- C1: max 400 lines per file\n\n" + table + "| C1 | ann | 2026-12 |\n")
+        self.commit("constraints")
+        self._git("branch", "-f", "main")  # the rules are on the base
+        self.write("CONSTRAINTS.md", "- C1: max 400 lines per file\n\n" + table)
+        self.assertEqual(self.rules(), [])
+
     def test_exception_row_above_an_empty_row_is_flagged(self) -> None:
         table = "## Exceptions\n| Rule | Owner |\n|---|---|\n| C1 | ann |\n"
         self.write("CONSTRAINTS.md", table + "| | |\n")

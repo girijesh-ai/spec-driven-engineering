@@ -48,7 +48,8 @@ Fixes from re-checking the skills against their upstream sources
   deletions and codemods don't count toward the size check.
 - **Floor guard:** reports rules removed from `CONSTRAINTS.md` or kept
   with changed numbers, new entries under an Exceptions heading, and the
-  file deleted or renamed away. Flags empty `catch` (typed or with a comment), `pass #
+  file deleted or renamed away. Removing an exception stays silent: it
+  raises the bar. Flags empty `catch` (typed or with a comment), `pass #
   stub`, a `TODO` comment, `biome-ignore`, `gitleaks:allow`, `Stryker
   disable`.
 - **`dev-workflow`:** phase-boundary order matches upstream; never compact
