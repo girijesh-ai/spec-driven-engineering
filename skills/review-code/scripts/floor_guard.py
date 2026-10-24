@@ -223,9 +223,23 @@ def rule_key(text: str) -> Optional[str]:
 def exception_rows(repo: Path, path: str) -> FrozenSet[int]:
     """Line numbers of the data rows in tables under an Exceptions heading."""
     try:
-        lines = (repo / path).read_text(encoding="utf-8").splitlines()
+        text = (repo / path).read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError):
         return frozenset()
+    return exception_rows_in(text)
+
+
+def base_exception_rows(repo: Path, merge_base: str, path: str) -> FrozenSet[int]:
+    """The same, in the base version of the file (empty if it's new there)."""
+    try:
+        text = git(repo, "show", f"{merge_base}:{path}")
+    except GuardError:
+        return frozenset()
+    return exception_rows_in(text)
+
+
+def exception_rows_in(text: str) -> FrozenSet[int]:
+    lines = text.splitlines()
     rows = set()
     inside = False
     for number, line in enumerate(lines, start=1):
@@ -240,13 +254,21 @@ def exception_rows(repo: Path, path: str) -> FrozenSet[int]:
     return frozenset(rows)
 
 
-def scan_constraints(diff: FileDiff, exceptions: FrozenSet[int]) -> List[Finding]:
+def scan_constraints(
+    diff: FileDiff,
+    exceptions: FrozenSet[int],
+    base_exceptions: FrozenSet[int] = frozenset(),
+) -> List[Finding]:
     """Removing a rule, changing its numbers, or adding an exception can
-    lower the bar.
+    lower the bar. Removing an exception raises it, so that stays silent.
 
     The guard can't tell which way a number moved the bar ("at least 90"
     vs "at most 400"), so any changed number is reported for a person to
-    judge. Rewording with the same numbers, and new rules, stay silent.
+    judge. New rules stay silent, and so does rewording with the same
+    numbers as long as the rule's key is kept: the text before a bullet's
+    colon, or a table row's first cell. A bullet with no colon is keyed
+    on its whole text, so rewording it reads as a removal. Only `-` and
+    `*` bullets and table rows count as rules; numbered items don't.
     """
     findings: List[Finding] = []
     added = {}
@@ -260,6 +282,8 @@ def scan_constraints(diff: FileDiff, exceptions: FrozenSet[int]) -> List[Finding
         if key is None:
             continue
         removed_keys.add(key)
+        if key not in added and number in base_exceptions:
+            continue
         if key not in added:
             findings.append(Finding("CONSTRAINT_REMOVED", diff.path, number, key))
         elif NUMBER.findall(text) != NUMBER.findall(added[key][1]):
@@ -271,10 +295,14 @@ def scan_constraints(diff: FileDiff, exceptions: FrozenSet[int]) -> List[Finding
     return findings
 
 
-def scan_file(diff: FileDiff, exceptions: FrozenSet[int] = frozenset()) -> List[Finding]:
+def scan_file(
+    diff: FileDiff,
+    exceptions: FrozenSet[int] = frozenset(),
+    base_exceptions: FrozenSet[int] = frozenset(),
+) -> List[Finding]:
     findings: List[Finding] = []
     if Path(diff.path).name == CONSTRAINTS_FILE:
-        return scan_constraints(diff, exceptions)
+        return scan_constraints(diff, exceptions, base_exceptions)
     if matches_any(diff.path, PROSE_GLOBS):
         return findings
     for number, text in diff.added:
@@ -339,8 +367,11 @@ def run(repo: Path, base: Optional[str]) -> Tuple[List[Finding], str, str, int]:
     findings: List[Finding] = []
     for diff in diffs:
         is_constraints = Path(diff.path).name == CONSTRAINTS_FILE
-        exceptions = exception_rows(repo, diff.path) if is_constraints else frozenset()
-        findings.extend(scan_file(diff, exceptions))
+        exceptions = base_exceptions = frozenset()
+        if is_constraints:
+            exceptions = exception_rows(repo, diff.path)
+            base_exceptions = base_exception_rows(repo, merge_base, diff.path)
+        findings.extend(scan_file(diff, exceptions, base_exceptions))
 
     status = git(repo, "diff", "--name-status", "-M", merge_base)
     for row in status.splitlines():
