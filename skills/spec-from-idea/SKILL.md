@@ -62,7 +62,11 @@ throughout. Simpler words, never less precision.
    `HYPOTHESIS: <what you think they want>` and
    `CONFIDENCE: ~N% — missing: <what would raise it>`.
 3. **Ask clarifying questions one at a time**, each carrying your guess:
-   `Q: <question>` / `GUESS: <your recommended answer and why>`. With the
+   `Q: <question>` / `GUESS: <your recommended answer and why>`. `Q:` is
+   one sentence in the user's own words; `GUESS:` is the answer plus one
+   "because", at most 2 sentences. Any term a new graduate engineer
+   wouldn't know, including the project's own names, gets a short gloss
+   in brackets the first time. With the
    first question, ask once: "Is there a ticket, doc or thread I should
    read first?" Ask one at a time only for decisions that change the
    design; list the low-stakes guesses under `ASSUMPTIONS I'M MAKING:` so

@@ -25,5 +25,6 @@ graders:
       - States a classification of the task (spike, bounded, or architectural).
       - States a hypothesis about what the user wants, with a confidence level.
       - Asks exactly one clarifying question about a single decision (not several sub-questions bundled together), and attaches its own recommended answer to it. A one-line ask for a ticket, doc or thread to read first, and a list of low-stakes assumptions to correct, don't count as extra questions.
+      - The question is one plain sentence and the guess is at most 2 sentences; a new graduate engineer could follow both without looking anything up, because any jargon is glossed.
       - Asks once whether there is a ticket, doc or thread to read first.
       - Contains no implementation code and no finished spec document.
