@@ -84,7 +84,7 @@ flowchart LR
 - Verification: `claude plugin eval . --no-publish --model sonnet --case journey-pause-before --scaffold --allow-tools Write Edit` → ≥ 67%.
 
 ### 6. code-journey: add "What changed", pause, and commit the unit file with the code
-- Status: todo
+- Status: blocked — eval not run (the eval child can't sign in on this host)
 - Depends on: step 5
 - Touches: `skills/implement/SKILL.md`, `evals/journey-what-changed/{case.yaml,scaffold.sh}`
 - Size: S

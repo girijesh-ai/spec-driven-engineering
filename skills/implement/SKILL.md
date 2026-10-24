@@ -119,6 +119,13 @@ once and code each step in the main session.
 Then end the turn: "Unit NN is ready: `<path>`. Read it, then say go, ask
 a question, or change it." Edit no source file before the user says go.
 
+**code-journey: after each step.** Once the check and `review-code`
+pass, add `## What changed` to the unit file: what the code does now, in
+plain words; the 2-5 diff lines that matter, quoted; and the verification
+result. Then end the turn: "Unit NN is done: read What changed in
+`<path>`. Say next to commit it and go on." On next, commit the code, the
+unit file and the plan's status line together.
+
 **When a step's check fails.** A failed check is your re-run of the
 verification failing, or `review-code` returning NEEDS FIXES. Send the
 failure output back to a subagent on the same model. After 2 failed
