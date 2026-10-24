@@ -163,8 +163,8 @@ before commit) needs a hook inside each step.
 - A case is one prompt, so a case that stops at a pause can't also show
   what happens after it. That's why the cases that check a pause (SC-2,
   SC-5) are separate from the ones that run past it (SC-3, SC-6), whose
-  prompts give the mode or the "go" up front. The pause cases stop early
-  and need no Bash.
+  prompts give the mode or the "go" up front. The pause cases stop early;
+  only SC-2's needs no Bash, because the mode is asked before the baseline.
 - Cases that run tests need `--scaffold --allow-tools Write Edit Bash`, and
   Bash needs a working OS sandbox (see `evals/README.md`). Where the sandbox
   fails, their trigger graders still count; outcome graders are reported as
@@ -201,7 +201,7 @@ case passes in at least 2 of 3 runs (≥ 67%).
   line naming the verification command. It ends with the pause message, with
   no Edit or Write to any source file. Check: `claude plugin eval .
   --no-publish --model sonnet --case journey-pause-before --scaffold
-  --allow-tools Write Edit` → ≥ 67%.
+  --allow-tools Write Edit Bash` → ≥ 67%.
 - **SC-6 (code-journey, after):** given "go" on unit 1, the step is coded
   and checked, the unit file gains a `## What changed` section, and the run
   ends with the after-pause message, with no commit after the scaffold's

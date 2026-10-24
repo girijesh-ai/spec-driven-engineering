@@ -39,4 +39,4 @@ graders:
       - Every step has a size label (XS, S, M, L or XL), and none is XL.
       - The risky shared-schema change (backward compatibility for existing sessions, SC-3) is scheduled before or alongside the first behaviour step, not last.
       - Steps declare dependencies on each other.
-      - Every step has a `Model:` line naming sonnet or opus with a reason in brackets, and the risky shared-schema step (SC-3) names opus.
+      - Every step has a `Model:` line naming sonnet or opus with a reason in brackets, the risky shared-schema step (SC-3) names opus, and any step sized L names opus.

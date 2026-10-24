@@ -24,6 +24,10 @@ graders:
     name: step-2-on-opus
     tool: Agent
     input_match: '"model"\s*:\s*"opus"'
+  - type: tool_used
+    name: review-code-ran
+    tool: Skill
+    input_match: "review-code"
   - type: llm
     name: main-session-keeps-the-checks
     focus: trace

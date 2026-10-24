@@ -20,10 +20,6 @@ graders:
     name: coded-on-sonnet
     tool: Agent
     input_match: '"model"\s*:\s*"sonnet"'
-  - type: regex
-    name: wrote-what-changed
-    target: trace
-    pattern: "## What changed"
   - type: llm
     name: note-then-pause
     focus: trace

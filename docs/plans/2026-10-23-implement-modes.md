@@ -81,7 +81,7 @@ flowchart LR
 - Touches: `skills/implement/SKILL.md`, `evals/journey-pause-before/{case.yaml,scaffold.sh}`
 - Size: S
 - Satisfies: SC-5
-- Verification: `claude plugin eval . --no-publish --model sonnet --case journey-pause-before --scaffold --allow-tools Write Edit` → ≥ 67%.
+- Verification: `claude plugin eval . --no-publish --model sonnet --case journey-pause-before --scaffold --allow-tools Write Edit Bash` → ≥ 67%.
 
 ### 6. code-journey: add "What changed", pause, and commit the unit file with the code
 - Status: blocked — eval not run (the eval child can't sign in on this host)

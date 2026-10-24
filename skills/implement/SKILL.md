@@ -77,8 +77,8 @@ against beyond what's obviously implied by the request.
 7. **Mark the step done** in the plan file (`Status: done`). The plan
    file, not your memory, is the record a resumed session starts from.
 8. **Commit** only after review passes (or documented findings are
-   addressed). Stage only this step's files plus the plan's status line,
-   so the tree is clean before the next step; `git blame` on the status
+   addressed). Stage only this step's files plus the plan's status line
+   (and its unit file in code-journey), so the tree is clean before the next step; `git blame` on the status
    line gives the step's commit. Keep each commit revertable on its own:
    the code compiles at every commit, and never delete an old
    implementation and add its replacement in the same commit.
@@ -88,23 +88,28 @@ against beyond what's obviously implied by the request.
 For a plan step only. An ad-hoc change with no plan is coded in the
 main session, as above.
 
-**Ask the mode.** After the user's yes on the plan, ask once, before any
-code edit: "code-auto (default: I code each step; you look at the
+**Ask the mode.** After the user's yes on the plan, ask once, before
+Process step 0: "code-auto (default: I code each step; you look at the
 checkpoints) or code-journey (before each step I write a plain unit file
-for you to read; after it, a plain note on what changed)?" If the user
-already named one, use it. Switching modes partway needs the user's ask.
+for you to read; after it, a plain note on what changed)?" code-journey
+is draft: say so when you ask. If the user already named a mode, use it;
+a mode named with the plan's yes is not a go on unit 1. Switching modes
+partway needs the user's ask. In code-auto, stop at each plan checkpoint
+for the user's look.
 
 **Delegate the coding.** For each step, call the Agent tool with `model`
 set to the step's `Model:` line (`sonnet` or `opus`). The brief holds the
 step text, the spec lines it cites, the files to touch, the pattern to
 follow and known gotchas, and ends: "Write the failing test first, then
-the code. Don't commit, run review, or start subagents. Report the files
-changed, the test output, and anything you noticed but didn't touch."
+the code. Write against `engineering-standards` (call the Skill tool with
+it). Don't commit, run `review-code` or the floor guard, or start
+subagents. Report the files changed, the test output, and anything you
+noticed but didn't touch."
 The rest stays in the main session: re-run the step's verification
-yourself (the subagent's "tests pass" is a claim), the floor guard,
-`review-code`, the status line and the commit. agent-skills leaves model
-choice to the harness; this plugin picks per step so routine steps run on
-a cheaper model. On OpenCode, which can't pick a model per call, say so
+yourself (the subagent's "tests pass" is a claim), `review-code` (which
+runs the floor guard), the status line and the commit. agent-skills
+leaves model choice to the harness; this plugin picks per step so routine
+steps run on a cheaper model. On OpenCode, which can't pick a model per call, say so
 once and code each step in the main session.
 
 **code-journey: before each step.** Call the Skill tool with
@@ -123,16 +128,18 @@ a question, or change it." Edit no source file before the user says go.
 pass, add `## What changed` to the unit file: what the code does now, in
 plain words; the 2-5 diff lines that matter, quoted; and the verification
 result. Then end the turn: "Unit NN is done: read What changed in
-`<path>`. Say next to commit it and go on." On next, commit the code, the
-unit file and the plan's status line together.
+`<path>`. Say next to commit it and go on." On next, mark the step
+`Status: done` and commit the code, the unit file and the status line
+together.
 
 **When a step's check fails.** A failed check is your re-run of the
 verification failing, or `review-code` returning NEEDS FIXES. Send the
-failure output back to a subagent on the same model. After 2 failed
-checks, send it to `opus` instead. After 2 failures on `opus`, stop: show
-the failures and ask the user. Don't start a fifth call. The step stays open
-while it retries, so this is still stopping the line (Process step 5):
-nothing moves on. When you stop, offer `debug-systematically`.
+failure output back to a new subagent. A step gets 2 attempts on its
+`Model:`; a `sonnet` step then gets 2 more on `opus`. After the last
+failed attempt, stop: show the failures and ask the user. That's at most
+4 Agent calls for a `sonnet` step and 2 for an `opus` one, counted per
+step. The step stays open while it retries, so this is still stopping the
+line (Process step 5): nothing moves on. When you stop, offer `debug-systematically`.
 
 ## Reuse before writing
 
@@ -167,7 +174,7 @@ Per step, before marking it done:
 
 - [ ] The step's verification command ran in this session and passed (paste the result)
 - [ ] `review-code` returned READY for this step's diff
-- [ ] Only this step's files and the plan's status line are staged
+- [ ] Only this step's files, the plan's status line and (code-journey) its unit file are staged
 - [ ] Out-of-scope finds are listed under NOTICED BUT NOT TOUCHING, not fixed
 - [ ] The plan file shows `Status: done`, in the same commit, and `git status` is clean after it
 
