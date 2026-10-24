@@ -21,4 +21,5 @@ graders:
       - Asks one question about one decision. Restating that same question in closing counts as one.
       - The question challenges the plan — a failure path (rollback, partial migration, data loss, overrun of the window), the irreversible Redis deletion, or an unexamined premise — rather than confirming the happy path.
       - Attaches the assistant's own recommended answer or guess to the question.
+      - The question is one plain sentence and the guess is at most 2 sentences; a new graduate engineer could follow both without looking anything up, because any jargon is glossed.
       - Does not answer the question itself or continue to further questions in the same message.

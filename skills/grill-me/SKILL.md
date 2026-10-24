@@ -56,8 +56,9 @@ if it were real.
    question, and a wrong guess surfaces the gap just as well.
    Word both plainly: call the Skill tool with `plain-technical-writing`
    before the first question. `Q:` is one sentence in the requester's own
-   words; `GUESS:` is the answer plus "because". A term they didn't use
-   gets a short gloss.
+   words; `GUESS:` is the answer plus one "because", at most 2 sentences.
+   Any term a new graduate engineer wouldn't know, including the
+   project's own names, gets a short gloss in brackets the first time.
    Finding an edge case is not the same as having to handle it. Weigh how
    likely it is at the spec's stated scale and what breaks if it's not
    handled. "Out of scope" and "fail with a clear error" are real answers,
