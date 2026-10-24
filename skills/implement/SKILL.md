@@ -87,8 +87,9 @@ against beyond what's obviously implied by the request.
 
 For a plan step only. An ad-hoc change with no plan is coded in the
 main session, as above. If the user asks for a mode and there is no plan
-file, say the modes need one (unit files live under the plan's path),
-offer `plan-from-spec`, and otherwise proceed ad-hoc.
+file, say the modes run plan steps and need one, offer `plan-from-spec`,
+and wait. If the user declines, give the no-plan line above and proceed
+ad-hoc.
 
 **Ask the mode.** After the user's yes on the plan, ask once, before
 Process step 0: "code-auto (default: I code each step; you look at the
@@ -100,14 +101,14 @@ partway needs the user's ask. In code-auto, stop at each plan checkpoint
 for the user's look.
 
 **Delegate the coding.** For each step, call the Agent tool with `model`
-set to the step's `Model:` line (`sonnet` or `opus`); a step with no
-`Model:` line gets `sonnet`, and you say so. The brief holds the
-step text, the spec lines it cites, the files to touch, the pattern to
-follow and known gotchas, and ends: "Call the Skill tool with
-`test-driven-development` and `engineering-standards` and follow them:
-failing test first, then the code. Don't commit, run `review-code` or
-the floor guard, or start subagents. Report the files changed, the test output, and anything you
-noticed but didn't touch."
+set to the step's `Model:` line (`sonnet` or `opus`). A step with no
+`Model:` line (a plan from before 2.1.0) gets `sonnet`; tell the user
+once. The brief holds the step text, the spec lines it cites, the files
+to touch, the pattern to follow and known gotchas, and ends: "Call the
+Skill tool with `test-driven-development` and `engineering-standards`
+and follow them: failing test first, then the code. Don't commit, run
+`review-code` or the floor guard, or start subagents. Report the files
+changed, the test output, and anything you noticed but didn't touch."
 The rest stays in the main session: re-run the step's verification
 yourself (the subagent's "tests pass" is a claim), `review-code` (which
 runs the floor guard), the status line and the commit. agent-skills

@@ -69,6 +69,10 @@ ASSUMPTIONS I'M MAKING:
   commit stay in the main session (addendum Section C).
 - An ad-hoc change with no plan has no `Model:` line, so `implement` codes it in the
   main session, as today. "Delegate every step" applies to plan steps.
+  Asking for a mode with no plan gets an offer of `plan-from-spec`
+  (found in the first dry run, where the run stalled without one).
+- A plan written before this change has no `Model:` lines. Its steps run
+  on `sonnet`, and `implement` tells the user once.
 - OpenCode has no per-call model choice. There, `implement` says so once
   and codes every step on the session's model.
 - A "failed check" is the main session's re-run of the step's verification
