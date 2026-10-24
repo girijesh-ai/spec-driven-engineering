@@ -76,7 +76,7 @@ flowchart LR
 - Verification: `claude plugin eval . --no-publish --model sonnet --case implement-asks-mode --scaffold --allow-tools Write Edit` → ≥ 67%.
 
 ### 5. code-journey: write the unit file, then pause before any code
-- Status: todo
+- Status: blocked — eval not run (the eval child can't sign in on this host)
 - Depends on: step 4
 - Touches: `skills/implement/SKILL.md`, `evals/journey-pause-before/{case.yaml,scaffold.sh}`
 - Size: S

@@ -107,6 +107,18 @@ choice to the harness; this plugin picks per step so routine steps run on
 a cheaper model. On OpenCode, which can't pick a model per call, say so
 once and code each step in the main session.
 
+**code-journey: before each step.** Call the Skill tool with
+`plain-technical-writing` before the first unit. Write
+`docs/plans/<plan file name without .md>/units/NN-<slug>.md`:
+
+- `## The picture`: 3-5 plain lines, as `simple` would write them, on what
+  this step does and why it matters.
+- `## What changes`, `## Why`, `## Files`, and `## How we'll know` (the
+  step's verification command and its expected result).
+
+Then end the turn: "Unit NN is ready: `<path>`. Read it, then say go, ask
+a question, or change it." Edit no source file before the user says go.
+
 **When a step's check fails.** A failed check is your re-run of the
 verification failing, or `review-code` returning NEEDS FIXES. Send the
 failure output back to a subagent on the same model. After 2 failed
