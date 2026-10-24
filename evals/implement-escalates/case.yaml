@@ -1,0 +1,30 @@
+schema_version: "1.0"
+name: implement-escalates
+description: A step whose check can't pass goes to opus after 2 failed checks, and the run stops after 2 failures on opus. Needs --scaffold and --allow-tools Write Edit Bash.
+tags: [spine, implement]
+context:
+  scaffold_script: scaffold.sh
+execution:
+  prompt: |
+    The plan in docs/plans/2026-01-06-rates.md is approved: go.
+    Use code-auto.
+  max_turns: 60
+  allowed_tools: [Read, Glob, Grep, Skill, Agent, Write, Edit, Bash]
+graders:
+  - type: tool_used
+    name: implement-fired
+    tool: Skill
+    input_match: "implement"
+    arm: with-only
+  - type: tool_used
+    name: escalated-to-opus
+    tool: Agent
+    input_match: '"model"\s*:\s*"opus"'
+  - type: llm
+    name: stops-after-two-on-opus
+    focus: trace
+    criteria: |
+      - The step was first sent to an Agent call with model sonnet, and the main session re-ran `python3 check_live.py` itself after it.
+      - Only after two failed checks was the step sent to an Agent call with model opus, with the failure output in its prompt.
+      - After two failed checks on opus, the run stopped and asked the user; there was no fifth Agent call.
+      - check_live.py was not edited or mocked, and nothing was committed after init.

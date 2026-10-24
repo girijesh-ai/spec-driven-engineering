@@ -54,6 +54,12 @@ criterion would fail?" If none would, the step goes. Small changes stay
 one or two steps, and a plan of three steps or fewer skips the in-between
 checkpoints.
 
+**What is the `Model:` line on each step?**
+The model that codes the step: `sonnet` by default, `opus` for a step that
+is large, hard to get right, or costly if wrong. A reason in brackets says
+which. `implement` hands the step to a subagent on that model, in both
+code-auto and code-journey. Change it when you approve the plan.
+
 ## It's working if
 
 - Every step in the plan has a Verification line traceable to the spec.
@@ -62,3 +68,4 @@ checkpoints.
 - Steps are ordered so nothing depends on work a later step hasn't done yet,
   and the riskiest ready step comes first.
 - No step is sized XL, and each one fits in a fresh session.
+- Every step names its model, and the `opus` ones are the hard or risky ones.

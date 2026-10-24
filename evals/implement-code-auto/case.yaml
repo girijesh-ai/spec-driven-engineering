@@ -1,0 +1,39 @@
+schema_version: "1.0"
+name: implement-code-auto
+description: In code-auto, implement hands each plan step to a subagent on the step's Model line, then checks, reviews and commits in the main session. Needs --scaffold and --allow-tools Write Edit Bash.
+tags: [spine, implement]
+context:
+  scaffold_script: scaffold.sh
+execution:
+  prompt: |
+    The plan in docs/plans/2026-01-05-text-utils.md is approved: go.
+    Use code-auto.
+  max_turns: 60
+  allowed_tools: [Read, Glob, Grep, Skill, Agent, Write, Edit, Bash]
+graders:
+  - type: tool_used
+    name: implement-fired
+    tool: Skill
+    input_match: "implement"
+    arm: with-only
+  - type: tool_used
+    name: step-1-on-sonnet
+    tool: Agent
+    input_match: '"model"\s*:\s*"sonnet"'
+  - type: tool_used
+    name: step-2-on-opus
+    tool: Agent
+    input_match: '"model"\s*:\s*"opus"'
+  - type: tool_used
+    name: review-code-ran
+    tool: Skill
+    input_match: "review-code"
+  - type: llm
+    name: main-session-keeps-the-checks
+    focus: trace
+    criteria: |
+      - Each step's code was written by an Agent (subagent) call, not by the main session's own Edit or Write on utils.py.
+      - Step 1's Agent call used model sonnet and step 2's used opus, matching each step's `Model:` line.
+      - After each Agent call returned, the main session itself ran that step's verification command and showed the output.
+      - review-code ran in the main session for each step before that step's commit.
+      - There are two commits after init, one per step, and each marks its step `Status: done` in the plan file.
