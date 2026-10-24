@@ -62,7 +62,11 @@ throughout. Simpler words, never less precision.
    `HYPOTHESIS: <what you think they want>` and
    `CONFIDENCE: ~N% — missing: <what would raise it>`.
 3. **Ask clarifying questions one at a time**, each carrying your guess:
-   `Q: <question>` / `GUESS: <your recommended answer and why>`. Word the
+   `Q: <question>` / `GUESS: <your recommended answer and why>`. With the
+   first question, ask once: "Is there a ticket, doc or thread I should
+   read first?" Ask one at a time only for decisions that change the
+   design; list the low-stakes guesses under `ASSUMPTIONS I'M MAKING:` so
+   the user can correct them all in one reply. Word the
    question so "yes" accepts the guess: "Keep exports under 10k rows?",
    not "How big can exports get?". One
    question is one decision — never a bundle of sub-questions under one

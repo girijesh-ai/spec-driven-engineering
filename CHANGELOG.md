@@ -3,6 +3,14 @@
 Versions follow semver (`.claude-plugin/plugin.json`). Renaming a plugin or
 skill is a breaking change.
 
+## Unreleased
+
+- **`spec-from-idea`:** with the first question, ask once for a ticket,
+  doc or thread to read. Only design-changing decisions are asked one at
+  a time; low-stakes guesses go under `ASSUMPTIONS I'M MAKING:` for one
+  reply. Earlier interviews spent a turn per minor guess (runs of
+  one-word "agree" replies). The `spec-interview` eval checks the ask.
+
 ## 2.0.2 — 2026-10-22
 
 Fixes from re-checking the skills against their upstream sources
