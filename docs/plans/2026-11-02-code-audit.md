@@ -74,7 +74,7 @@ flowchart LR
 - Verification: `d=$(mktemp -d) && (cd "$d" && bash /Users/girijesh.prasad/Documents/sde-code-audit/evals/code-audit-pr/scaffold.sh && git log --oneline main..feature)` → one commit on `feature` changing a function's return type, with the broken caller in a file that commit doesn't touch. Local smoke as in step 2, on branch `feature` → the report names the broken caller and has no READY / NEEDS FIXES and no spec section. The eval (`... --case code-audit-pr ...` → ≥ 67%) is `blocked — eval not run` until the other machine runs it.
 
 ### 5. Track it as draft and update the README
-- Status: todo
+- Status: done
 - Depends on: steps 3, 4
 - Touches: `README.md`, `docs/in-progress.md`, `CHANGELOG.md`, `evals/README.md`
 - Size: S

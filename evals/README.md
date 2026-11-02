@@ -19,6 +19,8 @@ plugin loaded and grades two things:
 | `review-no-spec` | review-code | Reports no spec, finds the pool leak on the early return with blocking severity |
 | `debug-loop-first` | debug-systematically | Reproduces before fixing, finds the real cause instead of the user's `flush()` theory |
 | `grill-one-question` | grill-me | One plan-challenging question with a guess, then stops |
+| `code-audit-repo` | code-audit | Finds 4 planted problems and skips a decoy called by a name string; Lens 1 on `opus`; 3 lenses; no edits |
+| `code-audit-pr` | code-audit | Finds a caller outside the branch's diff that the change breaks; no READY / NEEDS FIXES, no spec section; no edits |
 
 ## Running
 
@@ -30,8 +32,9 @@ claude plugin eval . --no-publish --model sonnet
 
 - Firing is stochastic: keep the default 3 runs per case, and pin
   `--model` and the Claude Code version when comparing results over time.
-- `implement-ad-hoc` and `debug-loop-first` build a small repo with
-  `scaffold.sh` and need to run tests, so they need
+- `implement-ad-hoc`, `debug-loop-first` and the two `code-audit-*`
+  cases build a small repo with `scaffold.sh` and need Bash (to run
+  tests, or `git diff` and `git grep`), so they need
   `--scaffold --allow-tools Write Edit Bash`. Bash in evals needs an OS
   sandbox (`bubblewrap` and `socat` on Linux); without one the harness
   refuses the run. With only `--allow-tools Write Edit` they still show
