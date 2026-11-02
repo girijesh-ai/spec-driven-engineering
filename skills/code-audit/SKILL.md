@@ -46,7 +46,9 @@ both when you want both.
    (one person running a script, or many users and processes at once; say
    which you assumed), the main flows with paths, and the risky areas
    (auth, money, data writes, concurrency, shared interfaces). Big scope:
-   name the parts you will go deep on and the parts you won't read.
+   name the parts you will go deep on and the parts you won't read, and
+   offer one more audit per unread part; a smaller scope, not fewer
+   findings, keeps the report checkable.
 
 3. **Pick each lens's model** from the Map note:
 
@@ -94,8 +96,11 @@ both when you want both.
      it.
    - **Merge** duplicates across lenses into one finding.
 
-   Drop what you can't confirm. Keep at most 20, and count the smaller
-   ones you cut for the report's `Cut:` line. Done when every kept finding has a re-read line behind it.
+   Report every finding you confirm; there is no cap. Drop a lead only
+   when the code shows it wrong. A lead you didn't get to goes on the
+   report's `Leads:` line with its `path:line`, never dropped silently.
+   Done when every lead is a confirmed finding with a re-read line
+   behind it, dropped as wrong, or on `Leads:`.
 
 6. **Write the report** in plain words: short sentences, a technical term
    glossed the first time. Use this shape:
@@ -117,7 +122,7 @@ both when you want both.
 
    Verdict: <healthy, or what to fix first>
    Lean: -<N> lines, -<M> dependencies possible.     (only when lean findings exist)
-   Cut: <N> smaller findings left out.               (only when N > 0)
+   Leads: <N> not yet confirmed: <path:line — what to check>, ...   (only when N > 0)
    Not checked: <parts not read or not run>
    ```
 
