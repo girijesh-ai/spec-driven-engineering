@@ -46,7 +46,7 @@ flowchart LR
 - Riskiest step first: if a planted problem can't be made realistic in ~150 lines, the spec's SC-2 is wrong and we learn it before writing the skill.
 
 ### 2. Write the code-audit skill
-- Status: todo
+- Status: done
 - Depends on: step 1
 - Touches: `skills/code-audit/SKILL.md`
 - Size: M
