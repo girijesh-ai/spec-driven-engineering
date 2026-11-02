@@ -144,3 +144,30 @@ session, nothing changes.
 
 - The eval runs (SC-2 to SC-5) can't sign in on this host, the same blocker as PR #10's evals: the eval child gets `401 Authentication Error, No api key passed in` from the Bedrock gateway (`evals/results/2026-10-23T15-06-58-712Z/aggregate-result.json`). Decided 2026-11-02: the user runs them on another machine where `claude plugin eval` can sign in. Until then their plan steps stay `blocked — eval not run`.
 - Dry run (SC-9) repo: a private internal repo of the user's team (not named here, because this repo is public). The user picks the scope inside it (whole repo, a folder, or a PR) at dry-run time.
+
+## Dry run
+
+2026-11-02, a private internal repo of the user's team: a web app plus several tool servers. Not named here, because this repo is public; the detailed record is kept outside it. Whole repo: 15,777 of 109,562 code lines read in depth (7 of about 15 parts). Lens 1 and Lens 3 on opus, Lens 2 on the session model; `git status --porcelain` empty before and after. The user marked all 20 findings real. The main session's own re-check had flagged 2 of them as partly or probably wrong; the user's marks stand.
+
+- Finding 1: real — access control (file download)
+- Finding 2: real — access control (credential exposure)
+- Finding 3: real — committed secret (placeholder; risk depends on deploy)
+- Finding 4: real — concurrency (lock file)
+- Finding 5: real — data deletion ignores a guard
+- Finding 6: real — trust boundary (caller-supplied role)
+- Finding 7: real — access control (permission check skipped)
+- Finding 8: real — authentication
+- Finding 9: real — committed secret
+- Finding 10: real — access control (ownership check missing)
+- Finding 11: real — access control (empty list means all)
+- Finding 12: real — concurrency (shared file)
+- Finding 13: real — performance (blocking call in async handler)
+- Finding 14: real — error handling (failure hidden as empty result)
+- Finding 15: real — concurrency (cache and connect)
+- Finding 16: real — data overwrite ignores a guard
+- Finding 17: real — duplication (near-copy modules)
+- Finding 18: real — duplication (small helpers)
+- Finding 19: real — missing tests
+- Finding 20: real — cleanup (dependencies, unused code)
+
+Changes from this run: the 20-finding cap is gone (it cut 10 leads, one a possible path traversal); unchecked leads go on a `Leads:` line; a big scope is split into more audits; lens briefs never print a secret's value.

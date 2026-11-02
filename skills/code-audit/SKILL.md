@@ -70,6 +70,7 @@ both when you want both.
    (the lens makes its own Skill calls), and ends: "Read only: use Read,
    Grep, Glob and read-only Bash (git log, git diff, git grep, git show). Run code
    only in a form that writes nothing (`python3 -B`). Change no file.
+   For a secret, name its file and key; never print its value.
    Return candidate findings, each
    with `path:line`, the concrete case (this input or situation leads to
    this wrong result), and the smallest fix. Return none rather than a

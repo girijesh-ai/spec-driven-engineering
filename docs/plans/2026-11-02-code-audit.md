@@ -85,7 +85,7 @@ flowchart LR
 **Checkpoint:** push `feat/code-audit`, open a draft PR; the user runs the two evals on the other machine.
 
 ### 6. Dry-run code-audit on a private internal repo
-- Status: todo
+- Status: done (20 of 20 findings marked real by the user, 2026-11-02)
 - Depends on: step 5
 - Touches: `docs/specs/2026-11-02-code-audit.md` (adds `## Dry run`)
 - Size: S
