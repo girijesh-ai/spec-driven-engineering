@@ -32,7 +32,8 @@ both when you want both.
    - **PR or branch:** get the diff (`gh pr diff <n>`, or
      `git diff <base>...<branch>`). The scope is the diff plus the code it
      touches: callers of every changed function (grep them), the functions
-     it calls, and their tests.
+     it calls, and their tests. Read other branches with `git show
+     <ref>:<path>` and `git log`; stay on the checked-out branch.
    - **Repo or folder:** the main flows end to end.
 
    **Record** `git status --porcelain` now. Done when you can state the
@@ -65,7 +66,7 @@ both when you want both.
    `model: "opus"` only where step 3 says so. Each brief holds the Map
    note, the scope (paths, or the diff range), the lens's row below
    (the lens makes its own Skill calls), and ends: "Read only: use Read,
-   Grep, Glob and read-only Bash (git log, git diff, git grep). Run code
+   Grep, Glob and read-only Bash (git log, git diff, git grep, git show). Run code
    only in a form that writes nothing (`python3 -B`). Change no file.
    Return candidate findings, each
    with `path:line`, the concrete case (this input or situation leads to
@@ -75,7 +76,7 @@ both when you want both.
    | Lens | Checks |
    |---|---|
    | **1. Correctness** | Call the Skill tool with `engineering-standards` and apply Error handling, Security and Testing. Call the Skill tool with `review-code` and apply only its Step 4 (caller impact) and Step 5 (resource and failure-path audit); give no verdict. Also: wrong results and missed edge cases (empty, zero, last item, rounding, time zones); the same rule applied differently in two places; scale at the expected load (check-then-write races, a query per item, lists that only grow, per-process state that must be shared); risky logic (a branch, a parser, money, security, a data write) with no test that fails when it breaks |
-   | **2. Lean and slop** | Call the Skill tool with `engineering-standards` and apply Necessity and simplicity, DRY and SOLID. Also: delete (dead code, unused options and config, speculative features); reuse (two helpers doing one job: name the one to keep); stdlib (a dependency or hand-written code doing what the standard library does); yagni (an interface with one implementation, a wrapper that only forwards calls); merge (near-copies that must change together); split (one function doing unrelated jobs, split by job, never by line count) |
+   | **2. Lean and slop** | Call the Skill tool with `engineering-standards` and apply Necessity and simplicity, DRY and SOLID. Also: delete (dead code, unused options and config, speculative features); reuse (two helpers doing one job: name the one to keep); stdlib (a dependency or hand-written code doing what the standard library does); yagni (an interface with one implementation, a wrapper that only forwards calls); merge (near-copies that must change together); split (one function doing unrelated jobs, split by job, never by line count). Then read `references/slop-checklist.md` (pass its full path) and apply every row |
    | **3. Structure** | Call the Skill tool with `codebase-architecture` and apply its Core checks to the scope's main modules: depth, interface width, layer direction, information hiding, the deletion test. Name the layers you inferred if the project documents none |
 
    Done when all three have returned.
@@ -108,7 +109,7 @@ both when you want both.
    ### Should fix      (risky code with no test, real slowness, duplication, mixed jobs, code that shouldn't exist, a structural problem)
    ### Nice to have    (small speed-ups, shorter forms)
 
-   2. **Orders land on the wrong day** (`billing/close_day.py:40-52`)
+   1. **Orders land on the wrong day** (`billing/close_day.py:40-52`)
       - **What this is:** At midnight this job bills all orders of that day.
       - **Problem:** It takes "today" from the server clock in UTC, so an order at 00:30 in Berlin bills a day early.
       - **Fix:** `datetime.now(ZoneInfo("Europe/Berlin")).date()`. One line.

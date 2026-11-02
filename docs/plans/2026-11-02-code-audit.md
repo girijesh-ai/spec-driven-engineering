@@ -55,7 +55,7 @@ flowchart LR
 - If the lens briefs push past 200 lines, they move to `references/lenses.md` in this step.
 
 ### 3. Write the AI-slop checklist
-- Status: todo
+- Status: done
 - Depends on: step 2
 - Touches: `skills/code-audit/references/slop-checklist.md`, `skills/code-audit/SKILL.md` (Lens 2's pointer)
 - Size: S
@@ -66,7 +66,7 @@ flowchart LR
 **Checkpoint:** `python3 scripts/validate.py` and `python3 -m unittest discover -s scripts -q` green; human look at the skill and the local smoke report before the PR eval and docs.
 
 ### 4. Build the PR-mode eval
-- Status: todo
+- Status: blocked — eval not run (runs on the user's other machine); scaffold and local smoke done
 - Depends on: step 2
 - Touches: `evals/code-audit-pr/case.yaml`, `evals/code-audit-pr/scaffold.sh`
 - Size: S
