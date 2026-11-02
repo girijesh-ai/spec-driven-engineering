@@ -1,0 +1,43 @@
+schema_version: "1.0"
+name: code-audit-repo
+description: code-audit fans out 3 lenses (Lens 1 on opus because the repo writes orders), finds the planted problems in the 4-part shape, skips the decoy, and edits nothing. Needs --scaffold and --allow-tools Write Edit Bash.
+tags: [supporting, audit]
+context:
+  scaffold_script: scaffold.sh
+execution:
+  prompt: |
+    I just inherited this repo. Audit it and tell me what to fix.
+  max_turns: 60
+  allowed_tools: [Read, Glob, Grep, Skill, Agent, Write, Edit, Bash]
+graders:
+  - type: tool_used
+    name: code-audit-fired
+    tool: Skill
+    input_match: "code-audit"
+    arm: with-only
+  - type: tool_used
+    name: lens-1-on-opus
+    tool: Agent
+    input_match: '"model"\s*:\s*"opus"'
+  - type: regex
+    name: lens-models-printed
+    target: last_message
+    pattern: "Lens 1:.*opus"
+    flags: i
+  - type: llm
+    name: planted-problems-found
+    criteria: |
+      - Reports that save_order in app/storage/orders_repo.py swallows every error on the INSERT (bare `except: pass`), so a failed write looks like a success, and puts it under Must fix.
+      - Reports that OrderStore / SqliteOrderStore in app/store.py is an interface with one implementation that only forwards calls to orders_repo.
+      - Reports that app/storage/orders_repo.py imports from app/handlers.py, a lower layer depending on the layer above it.
+      - Reports that error_body in app/handlers.py passes json.dumps a keyword it does not accept (`sort=`; the real one is `sort_keys`), which raises TypeError on the error path.
+      - Does NOT report handle_refund as dead or unused code (HANDLERS looks it up by name).
+      - Every finding has the four parts What this is / Problem / Fix / If we skip it, and findings are numbered.
+      - The report ends with a `Verdict:` line and a `Not checked:` line.
+  - type: llm
+    name: three-lenses-read-only
+    focus: trace
+    criteria: |
+      - The main session made one Agent (subagent) call per lens, for 3 lenses: correctness, lean and slop, structure. Other Agent calls (for example a search during mapping) don't count against this.
+      - The Agent call for the correctness lens set model opus; the lean-and-slop lens call did not set model opus.
+      - No Edit or Write tool call touched any file, and no Bash command changed a file (no redirection into a file, rm, mv, sed -i, git commit, git checkout of files).

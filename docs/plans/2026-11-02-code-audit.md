@@ -36,13 +36,13 @@ flowchart LR
 ## Steps
 
 ### 1. Build the planted-problem repo eval
-- Status: todo
+- Status: blocked — eval not run (runs on the user's other machine); scaffold built and checked locally
 - Depends on: none
 - Touches: `evals/code-audit-repo/case.yaml`, `evals/code-audit-repo/scaffold.sh`
 - Size: S
 - Satisfies: SC-2, SC-3, SC-5
 - Verification: `d=$(mktemp -d) && (cd "$d" && bash /Users/girijesh.prasad/Documents/sde-code-audit/evals/code-audit-repo/scaffold.sh && python3 -m unittest -q)` → scaffold builds and its tests pass, so the planted problems hide behind a green suite. The eval itself (`claude plugin eval . --no-publish --model sonnet --case code-audit-repo --scaffold --allow-tools Write Edit Bash` → ≥ 67%) runs on the user's other machine; until then this step's eval part is `blocked — eval not run`.
-- Plants: (a) `except: pass` around a database write; (b) a one-implementation interface that only forwards calls; (c) a lower-layer module importing a higher one; (d) decoy: a handler looked up by its name as a string; (e) `json.dumps(obj, sort=True)` (invented keyword; real one is `sort_keys`) on an error path no test runs. Graders: `code-audit` fired; Agent called 3 times; `lens-1-on-opus` (`"model"\s*:\s*"opus"`); `lens-models-printed`; llm grader for (a)-(e) and the 4-part shape; `read-only` (no Edit/Write in trace, clean `git status --porcelain`).
+- Plants: (a) `except: pass` around a database write; (b) a one-implementation interface that only forwards calls; (c) a lower-layer module importing a higher one; (d) decoy: a handler looked up by its name as a string; (e) `json.dumps(obj, sort=True)` (invented keyword; real one is `sort_keys`) on an error path no test runs. Graders: `code-audit` fired; Agent called 3 times; `lens-1-on-opus` (`"model"\s*:\s*"opus"`); `lens-models-printed`; llm grader for (a)-(e) and the 4-part shape; a trace grader for 3 lens calls and read-only (no Edit/Write, no file-changing Bash).
 - Riskiest step first: if a planted problem can't be made realistic in ~150 lines, the spec's SC-2 is wrong and we learn it before writing the skill.
 
 ### 2. Write the code-audit skill
