@@ -34,7 +34,8 @@ flowchart LR
     4 --> 5[5. Pause before]
     5 --> 6[6. Pause after]
     3 & 6 --> 7[7. Docs]
-    7 --> 8[8. Dry run]
+    6 --> 9[9. One unit per turn]
+    7 & 9 --> 8[8. Dry run]
 ```
 
 ## Steps
@@ -45,7 +46,7 @@ flowchart LR
 - Touches: `skills/plan-from-spec/SKILL.md`, `evals/plan-traces-criteria/case.yaml`
 - Size: S
 - Satisfies: SC-1
-- Verification: `claude plugin eval . --no-publish --model sonnet --case plan-traces-criteria` → ≥ 67%, with a new `regex` grader on `Model: (sonnet|opus) \(.+\)` and an `llm` bullet that the risky shared-schema step gets `opus`.
+- Verification: `claude plugin eval . --no-publish --model sonnet --case plan-traces-criteria` → pass (`passRate` ≥ 0.66, per the spec), with a new `regex` grader on `Model: (sonnet|opus) \(.+\)` and an `llm` bullet that the risky shared-schema step gets `opus`.
 - Note: this adds graders to the existing case rather than a new `plan-models` case. One case to maintain, not two. The spec's SC-1 check names `plan-models`; it changes to `plan-traces-criteria` on your yes.
 
 ### 2. Hand each plan step's coding to a subagent on the step's model (code-auto)
@@ -54,7 +55,7 @@ flowchart LR
 - Touches: `skills/implement/SKILL.md`, `evals/implement-code-auto/{case.yaml,scaffold.sh}`
 - Size: M
 - Satisfies: SC-3
-- Verification: `claude plugin eval . --no-publish --model sonnet --case implement-code-auto --scaffold --allow-tools Write Edit Bash` → ≥ 67%. The scaffold's plan has one `sonnet` step and one `opus` step; the prompt says "code-auto".
+- Verification: `claude plugin eval . --no-publish --model sonnet --case implement-code-auto --scaffold --allow-tools Write Edit Bash` → pass (`passRate` ≥ 0.66, per the spec). The scaffold's plan has one `sonnet` step and one `opus` step; the prompt says "code-auto".
 - Also in this step: the OpenCode line (one model, said once) and the one-line deviation from agent-skills. Riskiest step: it is the first to show whether this Mac's eval sandbox runs Bash and whether the trace shows the Agent call's `model`. If either fails, stop and decide before step 3.
 
 ### 3. Retry a failing step on opus, stop after 2 opus failures
@@ -63,7 +64,7 @@ flowchart LR
 - Touches: `skills/implement/SKILL.md`, `evals/implement-escalates/{case.yaml,scaffold.sh}`
 - Size: S
 - Satisfies: SC-4
-- Verification: `claude plugin eval . --no-publish --model sonnet --case implement-escalates --scaffold --allow-tools Write Edit Bash` → ≥ 67%. The scaffold's step checks for a value the code can't produce.
+- Verification: `claude plugin eval . --no-publish --model sonnet --case implement-escalates --scaffold --allow-tools Write Edit Bash` → pass (`passRate` ≥ 0.66, per the spec). The scaffold's step checks for a value the code can't produce.
 
 **Checkpoint:** `python3 scripts/validate.py`, `python3 scripts/test_validate.py`, `python3 scripts/test_floor_guard.py` all green; you read the code-auto text before code-journey builds on it.
 
@@ -73,7 +74,7 @@ flowchart LR
 - Touches: `skills/implement/SKILL.md`, `evals/implement-asks-mode/{case.yaml,scaffold.sh}`
 - Size: S
 - Satisfies: SC-2
-- Verification: `claude plugin eval . --no-publish --model sonnet --case implement-asks-mode --scaffold --allow-tools Write Edit` → ≥ 67%.
+- Verification: `claude plugin eval . --no-publish --model sonnet --case implement-asks-mode --scaffold --allow-tools Write Edit` → pass (`passRate` ≥ 0.66, per the spec).
 
 ### 5. code-journey: write the unit file, then pause before any code
 - Status: blocked — eval not run (the eval child can't sign in on this host)
@@ -81,7 +82,7 @@ flowchart LR
 - Touches: `skills/implement/SKILL.md`, `evals/journey-pause-before/{case.yaml,scaffold.sh}`
 - Size: S
 - Satisfies: SC-5
-- Verification: `claude plugin eval . --no-publish --model sonnet --case journey-pause-before --scaffold --allow-tools Write Edit Bash` → ≥ 67%.
+- Verification: `claude plugin eval . --no-publish --model sonnet --case journey-pause-before --scaffold --allow-tools Write Edit Bash` → pass (`passRate` ≥ 0.66, per the spec).
 
 ### 6. code-journey: add "What changed", pause, and commit the unit file with the code
 - Status: blocked — eval not run (the eval child can't sign in on this host)
@@ -89,7 +90,7 @@ flowchart LR
 - Touches: `skills/implement/SKILL.md`, `evals/journey-what-changed/{case.yaml,scaffold.sh}`
 - Size: S
 - Satisfies: SC-6
-- Verification: `claude plugin eval . --no-publish --model sonnet --case journey-what-changed --scaffold --allow-tools Write Edit Bash` → ≥ 67%. The scaffold already holds unit 1's file; the prompt says "go". The run ends at the after-pause, so the case checks the note and "no commit yet"; the commit holding the unit file is checked in step 8 (SC-8).
+- Verification: `claude plugin eval . --no-publish --model sonnet --case journey-what-changed --scaffold --allow-tools Write Edit Bash` → pass (`passRate` ≥ 0.66, per the spec). The scaffold already holds unit 1's file; the prompt says "go". The run ends at the after-pause, so the case checks the note and "no commit yet"; the commit holding the unit file is checked in step 8 (SC-8).
 
 **Checkpoint:** the three suites from step 3's checkpoint green; `wc -l skills/implement/SKILL.md` — if the Modes section pushed it past ~200 lines, say so before step 7.
 
@@ -103,10 +104,20 @@ flowchart LR
 - The eval table, CHANGELOG entry and version bump (2.0.2 → 2.1.0, a new feature) aren't in any SC. They are repo rules (`CLAUDE.md` Versioning; `evals/README.md` lists every case), so they ride in this step rather than getting their own.
 
 ### 8. Dry-run code-journey on a real task
-- Status: todo
-- Depends on: step 7
+- Status: todo — run 1 (2026-10-24) broke the mode after one unit (spec `## Dry run`); re-run after step 9
+- Depends on: steps 7, 9
 - Touches: `docs/specs/2026-10-23-implement-modes.md` (adds `## Dry run`)
 - Size: S
 - Satisfies: SC-8
 - Verification: `rg -c ': understood$' docs/specs/2026-10-23-implement-modes.md` → ≥ 2.
 - Needs a real task you pick, run by an engineer with the plugin loaded from this branch. Until it passes, code-journey stays draft.
+
+### 9. code-journey: after each commit, write one unit and pause
+- Status: blocked — eval not run
+- Depends on: step 6
+- Touches: `skills/implement/SKILL.md`, `evals/journey-next-pauses/{case.yaml,scaffold.sh}`, `evals/README.md`
+- Size: S
+- Model: sonnet (skill text and one eval case)
+- Satisfies: SC-9
+- Verification: `claude plugin eval . --no-publish --model sonnet --case journey-next-pauses --scaffold --allow-tools Write Edit Bash` → pass (`passRate` ≥ 0.66, per the spec). The scaffold holds step 1 committed and a 3-step plan, so a batched unit 03 shows up; it needs no sandboxed `git` commit.
+- Added after dry run 1 (spec `## Dry run`); the same commit fixes the run's other six failures in `implement`.

@@ -178,41 +178,44 @@ before commit) needs a hook inside each step.
 
 ## Success Criteria & Evals
 
-Each eval runs 3 times (the default). "Pass" means every grader in the
-case passes in at least 2 of 3 runs (≥ 67%).
+Each eval runs 3 times (the default). "Pass" means at least 2 of 3 runs
+pass every grader: after the run, `jq '.cases[0].aggregates.passRate'
+evals/results/<run>/aggregate-result.json` → ≥ 0.66 (2 of 3 is 0.667).
+Not the harness's exit code: `--threshold` gates the mean score and
+defaults to 1.0. Below, "→ pass" means this check.
 
 - **SC-1:** `plan-from-spec` gives every step a line matching
   `Model: (sonnet|opus) \(.+\)`, and every step sized L has `opus`.
   Check: `claude plugin eval . --no-publish --model sonnet --case plan-traces-criteria`
-  → ≥ 67%.
+  → pass.
 - **SC-2:** after the plan's yes, `implement` asks for code-auto or
   code-journey, code-auto preselected, before any Edit or Write to a source
   file. Check: `claude plugin eval . --no-publish --model sonnet --case
-  implement-asks-mode --scaffold --allow-tools Write Edit` → ≥ 67%.
+  implement-asks-mode --scaffold --allow-tools Write Edit` → pass.
 - **SC-3 (code-auto):** every implementer Agent call names `model` matching
   its step's `Model:` line. The verification re-run, `review-code` and `git
   commit` appear in the main trace after each Agent call returns. Check:
   `claude plugin eval . --no-publish --model sonnet --case
-  implement-code-auto --scaffold --allow-tools Write Edit Bash` → ≥ 67%.
+  implement-code-auto --scaffold --allow-tools Write Edit Bash` → pass.
 - **SC-4 (escalation):** the scaffold holds a step whose verification can't
   pass. The trace shows 2 Agent calls with `model: sonnet`, then 2 with
   `model: opus`, then a final message that stops and asks; there is no fifth
   Agent call and no commit. Check: `claude plugin eval . --no-publish
   --model sonnet --case implement-escalates --scaffold --allow-tools Write
-  Edit Bash` → ≥ 67%.
+  Edit Bash` → pass.
 - **SC-5 (code-journey, before):** the run creates
   `docs/plans/*/units/01-*.md` with a picture section and a "how we'll know"
   line naming the verification command. It ends with the pause message, with
   no Edit or Write to any source file. Check: `claude plugin eval .
   --no-publish --model sonnet --case journey-pause-before --scaffold
-  --allow-tools Write Edit Bash` → ≥ 67%.
+  --allow-tools Write Edit Bash` → pass.
 - **SC-6 (code-journey, after):** given "go" on unit 1, the step is coded
   and checked, the unit file gains a `## What changed` section, and the run
   ends with the after-pause message, with no commit after the scaffold's
   first. (One eval prompt can't also answer "next"; that the commit holds
   the unit file is checked in the dry run, SC-8.) Check: `claude plugin eval .
   --no-publish --model sonnet --case journey-what-changed --scaffold
-  --allow-tools Write Edit Bash` → ≥ 67%.
+  --allow-tools Write Edit Bash` → pass.
 - **SC-7:** the repo's own checks pass, and the docs use the new names.
   Check: `python3 scripts/validate.py` → `All checks passed`; `rg -c
   "code-auto|code-journey" docs/engineering/implement.md
@@ -227,9 +230,40 @@ case passes in at least 2 of 3 runs (≥ 67%).
   draft, and each listed commit must hold its unit file. Check: `rg -c
   ': understood$' docs/specs/2026-10-23-implement-modes.md` → ≥ 2; `git show
   --stat <sha>` for each listed sha → lists that unit file.
+- **SC-9 (code-journey, one unit per turn):** with step 1 of a 3-step plan
+  committed and the user saying "carry on", the run writes
+  `units/02-*.md` and no `units/03-*` file, edits no source file, makes no
+  Agent call, and ends with the before-step pause; the unit file holds no
+  "say go" line. Check: `claude plugin eval . --no-publish --model sonnet
+  --case journey-next-pauses --scaffold --allow-tools Write Edit Bash` →
+  pass. Added after dry run 1 (below), where the mode broke after one unit.
 
 ## Open Questions
 
 - Is delegating XS steps too slow? The engineer running the first 3 plans
   notes the time per XS step. If XS steps are clearly slow, keeping them in
   the main session becomes a spec change, with those numbers behind it.
+
+## Dry run
+
+- Run 1 (2026-10-24, a real 12-step plan in a private repo, resumed at
+  step 5): **not SC-8 evidence**, as no per-unit "understood" marks were
+  recorded. Unit 05 followed the mode up to READY. From there:
+  1. It paused without writing What changed. A question ("why you
+     stopped?") was taken as a go for everything.
+  2. Step 5's commit didn't hold its unit file; What changed came after
+     the commit.
+  3. It wrote units 06-12 in one turn, took one "yes" for all, and ran 4
+     step subagents in parallel: code-auto plus parallel steps, unasked.
+  4. One commit held steps 6-10, another held 9 and 11; steps 6-12 got no
+     `review-code` run.
+  5. Every unit file kept the "say go" pause line above its What changed.
+  6. It loaded another plugin's branch-finishing skill, not `finish-branch`.
+  7. It called the full suite verified on exit code 0, which was the
+     `| tail` pipe's; the run had failures with no baseline comparison.
+
+  Fixed in `implement`: one unit per turn (only go codes, only next
+  commits), the pause line stays in chat, one step's subagent at a time,
+  new Common rationalizations and Red flags rows, the runner's own exit
+  code against step 0's baseline, and this plugin's `finish-branch` by
+  name. SC-9 tests the drift point.

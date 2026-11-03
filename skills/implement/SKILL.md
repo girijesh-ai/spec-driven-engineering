@@ -40,7 +40,9 @@ against beyond what's obviously implied by the request.
    building on it — otherwise a failure later can't be blamed on the step
    that caused it.
 1. **Take one step at a time.** Never start a step whose dependencies (per
-   the plan) aren't done. Call the Skill tool with `engineering-standards`
+   the plan) aren't done, and never run two steps' subagents at once: one
+   step is coded, checked, reviewed and committed before the next starts.
+   Call the Skill tool with `engineering-standards`
    once per session and write against it as you go —
    naming, error handling, security, layer boundaries, and necessity
    (does this code need to exist, is this the simplest correct solution)
@@ -78,10 +80,11 @@ against beyond what's obviously implied by the request.
    file, not your memory, is the record a resumed session starts from.
 8. **Commit** only after review passes (or documented findings are
    addressed). Stage only this step's files plus the plan's status line
-   (and its unit file in code-journey), so the tree is clean before the next step; `git blame` on the status
-   line gives the step's commit. Keep each commit revertable on its own:
-   the code compiles at every commit, and never delete an old
-   implementation and add its replacement in the same commit.
+   (and its unit file in code-journey), so the tree is clean before the
+   next step; `git blame` on the status line gives the step's commit.
+   Keep each commit revertable on its own: the code compiles at every
+   commit, and never delete an old implementation and add its
+   replacement in the same commit.
 
 ## Modes
 
@@ -101,7 +104,8 @@ partway needs the user's ask. In code-auto, stop at each plan checkpoint
 for the user's look.
 
 **Delegate the coding.** For each step, call the Agent tool with `model`
-set to the step's `Model:` line (`sonnet` or `opus`). A step with no
+set to the step's `Model:` line (`sonnet` or `opus`). Choosing a mode is
+the user's request for these Agent calls. A step with no
 `Model:` line (a plan from before 2.1.0) gets `sonnet`; tell the user
 once. The brief holds the step text, the spec lines it cites, the files
 to touch, the pattern to follow and known gotchas, and ends: "Call the
@@ -111,10 +115,9 @@ and follow them: failing test first, then the code. Don't commit, run
 changed, the test output, and anything you noticed but didn't touch."
 The rest stays in the main session: re-run the step's verification
 yourself (the subagent's "tests pass" is a claim), `review-code` (which
-runs the floor guard), the status line and the commit. agent-skills
-leaves model choice to the harness; this plugin picks per step so routine
-steps run on a cheaper model. On OpenCode, which can't pick a model per call, say so
-once and code each step in the main session.
+runs the floor guard), the status line and the commit. On OpenCode,
+which can't pick a model per call, say so once and code each step in the
+main session.
 
 **code-journey: before each step.** Call the Skill tool with
 `plain-technical-writing` before the first unit. Write
@@ -127,14 +130,22 @@ once and code each step in the main session.
 
 Then end the turn: "Unit NN is ready: `<path>`. Read it, then say go, ask
 a question, or change it." Edit no source file before the user says go.
+The pause message goes in chat, never in the unit file.
 
 **code-journey: after each step.** Once the check and `review-code`
 pass, add `## What changed` to the unit file: what the code does now, in
 plain words; the 2-5 diff lines that matter, quoted; and the verification
 result. Then end the turn: "Unit NN is done: read What changed in
-`<path>`. Say next to commit it and go on." On next, mark the step
-`Status: done` and commit the code, the unit file and the status line
-together.
+`<path>`. Say next to commit it and write unit NN+1." Commit nothing
+before next. On next, mark the step `Status: done`, commit the code, the
+unit file and the status line in one commit, then write unit NN+1 only
+and end the turn with the before-step message.
+
+**code-journey: one unit per turn.** Only go moves a unit to code, and
+only next commits it. Answer a question or a change request, then repeat
+the same pause. Every step to the plan's last gets its own unit file, go
+and next: writing two unit files in one turn, or coding a step before its
+go, is switching modes, which needs the user's ask.
 
 **When a step's check fails.** A failed check is your re-run of the
 verification failing, or `review-code` returning NEEDS FIXES. Send the
@@ -163,6 +174,8 @@ feature.
 | "The failure is probably flaky, I'll move on" | Stop the line. A failure you don't understand is a bug until proven otherwise |
 | "The subagent / tool said tests pass" | Run the verification command yourself. A claim is not evidence |
 | "This already exists but mine is cleaner" | Reuse first; a second version of the same concern is a bug |
+| "Unit 1 went well, so I'll write the remaining units and code them in one go" | Each step gets its own unit file, its own go and its own next. Only the user switches modes |
+| "The suite exited 0, so it's green" | Read the test runner's own exit code (no pipe into `tail`, or `set -o pipefail`) and compare the failures with step 0's baseline |
 
 ## Red flags
 
@@ -171,6 +184,9 @@ feature.
 - A commit that deletes old code and adds its replacement together
 - Starting a step while the suite is red
 - No "no spec/plan found — proceeding ad-hoc" line when there's no plan
+- One commit holding two plan steps, or two steps' subagents running at once
+- A step reported READY with no `review-code` call for it
+- Two unit files written in one turn, or "say go" text left inside a unit file
 
 ## Verification
 
@@ -184,4 +200,5 @@ Per step, before marking it done:
 
 ## Next
 
-After all steps pass review, call the Skill tool with `finish-branch`.
+After all steps pass review, call the Skill tool with this plugin's
+`finish-branch`, not another plugin's branch-finishing skill.

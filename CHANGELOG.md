@@ -17,8 +17,12 @@ track of fast, dense output while coding alongside Claude Code.
   `review-code`, and commits. After 2 failed checks a step moves to
   `opus`; after 2 failures there, it stops and asks. code-journey (draft)
   writes a plain unit file before each step and a "What changed" note
-  after it, pausing at both. OpenCode codes in the main session.
-- **Evals:** five new `implement` cases; `plan-traces-criteria` checks the
+  after it, pausing at both, one unit per turn: in its first real run it
+  wrote the remaining units at once and coded them in parallel. One
+  step's subagent runs at a time, and a suite counts as green on the test
+  runner's own exit code, against the step 0 baseline. OpenCode codes in
+  the main session.
+- **Evals:** six new `implement` cases; `plan-traces-criteria` checks the
   `Model:` line. None has run yet: the eval child couldn't sign in on the
   host they were written on.
 - **`spec-from-idea`:** with the first question, ask once for a ticket,

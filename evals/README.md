@@ -21,6 +21,7 @@ plugin loaded and grades two things:
 | `implement-escalates` | implement | A step that can't pass goes to opus after 2 failures, then stops after 2 more |
 | `journey-pause-before` | implement | Writes unit 1's file and stops before any code |
 | `journey-what-changed` | implement | After "go", codes the step, writes What changed, and stops before committing |
+| `journey-next-pauses` | implement | After a committed step and "carry on", writes only the next unit file and pauses: no code, no third unit |
 | `review-no-spec` | review-code | Reports no spec, finds the pool leak on the early return with blocking severity |
 | `debug-loop-first` | debug-systematically | Reproduces before fixing, finds the real cause instead of the user's `flush()` theory |
 | `grill-one-question` | grill-me | One plan-challenging question with a guess, then stops |
