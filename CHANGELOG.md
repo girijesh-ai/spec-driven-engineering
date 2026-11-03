@@ -3,7 +3,7 @@
 Versions follow semver (`.claude-plugin/plugin.json`). Renaming a plugin or
 skill is a breaking change.
 
-## 2.1.0 — 2026-10-24
+## 2.1.0 — unreleased
 
 Two ways to run `implement`, and a model per plan step
 (`docs/specs/2026-10-23-implement-modes.md`). Prompted by engineers losing

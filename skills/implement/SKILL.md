@@ -1,6 +1,6 @@
 ---
 name: implement
-description: Use when writing or changing code for a plan step, feature, or bugfix — including a small one-off change asked for with no spec or plan, such as adding a function to an existing file — turns it into committed, verified code.
+description: Use when writing or changing code for a plan step, feature, or bugfix, or resuming a plan or code-journey unit already in progress ("carry on", "continue", "next") — including a small one-off change asked for with no spec or plan, such as adding a function to an existing file — turns it into committed, verified code.
 ---
 
 # implement
@@ -115,9 +115,10 @@ and follow them: failing test first, then the code. Don't commit, run
 changed, the test output, and anything you noticed but didn't touch."
 The rest stays in the main session: re-run the step's verification
 yourself (the subagent's "tests pass" is a claim), `review-code` (which
-runs the floor guard), the status line and the commit. On OpenCode,
-which can't pick a model per call, say so once and code each step in the
-main session.
+runs the floor guard), the status line and the commit. agent-skills
+leaves model choice to the harness; this plugin picks per step so routine
+steps run on a cheaper model. On OpenCode, which can't pick a model per
+call, say so once and code each step in the main session.
 
 **code-journey: before each step.** Call the Skill tool with
 `plain-technical-writing` before the first unit. Write
