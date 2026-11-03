@@ -65,7 +65,9 @@ both when you want both.
    say so once and run every lens on the session model.
 
 4. **Dispatch the three lenses in one message**, one Agent call each, with
-   `model: "opus"` only where step 3 says so. Each brief holds the Map
+   `model: "opus"` only where step 3 says so, whatever the scope's size:
+   a five-file repo or a two-line diff still gets three Agent calls, since
+   inline lenses lose the opus pin and the separate read. Each brief holds the Map
    note, the scope (paths, or the diff range), the lens's row below
    (the lens makes its own Skill calls), and ends: "Read only: use Read,
    Grep, Glob and read-only Bash (git log, git diff, git grep, git show). Run code
@@ -96,6 +98,9 @@ both when you want both.
      change), and keep it only if the docs for the installed version back
      it.
    - **Merge** duplicates across lenses into one finding.
+   - **Quote what ran.** A finding that says you ran something quotes the
+     command and its real output. A command that failed or never ran
+     proves nothing: put the claim on `Not checked:` instead.
 
    Report every finding you confirm; there is no cap. Drop a lead only
    when the code shows it wrong. A lead you didn't get to goes on the
@@ -131,7 +136,8 @@ both when you want both.
    what the reader needs from it.
 
    Number findings across all groups so the user can say "fix 2 and 5".
-   Skip empty groups. Each of the four parts is one or two sentences.
+   Skip empty groups. Every finding in every group, Nice to have
+   included, has all four parts, each one or two sentences.
    Prefer a fix that deletes code; never propose a layer, framework or
    config the problem doesn't need. Nothing found: the lens lines, `What
    this ... does`, then `Healthy. Nothing to fix.` and one line on what you
@@ -156,6 +162,8 @@ input; the audit itself never edits.
 | Reporting a lens's finding without reading the line | Re-read it and state the concrete case; a lead isn't a finding |
 | Calling code dead after one grep for its name | Grep for string and dynamic lookups too; a registry keeps code alive |
 | A finding with "consider" and no failure | Name the input that breaks it, or drop it |
+| Running the lenses inline because the scope is small | Dispatch all three Agent calls; a small scope just makes each lens quick |
+| "I ran it and got X" when the run failed or never happened | Quote the command and its real output, or move the claim to `Not checked:` |
 | Pinning `opus` on every lens "to be safe" | Pin only where step 3's table says so, and print the reason |
 | A finding about style or taste | Drop it; findings name a wrong result, a risk, a cost or code that shouldn't exist |
 | Giving READY / NEEDS FIXES | That's `review-code`; this report ends with `Verdict:` and `Not checked:` |

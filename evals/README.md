@@ -65,3 +65,12 @@ but every Bash call inside it fails with `bwrap: Can't create file at
 /usr/bin/git: Permission denied`, so the two scaffolded cases can't run
 their tests on that host. Their trigger graders are still meaningful;
 their outcome graders need a host where sandboxed Bash works.
+
+On macOS (Claude Code 2.1.314, 2026-11-03), `/usr/bin/git` and
+`/usr/bin/python3` are Xcode shims: they write an `xcrun_db` cache under
+`/var/folders/.../T` and read the real binary from
+`/Library/Developer/CommandLineTools`, and the sandbox blocks both
+(`couldn't create cache file ... Operation not permitted`). In
+`code-audit-pr`, 5 of 6 runs couldn't get the diff. Put non-shim `git` and
+`python3` first on the PATH (Homebrew, for example) before running the
+scaffolded cases there.

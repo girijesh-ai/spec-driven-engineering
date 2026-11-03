@@ -143,6 +143,7 @@ session, nothing changes.
 ## Open Questions
 
 - The eval runs (SC-2 to SC-5) can't sign in on this host, the same blocker as PR #10's evals: the eval child gets `401 Authentication Error, No api key passed in` from the Bedrock gateway (`evals/results/2026-10-23T15-06-58-712Z/aggregate-result.json`). Decided 2026-11-02: the user runs them on another machine where `claude plugin eval` can sign in. Until then their plan steps stay `blocked — eval not run`.
+- Eval run 2026-11-03 (second machine, macOS, Claude Code 2.1.314, head `a7eabdd`; PR #12 comment): SC-2 to SC-5 **run, not met**. `code-audit-repo` 0.17 over 3 runs (0.40 on a 4th), `code-audit-pr` 0.17; baseline 0.00; the skill fired in every run. Causes: the lenses ran inline in all 7 runs (no Agent call, so no opus pin); reports claimed runs that had failed; Should fix and Nice to have findings dropped parts of the four-part shape; sandboxed `git` and `python3` blocked by the macOS Xcode shims. Skill fixes landed after it; a re-run on a host with working sandboxed `git` and `python3` is next. Unverified: whether the eval child names the subagent tool `Task` rather than `Agent`, which the `tool: Agent` grader would need.
 - Dry run (SC-9) repo: a private internal repo of the user's team (not named here, because this repo is public). The user picks the scope inside it (whole repo, a folder, or a PR) at dry-run time.
 
 ## Dry run

@@ -36,7 +36,7 @@ flowchart LR
 ## Steps
 
 ### 1. Build the planted-problem repo eval
-- Status: blocked — eval not run (runs on the user's other machine); scaffold built and checked locally
+- Status: blocked — eval run 2026-11-03 not met (0.17); skill fixed, re-run pending
 - Depends on: none
 - Touches: `evals/code-audit-repo/case.yaml`, `evals/code-audit-repo/scaffold.sh`
 - Size: S
@@ -66,7 +66,7 @@ flowchart LR
 **Checkpoint:** `python3 scripts/validate.py` and `python3 -m unittest discover -s scripts -q` green; human look at the skill and the local smoke report before the PR eval and docs.
 
 ### 4. Build the PR-mode eval
-- Status: blocked — eval not run (runs on the user's other machine); scaffold and local smoke done
+- Status: blocked — eval run 2026-11-03 not met (0.17); skill fixed, re-run pending
 - Depends on: step 2
 - Touches: `evals/code-audit-pr/case.yaml`, `evals/code-audit-pr/scaffold.sh`
 - Size: S
