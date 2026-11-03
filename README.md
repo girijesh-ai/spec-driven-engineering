@@ -393,8 +393,9 @@ Anthropic's own `superpowers` plugin ship
 `engineering-standards` carries its own lightweight necessity/YAGNI
 check (no unrequested abstractions, stdlib/native-feature-first, simplest
 correct solution), applied at write-time by `implement` and as a backstop
-by `review-code`'s Axis 2 — not left as review-only. What isn't
-reimplemented here is `ponytail`'s deeper, dedicated audit
-(`ponytail-review`/`ponytail-audit` scan a whole diff or repo
-specifically for over-engineering); pairs well with that for anyone who
-wants it.
+by `review-code`'s Axis 2 — not left as review-only. The draft skill
+`code-audit` adapts `ponytail-audit` from
+[DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) (MIT)
+for the deeper, dedicated audit of a whole repo, folder or PR: its finding
+shape and check-before-report rules, plus an AI-code slop checklist and
+the `codebase-architecture` lens.
