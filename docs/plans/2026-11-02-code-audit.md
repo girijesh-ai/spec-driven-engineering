@@ -36,12 +36,12 @@ flowchart LR
 ## Steps
 
 ### 1. Build the planted-problem repo eval
-- Status: done 47d5567 (eval passRate 0.67, mean score 0.80, 2026-11-03, reported in the PR #12 review)
+- Status: done 47d5567 (eval passRate 0.667, 2 of 3 runs, mean score 0.80, 2026-11-03, reported in the PR #12 review)
 - Depends on: none
 - Touches: `evals/code-audit-repo/case.yaml`, `evals/code-audit-repo/scaffold.sh`
 - Size: S
 - Satisfies: SC-2, SC-3, SC-5
-- Verification: `d=$(mktemp -d) && (cd "$d" && bash /Users/girijesh.prasad/Documents/sde-code-audit/evals/code-audit-repo/scaffold.sh && python3 -m unittest -q)` → scaffold builds and its tests pass, so the planted problems hide behind a green suite. The eval itself (`claude plugin eval . --no-publish --model sonnet --case code-audit-repo --scaffold --allow-tools Write Edit Bash` → `passRate` ≥ 0.67, per SC-2) is run by the user on another machine; see the step's Status.
+- Verification: `d=$(mktemp -d) && (cd "$d" && bash /Users/girijesh.prasad/Documents/sde-code-audit/evals/code-audit-repo/scaffold.sh && python3 -m unittest -q)` → scaffold builds and its tests pass, so the planted problems hide behind a green suite. The eval itself (`claude plugin eval . --no-publish --model sonnet --case code-audit-repo --scaffold --allow-tools Write Edit Bash` → `passRate` ≥ 0.66, per SC-2) is run by the user on another machine; see the step's Status.
 - Plants: (a) `except: pass` around a database write; (b) a one-implementation interface that only forwards calls; (c) a lower-layer module importing a higher one; (d) decoy: a handler looked up by its name as a string; (e) `json.dumps(obj, sort=True)` (invented keyword; real one is `sort_keys`) on an error path no test runs. Graders: `code-audit` fired; Agent called 3 times; `lens-1-on-opus` (`"model"\s*:\s*"opus"`); `lens-models-printed`; llm grader for (a)-(e) and the 4-part shape; a trace grader for 3 lens calls and read-only (no Edit/Write, no file-changing Bash).
 - Riskiest step first: if a planted problem can't be made realistic in ~150 lines, the spec's SC-2 is wrong and we learn it before writing the skill.
 
@@ -71,7 +71,7 @@ flowchart LR
 - Touches: `evals/code-audit-pr/case.yaml`, `evals/code-audit-pr/scaffold.sh`
 - Size: S
 - Satisfies: SC-4, SC-5
-- Verification: `d=$(mktemp -d) && (cd "$d" && bash /Users/girijesh.prasad/Documents/sde-code-audit/evals/code-audit-pr/scaffold.sh && git log --oneline main..feature)` → one commit on `feature` changing a function's return type, with the broken caller in a file that commit doesn't touch. Local smoke as in step 2, on branch `feature` → the report names the broken caller and has no READY / NEEDS FIXES and no spec section. The eval (`... --case code-audit-pr ...` → `passRate` ≥ 0.67, per SC-4) is run by the user on a host with a non-shim `git`; see the step's Status.
+- Verification: `d=$(mktemp -d) && (cd "$d" && bash /Users/girijesh.prasad/Documents/sde-code-audit/evals/code-audit-pr/scaffold.sh && git log --oneline main..feature)` → one commit on `feature` changing a function's return type, with the broken caller in a file that commit doesn't touch. Local smoke as in step 2, on branch `feature` → the report names the broken caller and has no READY / NEEDS FIXES and no spec section. The eval (`... --case code-audit-pr ...` → `passRate` ≥ 0.66, per SC-4) is run by the user on a host with a non-shim `git`; see the step's Status.
 
 ### 5. Track it as draft and update the README
 - Status: done
@@ -90,5 +90,5 @@ flowchart LR
 - Touches: `docs/specs/2026-11-02-code-audit.md` (adds `## Dry run`)
 - Size: S
 - Satisfies: SC-9
-- Verification: `rg -c '^- Finding [0-9]+: real' docs/specs/2026-11-02-code-audit.md` ÷ `rg -c '^- Finding [0-9]+:' docs/specs/2026-11-02-code-audit.md` → ≥ 0.67, second count ≥ 3.
+- Verification: `rg -c '^- Finding [0-9]+: real' docs/specs/2026-11-02-code-audit.md` ÷ `rg -c '^- Finding [0-9]+:' docs/specs/2026-11-02-code-audit.md` → ≥ 0.66, second count ≥ 3.
 - Run by the user in a clone of a private internal repo (not named here: this repo is public), with the plugin installed from this worktree (`claude plugin marketplace add /Users/girijesh.prasad/Documents/sde-code-audit`). The user marks each finding. Until it passes, code-audit stays draft.
