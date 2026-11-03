@@ -36,12 +36,12 @@ flowchart LR
 ## Steps
 
 ### 1. Build the planted-problem repo eval
-- Status: blocked — eval run 2026-11-03 not met (0.17); skill fixed, re-run pending
+- Status: blocked — eval not met (re-run 2026-11-03 at 9f1d1a1: 1 of 3 runs pass); re-run pending
 - Depends on: none
 - Touches: `evals/code-audit-repo/case.yaml`, `evals/code-audit-repo/scaffold.sh`
 - Size: S
 - Satisfies: SC-2, SC-3, SC-5
-- Verification: `d=$(mktemp -d) && (cd "$d" && bash /Users/girijesh.prasad/Documents/sde-code-audit/evals/code-audit-repo/scaffold.sh && python3 -m unittest -q)` → scaffold builds and its tests pass, so the planted problems hide behind a green suite. The eval itself (`claude plugin eval . --no-publish --model sonnet --case code-audit-repo --scaffold --allow-tools Write Edit Bash` → ≥ 67%) runs on the user's other machine; until then this step's eval part is `blocked — eval not run`.
+- Verification: `d=$(mktemp -d) && (cd "$d" && bash /Users/girijesh.prasad/Documents/sde-code-audit/evals/code-audit-repo/scaffold.sh && python3 -m unittest -q)` → scaffold builds and its tests pass, so the planted problems hide behind a green suite. The eval itself (`claude plugin eval . --no-publish --model sonnet --case code-audit-repo --scaffold --allow-tools Write Edit Bash` → ≥ 67%) is run by the user on another machine; see the step's Status.
 - Plants: (a) `except: pass` around a database write; (b) a one-implementation interface that only forwards calls; (c) a lower-layer module importing a higher one; (d) decoy: a handler looked up by its name as a string; (e) `json.dumps(obj, sort=True)` (invented keyword; real one is `sort_keys`) on an error path no test runs. Graders: `code-audit` fired; Agent called 3 times; `lens-1-on-opus` (`"model"\s*:\s*"opus"`); `lens-models-printed`; llm grader for (a)-(e) and the 4-part shape; a trace grader for 3 lens calls and read-only (no Edit/Write, no file-changing Bash).
 - Riskiest step first: if a planted problem can't be made realistic in ~150 lines, the spec's SC-2 is wrong and we learn it before writing the skill.
 
@@ -66,12 +66,12 @@ flowchart LR
 **Checkpoint:** `python3 scripts/validate.py` and `python3 -m unittest discover -s scripts -q` green; human look at the skill and the local smoke report before the PR eval and docs.
 
 ### 4. Build the PR-mode eval
-- Status: blocked — eval run 2026-11-03 not met (0.17); skill fixed, re-run pending
+- Status: blocked — eval not met (0.17, 2026-11-03); re-run needs a host with a non-shim `git`
 - Depends on: step 2
 - Touches: `evals/code-audit-pr/case.yaml`, `evals/code-audit-pr/scaffold.sh`
 - Size: S
 - Satisfies: SC-4, SC-5
-- Verification: `d=$(mktemp -d) && (cd "$d" && bash /Users/girijesh.prasad/Documents/sde-code-audit/evals/code-audit-pr/scaffold.sh && git log --oneline main..feature)` → one commit on `feature` changing a function's return type, with the broken caller in a file that commit doesn't touch. Local smoke as in step 2, on branch `feature` → the report names the broken caller and has no READY / NEEDS FIXES and no spec section. The eval (`... --case code-audit-pr ...` → ≥ 67%) is `blocked — eval not run` until the other machine runs it.
+- Verification: `d=$(mktemp -d) && (cd "$d" && bash /Users/girijesh.prasad/Documents/sde-code-audit/evals/code-audit-pr/scaffold.sh && git log --oneline main..feature)` → one commit on `feature` changing a function's return type, with the broken caller in a file that commit doesn't touch. Local smoke as in step 2, on branch `feature` → the report names the broken caller and has no READY / NEEDS FIXES and no spec section. The eval (`... --case code-audit-pr ...` → ≥ 67%) is run by the user on a host with a non-shim `git`; see the step's Status.
 
 ### 5. Track it as draft and update the README
 - Status: done
@@ -82,7 +82,7 @@ flowchart LR
 - Verification: `rg -c "What isn't\s*$" README.md` → no match; `rg -c "code-audit.*ponytail|ponytail.*code-audit" README.md` → ≥ 1; `rg -c "ponytail.*MIT|MIT.*ponytail" README.md` → ≥ 1; `rg -c "code-audit" docs/in-progress.md` → ≥ 1; `test ! -e docs/engineering/code-audit.md && echo ok` → `ok`; `python3 scripts/validate.py` → `All checks passed`.
 - The CHANGELOG `## Unreleased` entry and the two `evals/README.md` table rows aren't in any SC. They're repo rules (`evals/README.md` lists every case; changes are logged), so they ride in this step.
 
-**Checkpoint:** push `feat/code-audit`, open a draft PR; the user runs the two evals on the other machine.
+**Checkpoint:** push `feat/code-audit`, open a draft PR; the user runs the two evals on another machine.
 
 ### 6. Dry-run code-audit on a private internal repo
 - Status: done (20 of 20 findings marked real by the user, 2026-11-02)
