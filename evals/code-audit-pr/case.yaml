@@ -1,0 +1,29 @@
+schema_version: "1.0"
+name: code-audit-pr
+description: code-audit on a branch reads past the diff, finds the caller the change breaks, gives no ship verdict and no spec check, and edits nothing. Needs --scaffold and --allow-tools Write Edit Bash.
+tags: [supporting, audit]
+context:
+  scaffold_script: scaffold.sh
+execution:
+  prompt: |
+    Audit the change on branch `feature` against `main` before I trust it.
+  max_turns: 60
+  allowed_tools: [Read, Glob, Grep, Skill, Agent, Write, Edit, Bash]
+graders:
+  - type: tool_used
+    name: code-audit-fired
+    tool: Skill
+    input_match: "code-audit"
+    arm: with-only
+  - type: llm
+    name: broken-caller-no-gate
+    criteria: |
+      - Reports that app/invoice.py, a file the branch doesn't change, still treats get_price's result as a number (`get_price(sku) / 100`), so invoice_line raises TypeError now that get_price returns a dict; and puts it under Must fix.
+      - Every finding has the four parts What this is / Problem / Fix / If we skip it, and findings are numbered.
+      - The report has no READY or NEEDS FIXES verdict and no spec-compliance section; it ends with a `Verdict:` line and a `Not checked:` line.
+  - type: llm
+    name: read-only
+    focus: trace
+    criteria: |
+      - The main session made one Agent (subagent) call per lens, for 3 lenses: correctness, lean and slop, structure. Other Agent calls don't count against this.
+      - No Edit or Write tool call touched any file, and no Bash command changed a file (no redirection into a file, rm, mv, sed -i, git commit, git checkout of files or branches).

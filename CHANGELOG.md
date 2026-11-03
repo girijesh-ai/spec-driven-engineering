@@ -36,6 +36,15 @@ track of fast, dense output while coding alongside Claude Code.
   4-5 sentence guesses full of repo terms (floor guard, mutation
   spot-check, tier-L) took about 5 rounds to settle one question. Both
   interview evals check it.
+- **`code-audit` (new, draft):** a read-only audit of a whole repo, folder,
+  branch or PR. Three subagents each check one lens (correctness, lean and
+  AI-code slop, structure); the main session confirms every finding in the
+  code and writes one numbered report with a fix for each. Lens 1 runs on
+  `opus` when the scope has auth, money, data writes or concurrency; Lens 3
+  when an interface is shared by 2+ services. Adapts `ponytail-audit`
+  (DietrichGebert/ponytail, MIT). Until now the README said that audit was
+  left out on purpose, so there was no way to audit an inherited repo or an
+  AI-written PR. Eval cases `code-audit-repo` and `code-audit-pr`.
 
 ## 2.0.2 — 2026-10-22
 
