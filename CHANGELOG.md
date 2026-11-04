@@ -3,8 +3,30 @@
 Versions follow semver (`.claude-plugin/plugin.json`). Renaming a plugin or
 skill is a breaking change.
 
-## Unreleased
+## 2.1.0 — unreleased
 
+Two ways to run `implement`, and a model per plan step
+(`docs/specs/2026-10-23-implement-modes.md`). Prompted by engineers losing
+track of fast, dense output while coding alongside Claude Code.
+
+- **`plan-from-spec`:** every step has a `Model:` line, `sonnet` or
+  `opus`, with a reason.
+- **`implement`:** after the plan's yes, asks for **code-auto** (default)
+  or **code-journey**. Each plan step is coded by a subagent on its model;
+  the main session re-runs the check, runs the floor guard and
+  `review-code`, and commits. After 2 failed checks a step moves to
+  `opus`; after 2 failures there, it stops and asks, or sooner with quoted
+  proof that the check can't pass. code-journey (draft)
+  writes a plain unit file before each step and a "What changed" note
+  after it, pausing at both, one unit per turn: in its first real run it
+  wrote the remaining units at once and coded them in parallel. One
+  step's subagent runs at a time, and a suite counts as green on the test
+  runner's own exit code, against the step 0 baseline. OpenCode codes in
+  the main session.
+- **Evals:** six new `implement` cases; `plan-traces-criteria` checks the
+  `Model:` line, judged by `sonnet` (the default `haiku` judge split its
+  votes on correct plans). Run on macOS: SC-1, SC-2, SC-5, SC-6 and
+  SC-9 pass 3/3; `implement-code-auto` passed where sandboxed `git` worked.
 - **`spec-from-idea`:** with the first question, ask once for a ticket,
   doc or thread to read. Only design-changing decisions are asked one at
   a time; low-stakes guesses go under `ASSUMPTIONS I'M MAKING:` for one

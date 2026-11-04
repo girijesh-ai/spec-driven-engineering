@@ -73,6 +73,13 @@ changes in plain words, and every command, path, and `SC-n` stays exact.
    in its name, or touches two subsystems. Keep refactor steps separate
    from feature steps. Don't split below what one commit naturally holds:
    a small change is one or two steps, not six XS ones.
+
+   Then name the model that codes the step, on its own line:
+   `Model: sonnet (<reason>)` by default, `Model: opus (<reason>)` for a
+   step sized L or one that is hard to get right or costly if wrong (a
+   shared schema, an auth check, a data migration). The reason says which.
+   `implement` hands the step to a subagent on that model; the engineer
+   can change it when approving the plan.
 7. **Attach verification to every step**, citing the spec criterion it
    satisfies (`Satisfies: SC-2`) and the command that checks it. A step
    that maps to no criterion is **dropped by default**. Adding a criterion
@@ -121,6 +128,7 @@ changes in plain words, and every command, path, and `SC-n` stays exact.
 - Depends on: none
 - Touches: <files>
 - Size: S
+- Model: sonnet (one file, routine)
 - Satisfies: SC-1             ← or `Enables: step N` (prefactor) / `Completes: steps N-M` (contract)
 - Verification: `<exact command>` → <expected result>
 
@@ -129,6 +137,7 @@ changes in plain words, and every command, path, and `SC-n` stays exact.
 - Depends on: step 1
 - Touches: <files>
 - Size: M
+- Model: opus (changes a schema three services share)
 - Satisfies: SC-2, SC-3
 - Verification: `<exact command>` → <expected result>
 

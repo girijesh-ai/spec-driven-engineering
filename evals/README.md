@@ -14,8 +14,14 @@ plugin loaded and grades two things:
 |---|---|---|
 | `spec-interview` | spec-from-idea | Classification, hypothesis + confidence, one question with a `GUESS:`, no code |
 | `spec-right-size` | spec-from-idea | Sizes a small internal feature to its stated scale; recommends the minimal approach, no queue/cache/background job |
-| `plan-traces-criteria` | plan-from-spec | Steps cite SC-n with commands, are sized, risky step early |
+| `plan-traces-criteria` | plan-from-spec | Steps cite SC-n with commands, are sized, name a model, risky step early on opus |
 | `implement-ad-hoc` | implement | Announces "no spec/plan found", writes the test first |
+| `implement-asks-mode` | implement | Asks code-auto or code-journey before touching code |
+| `implement-code-auto` | implement | Codes each step in a subagent on the step's model; checks, reviews and commits in the main session |
+| `implement-escalates` | implement | A step that can't pass is coded on sonnet, then stops and asks with proof (at most 4 Agent calls), no commit |
+| `journey-pause-before` | implement | Writes unit 1's file and stops before any code |
+| `journey-what-changed` | implement | After "go", codes the step, writes What changed, and stops before committing |
+| `journey-next-pauses` | implement | After a committed step and "carry on", writes only the next unit file and pauses: no code, no third unit |
 | `review-no-spec` | review-code | Reports no spec, finds the pool leak on the early return with blocking severity |
 | `debug-loop-first` | debug-systematically | Reproduces before fixing, finds the real cause instead of the user's `flush()` theory |
 | `grill-one-question` | grill-me | One plan-challenging question with a guess, then stops |
