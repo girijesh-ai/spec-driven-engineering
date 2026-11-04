@@ -186,8 +186,10 @@ defaults to 1.0. Below, "→ pass" means this check.
 
 - **SC-1:** `plan-from-spec` gives every step a line matching
   `Model: (sonnet|opus) \(.+\)`, and every step sized L has `opus`.
-  Check: `claude plugin eval . --no-publish --model sonnet --case plan-traces-criteria`
-  → pass.
+  Check: `claude plugin eval . --no-publish --model sonnet --judge-model sonnet
+  --case plan-traces-criteria` → pass. The judge is `sonnet`: with the default
+  `haiku` judge the same plans split their votes (0/3 runs passed); with
+  `sonnet` all 3 passed, and `main` too.
 - **SC-2:** after the plan's yes, `implement` asks for code-auto or
   code-journey, code-auto preselected, before any Edit or Write to a source
   file. Check: `claude plugin eval . --no-publish --model sonnet --case

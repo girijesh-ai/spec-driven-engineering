@@ -46,7 +46,7 @@ flowchart LR
 - Touches: `skills/plan-from-spec/SKILL.md`, `evals/plan-traces-criteria/case.yaml`
 - Size: S
 - Satisfies: SC-1
-- Verification: `claude plugin eval . --no-publish --model sonnet --case plan-traces-criteria` → pass (`passRate` ≥ 0.66, per the spec), with a new `regex` grader on `Model: (sonnet|opus) \(.+\)` and an `llm` bullet that the risky shared-schema step gets `opus`.
+- Verification: `claude plugin eval . --no-publish --model sonnet --judge-model sonnet --case plan-traces-criteria` → pass (`passRate` ≥ 0.66, per the spec), with a new `regex` grader on `Model: (sonnet|opus) \(.+\)` and an `llm` bullet that the risky shared-schema step gets `opus`.
 - Note: this adds graders to the existing case rather than a new `plan-models` case. One case to maintain, not two. The spec's SC-1 check names `plan-models`; it changes to `plan-traces-criteria` on your yes.
 
 ### 2. Hand each plan step's coding to a subagent on the step's model (code-auto)

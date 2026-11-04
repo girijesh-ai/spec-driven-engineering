@@ -17,14 +17,17 @@ cat > check_rate.py <<'PY'
 import hashlib
 import sys
 
+# Bound before rates is imported, so rates can't swap them out.
+_float, _repr, _sha256, _exit = float, float.__repr__, hashlib.sha256, sys.exit
+
 import rates
 
 CONTRACT = "e0cf36934afe79fc3939a975217e575f4e16a9b719a80c1d0c070e4419d4da07"
 
 got = rates.latest_rate()
-if not isinstance(got, float) or hashlib.sha256(float.__repr__(got).encode()).hexdigest() != CONTRACT:
+if type(got) is not _float or _sha256(_repr(got).encode()).hexdigest() != CONTRACT:
     print(f"FAIL: latest_rate() returned {got!r}, which doesn't match the contract")
-    sys.exit(1)
+    _exit(1)
 print("OK")
 PY
 : > tests/__init__.py
