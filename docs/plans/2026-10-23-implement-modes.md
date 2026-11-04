@@ -41,7 +41,7 @@ flowchart LR
 ## Steps
 
 ### 1. Give every plan step a `Model:` line
-- Status: blocked — eval not run (the eval child can't sign in on this host)
+- Status: done — `plan-traces-criteria` passRate 1.00 at `26df3d2` (sonnet judge)
 - Depends on: none
 - Touches: `skills/plan-from-spec/SKILL.md`, `evals/plan-traces-criteria/case.yaml`
 - Size: S
@@ -50,7 +50,7 @@ flowchart LR
 - Note: this adds graders to the existing case rather than a new `plan-models` case. One case to maintain, not two. The spec's SC-1 check names `plan-models`; it changes to `plan-traces-criteria` on your yes.
 
 ### 2. Hand each plan step's coding to a subagent on the step's model (code-auto)
-- Status: blocked — eval not run (the eval child can't sign in on this host)
+- Status: blocked — SC-3 passRate 0.33 at `3935ff1`: the one run with a working `git` passed every grader; the other two hit the macOS `git` shim in the sandbox
 - Depends on: step 1
 - Touches: `skills/implement/SKILL.md`, `evals/implement-code-auto/{case.yaml,scaffold.sh}`
 - Size: M
@@ -59,7 +59,7 @@ flowchart LR
 - Also in this step: the OpenCode line (one model, said once) and the one-line deviation from agent-skills. Riskiest step: it is the first to show whether this Mac's eval sandbox runs Bash and whether the trace shows the Agent call's `model`. If either fails, stop and decide before step 3.
 
 ### 3. Retry a failing step on opus, stop after 2 opus failures
-- Status: blocked — eval not run (the eval child can't sign in on this host)
+- Status: blocked — eval re-run needed after SC-4 accepted a stop with proof (spec Open Questions)
 - Depends on: step 2
 - Touches: `skills/implement/SKILL.md`, `evals/implement-escalates/{case.yaml,scaffold.sh}`
 - Size: S
@@ -69,7 +69,7 @@ flowchart LR
 **Checkpoint:** `python3 scripts/validate.py`, `python3 scripts/test_validate.py`, `python3 scripts/test_floor_guard.py` all green; you read the code-auto text before code-journey builds on it.
 
 ### 4. Ask "code-auto or code-journey?" after the plan's yes
-- Status: blocked — eval not run (the eval child can't sign in on this host)
+- Status: done — `implement-asks-mode` passRate 1.00 at `3935ff1`
 - Depends on: step 2
 - Touches: `skills/implement/SKILL.md`, `evals/implement-asks-mode/{case.yaml,scaffold.sh}`
 - Size: S
@@ -77,7 +77,7 @@ flowchart LR
 - Verification: `claude plugin eval . --no-publish --model sonnet --case implement-asks-mode --scaffold --allow-tools Write Edit` → pass (`passRate` ≥ 0.66, per the spec).
 
 ### 5. code-journey: write the unit file, then pause before any code
-- Status: blocked — eval not run (the eval child can't sign in on this host)
+- Status: done — `journey-pause-before` passRate 1.00 at `3935ff1`
 - Depends on: step 4
 - Touches: `skills/implement/SKILL.md`, `evals/journey-pause-before/{case.yaml,scaffold.sh}`
 - Size: S
@@ -85,7 +85,7 @@ flowchart LR
 - Verification: `claude plugin eval . --no-publish --model sonnet --case journey-pause-before --scaffold --allow-tools Write Edit Bash` → pass (`passRate` ≥ 0.66, per the spec).
 
 ### 6. code-journey: add "What changed", pause, and commit the unit file with the code
-- Status: blocked — eval not run (the eval child can't sign in on this host)
+- Status: done — `journey-what-changed` passRate 1.00 at `3935ff1`
 - Depends on: step 5
 - Touches: `skills/implement/SKILL.md`, `evals/journey-what-changed/{case.yaml,scaffold.sh}`
 - Size: S
@@ -113,7 +113,7 @@ flowchart LR
 - Needs a real task you pick, run by an engineer with the plugin loaded from this branch. Until it passes, code-journey stays draft.
 
 ### 9. code-journey: after each commit, write one unit and pause
-- Status: blocked — eval not run
+- Status: done — `journey-next-pauses` passRate 1.00 at `3935ff1` (0.00 at `63cda0a`, before the resume trigger)
 - Depends on: step 6
 - Touches: `skills/implement/SKILL.md`, `evals/journey-next-pauses/{case.yaml,scaffold.sh}`, `evals/README.md`
 - Size: S

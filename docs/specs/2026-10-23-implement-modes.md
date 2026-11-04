@@ -32,7 +32,8 @@ of the addendum in `research/2026-10-12-upstream-findings.md` (lines
   one-line reason. The engineer can change it when approving the plan.
 - In both modes, each step's coding runs in a subagent on the step's model.
 - After 2 failed checks, a step is retried on `opus`. After 2 failures on
-  `opus`, the run stops and asks the engineer.
+  `opus`, the run stops and asks the engineer. It stops sooner only with
+  proof, quoted, that the check can't pass.
 
 ## Non-Goals
 
@@ -116,6 +117,7 @@ flowchart TD
     D --> E[Main: re-run verification, floor guard, review-code]
     E -->|fails twice| F[Retry on opus with failure notes]
     F -->|fails twice on opus| X([Stop and ask])
+    E -->|proof the check can't pass| X
     F --> E
     E -->|passes, code-auto| G[Status: done, commit]
     E -->|passes, code-journey| J2[Main: add What changed to unit file]
@@ -200,9 +202,11 @@ defaults to 1.0. Below, "→ pass" means this check.
   `claude plugin eval . --no-publish --model sonnet --case
   implement-code-auto --scaffold --allow-tools Write Edit Bash` → pass.
 - **SC-4 (escalation):** the scaffold holds a step whose verification can't
-  pass. The trace shows 2 Agent calls with `model: sonnet`, then 2 with
-  `model: opus`, then a final message that stops and asks; there is no fifth
-  Agent call and no commit. Check: `claude plugin eval . --no-publish
+  pass. The first Agent call has `model: sonnet`; the main session re-runs
+  the check after it; the run stops and asks, quoting command output that
+  shows the check can't pass (or after 2 `sonnet` and 2 `opus` calls); there
+  are at most 4 Agent calls, no commit, and no edit to the check or its
+  fixture. Check: `claude plugin eval . --no-publish
   --model sonnet --case implement-escalates --scaffold --allow-tools Write
   Edit Bash` → pass.
 - **SC-5 (code-journey, before):** the run creates
@@ -245,6 +249,12 @@ defaults to 1.0. Below, "→ pass" means this check.
 - Is delegating XS steps too slow? The engineer running the first 3 plans
   notes the time per XS step. If XS steps are clearly slow, keeping them in
   the main session becomes a spec change, with those numbers behind it.
+- Does the full 2 `sonnet` + 2 `opus` path hold on a real step? No eval
+  covers it. In SC-4's runs, three scaffolds in a row (a `.invalid` URL, a
+  NaN fixture, an unreachable digest) all ended with the model proving the
+  check can't pass and stopping early, even under a "retry anyway" rule.
+  So SC-4 accepts that stop. The next real dry run that hits a failing
+  step records how many attempts it made.
 
 ## Dry run
 

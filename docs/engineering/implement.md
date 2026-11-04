@@ -57,7 +57,8 @@ They're named so they don't clash with Claude Code's Auto Mode.
 
 **What if a step keeps failing?**
 After 2 failed checks it moves to `opus`; after 2 failures there, it stops
-and asks you.
+and asks you. It stops sooner only if it can show you output proving the
+check can't pass.
 
 ## It's working if
 

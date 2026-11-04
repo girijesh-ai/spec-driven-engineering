@@ -150,11 +150,12 @@ go, is switching modes, which needs the user's ask.
 
 **When a step's check fails.** A failed check is your re-run of the
 verification failing, or `review-code` returning NEEDS FIXES. Send the
-failure output back to a new subagent, even if you suspect the check
-itself: put that suspicion in the brief, and leave whether the check is
-wrong to the user after the last attempt. A step gets 2 attempts on its
+failure output back to a new subagent. A step gets 2 attempts on its
 `Model:`; a `sonnet` step then gets 2 more on `opus`. After the last
-failed attempt, stop: show the failures and ask the user. That's at most
+failed attempt, stop: show the failures and ask the user. Stop sooner only
+with proof that the check can't pass: command output showing it
+contradicts the spec, its fixture or itself, quoted in the stop message.
+A hunch that the check is wrong is a reason to retry. That's at most
 4 Agent calls for a `sonnet` step and 2 for an `opus` one, counted per
 step. The step stays open while it retries, so this is still stopping the
 line (Process step 5): nothing moves on. When you stop, offer `debug-systematically`.
@@ -178,7 +179,7 @@ feature.
 | "The subagent / tool said tests pass" | Run the verification command yourself. A claim is not evidence |
 | "This already exists but mine is cleaner" | Reuse first; a second version of the same concern is a bug |
 | "Unit 1 went well, so I'll write the remaining units and code them in one go" | Each step gets its own unit file, its own go and its own next. Only the user switches modes |
-| "The check itself looks wrong, so retrying is pointless" | Retry through the last attempt, then stop with your evidence. Whether the check is wrong is the user's call |
+| "The check itself looks wrong, so retrying is pointless" | Retry unless command output proves the check can't pass; then stop and quote that output. A hunch is not proof |
 | "The suite exited 0, so it's green" | Read the test runner's own exit code (no pipe into `tail`, or `set -o pipefail`) and compare the failures with step 0's baseline |
 
 ## Red flags

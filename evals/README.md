@@ -18,7 +18,7 @@ plugin loaded and grades two things:
 | `implement-ad-hoc` | implement | Announces "no spec/plan found", writes the test first |
 | `implement-asks-mode` | implement | Asks code-auto or code-journey before touching code |
 | `implement-code-auto` | implement | Codes each step in a subagent on the step's model; checks, reviews and commits in the main session |
-| `implement-escalates` | implement | A step that can't pass goes to opus after 2 failures, then stops after 2 more |
+| `implement-escalates` | implement | A step that can't pass is coded on sonnet, then stops and asks with proof (at most 4 Agent calls), no commit |
 | `journey-pause-before` | implement | Writes unit 1's file and stops before any code |
 | `journey-what-changed` | implement | After "go", codes the step, writes What changed, and stops before committing |
 | `journey-next-pauses` | implement | After a committed step and "carry on", writes only the next unit file and pauses: no code, no third unit |
