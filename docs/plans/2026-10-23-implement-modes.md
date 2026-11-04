@@ -50,7 +50,7 @@ flowchart LR
 - Note: this adds graders to the existing case rather than a new `plan-models` case. One case to maintain, not two. The spec's SC-1 check names `plan-models`; it changes to `plan-traces-criteria` on your yes.
 
 ### 2. Hand each plan step's coding to a subagent on the step's model (code-auto)
-- Status: blocked — SC-3 passRate 0.33 at `3935ff1`: the one run with a working `git` passed every grader; the other two hit the macOS `git` shim in the sandbox
+- Status: done — `implement-code-auto` passRate 0.667 at `b4361b4` (the failing run hit the macOS `git` shim in the sandbox)
 - Depends on: step 1
 - Touches: `skills/implement/SKILL.md`, `evals/implement-code-auto/{case.yaml,scaffold.sh}`
 - Size: M
@@ -59,7 +59,7 @@ flowchart LR
 - Also in this step: the OpenCode line (one model, said once) and the one-line deviation from agent-skills. Riskiest step: it is the first to show whether this Mac's eval sandbox runs Bash and whether the trace shows the Agent call's `model`. If either fails, stop and decide before step 3.
 
 ### 3. Retry a failing step on opus, stop after 2 opus failures
-- Status: blocked — eval re-run needed after SC-4 accepted a stop with proof (spec Open Questions)
+- Status: done — `implement-escalates` passRate 1.00 at `b4361b4`, under SC-4's stop-with-proof wording (the full 2+2 path is in the spec's Open Questions)
 - Depends on: step 2
 - Touches: `skills/implement/SKILL.md`, `evals/implement-escalates/{case.yaml,scaffold.sh}`
 - Size: S
