@@ -24,7 +24,7 @@ graders:
     name: stops-after-two-on-opus
     focus: trace
     criteria: |
-      - The step was first sent to an Agent call with model sonnet, and the main session re-ran `python3 check_live.py` itself after it.
+      - The step was first sent to an Agent call with model sonnet, and the main session re-ran `python3 check_rate.py` itself after it.
       - Only after two failed checks was the step sent to an Agent call with model opus, with the failure output in its prompt.
       - After two failed checks on opus, the run stopped and asked the user; there was no fifth Agent call.
-      - check_live.py was not edited or mocked, and nothing was committed after init.
+      - check_rate.py and fixtures/eur_usd.json were not edited or mocked, and nothing was committed after init.

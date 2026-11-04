@@ -1,6 +1,6 @@
 ---
 name: implement
-description: Use when writing or changing code for a plan step, feature, or bugfix, or resuming a plan or code-journey unit already in progress ("carry on", "continue", "next") — including a small one-off change asked for with no spec or plan, such as adding a function to an existing file — turns it into committed, verified code.
+description: Use when writing or changing code — a plan step, feature, or bugfix; starting an approved plan ("go") in code-auto or code-journey; resuming one already in progress ("carry on", "continue", "next"); or a small one-off change asked for with no spec or plan, such as adding a function to an existing file — turns it into committed, verified code.
 ---
 
 # implement
