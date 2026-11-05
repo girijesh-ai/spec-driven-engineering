@@ -3,7 +3,7 @@
 Versions follow semver (`.claude-plugin/plugin.json`). Renaming a plugin or
 skill is a breaking change.
 
-## 2.1.0 — unreleased
+## 2.1.0 — 2026-11-05
 
 Two ways to run `implement`, and a model per plan step
 (`docs/specs/2026-10-23-implement-modes.md`). Prompted by engineers losing
@@ -25,8 +25,9 @@ track of fast, dense output while coding alongside Claude Code.
   the main session.
 - **Evals:** six new `implement` cases; `plan-traces-criteria` checks the
   `Model:` line, judged by `sonnet` (the default `haiku` judge split its
-  votes on correct plans). Run on macOS: SC-1, SC-2, SC-5, SC-6 and
-  SC-9 pass 3/3; `implement-code-auto` passed where sandboxed `git` worked.
+  votes on correct plans). Run on macOS: SC-1, SC-2, SC-4, SC-5, SC-6
+  and SC-9 pass 3/3; `implement-code-auto` (SC-3) passes 2/3, the third run
+  hit the sandbox's `git` shim.
 - **`spec-from-idea`:** with the first question, ask once for a ticket,
   doc or thread to read. Only design-changing decisions are asked one at
   a time; low-stakes guesses go under `ASSUMPTIONS I'M MAKING:` for one
